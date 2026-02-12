@@ -1,0 +1,1 @@
+!function(){var o=".app.github.dev";if(window.location.hostname.indexOf(o)>-1){var t=window.WebSocket;window.WebSocket=class extends t{constructor(t,e){var n=new URL(t),i=n.port;n.port="";var s=n.hostname.split(o)[0].split("-");s.pop(),s.push(i),n.hostname=s.join("-")+o,super(t=n.href,e)}}}}();
