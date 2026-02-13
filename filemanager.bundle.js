@@ -61,11 +61,12 @@ function joinPaths(...paths) {
 }
 
 module.exports = {
-    makePathEasyToProcess,
-    parsePathArray,
-    parsePath,
-    joinPaths
+  makePathEasyToProcess,
+  parsePathArray,
+  parsePath,
+  joinPaths,
 };
+
 
 /***/ },
 
@@ -189,14 +190,14 @@ function refreshFileList() {
                 }
               },
             };
-          })
+          }),
       )
       .concat([
         {
           element: "div",
           className: "bottomFileMarker",
         },
-      ])
+      ]),
   );
   filePathInput.value = currentPath;
 }
@@ -496,28 +497,27 @@ filePathInput.addEventListener("change", function () {
             currentPath = "/";
             refreshFileList();
             dialog.alert(
-              "To view the addons directory, play SRB2 Web first to create the necessary folders."
+              "To view the addons directory, play SRB2 Web first to create the necessary folders.",
             );
           } catch (e) {
             dialog
               .alert(
                 "Failed to load filesystem: " +
                   e +
-                  "\nReload to try again.\nThis might have happened because you haven't loaded SRB2 Web."
+                  "\nReload to try again.\nThis might have happened because you haven't loaded SRB2 Web.",
               )
               .then(() => {
                 window.location.reload();
               });
           }
         }
-      },500);
+      }, 500);
     });
   } catch (e) {
     dialog.alert("Failed to load filesystem: " + e + "\nReload to try again.");
     window.location.reload();
   }
 })();
-
 
 const RUNNING_CHECK_NAME = "srb2web_running_check";
 var previousRunCheck = localStorage.getItem(RUNNING_CHECK_NAME);
@@ -528,11 +528,15 @@ var checkInterval = setInterval(() => {
     previousRunCheck = current;
     clearInterval(checkInterval);
     (async function () {
-      await dialog.alert("Another instance of SRB2 Web is running. \n" + "Please close other instances and press OK to reload.");
+      await dialog.alert(
+        "Another instance of SRB2 Web is running. \n" +
+          "Please close other instances and press OK to reload.",
+      );
       window.location.reload();
     })();
   }
-},100);
+}, 100);
+
 
 /***/ },
 
@@ -1083,6 +1087,7 @@ var dialog = {
 
 module.exports = dialog;
 
+
 /***/ },
 
 /***/ 7826
@@ -1101,7 +1106,7 @@ module.exports = [
     element: "div",
     className: "loadingScreen",
     gid: "loadingScreen",
-    textContent: "File system is loading..."
+    textContent: "File system is loading...",
   },
   {
     element: "div",
@@ -1118,13 +1123,13 @@ module.exports = [
   {
     element: "div",
     className: "fileList",
-    gid: "fileListContainer"
+    gid: "fileListContainer",
   },
   {
     element: "div",
     className: "clickDropdownMenu",
-    gid: "clickDropdownMenu"
-  }
+    gid: "clickDropdownMenu",
+  },
 ];
 
 
@@ -1133,7 +1138,7 @@ module.exports = [
 /***/ 8922
 (module) {
 
-module.exports = "body {\n    background: #696969;\n    font-weight: bold;\n    font-family: Arial, sans-serif;\n    margin: 0;\n    padding: 0;\n    /* Use dynamic viewport height for iOS Safari compatibility */\n    height: 100dvh;\n    height: 100vh;\n    width: 100vw;\n    overflow-x: auto;\n    overflow-y: auto;\n}\n\n.fileManagerMenuBar {\n    position: fixed;\n    top: 0px;\n    left: 0px;\n    width: 100%;\n    height: 40px;\n    background: #333333;\n    color: #ffffff;\n    display: flex;\n    align-items: center;\n    padding: 0 10px;\n    box-sizing: border-box;\n    z-index: 1000;\n}\n\n.fileManagerPathBar {\n    all: unset;\n    color: #ffffff;\n    width: calc(100% - 100px);\n    height: 100%;\n}\n\n.loadingScreen {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background: rgba(0, 0, 0, 0.8);\n    color: #ffffff;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: center;\n    z-index: 2000;\n    text-align: center;\n    font-size: 20px;\n    font-weight: bold;\n}\n\n.fileList {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: calc(100% - 100px);\n    height: 100%;\n    background: #444444;\n    display: flex;\n    flex-direction: column;\n    padding-top: 40px;\n    overflow: auto;\n    gap: 2px;\n}\n.fileListItem {\n    padding: 10px;\n    border-bottom: 1px solid #555555;\n    cursor: pointer;\n    color: #ffffff;\n    display: flex;\n    align-items: center;\n    gap: 8px;\n}\n\n.fileListItem:hover {\n    text-decoration: underline;\n    background-color: #555555;\n}\n\n.clickDropdownMenu {\n    position: fixed;\n    top: 0;\n    left: 0;\n    display: flex;\n    align-items: center;\n    flex-direction: column;\n    background: #333333;\n    border-radius: 3px;\n    box-sizing: border-box;\n}\n\n.dropdownItem {\n    padding: 10px;\n    border-bottom: 1px solid #555555;\n    cursor: pointer;\n    color: #ffffff;\n    display: flex;\n    align-items: center;\n    gap: 8px;\n    border-radius: 3px;\n    box-sizing: border-box;\n}\n\n.dropdownItem:hover {\n    text-decoration: underline;\n    background-color: #555555;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.bottomFileMarker {\n    height: calc(100% - 40px);\n    width: 100%;\n    flex-shrink: 0;\n}";
+module.exports = "body {\n    background: #696969;\n    font-weight: bold;\n    font-family: Arial, sans-serif;\n    margin: 0;\n    padding: 0;\n    /* Use dynamic viewport height for iOS Safari compatibility */\n    height: 100dvh;\n    height: 100vh;\n    width: 100vw;\n    overflow-x: auto;\n    overflow-y: auto;\n}\n\n.fileManagerMenuBar {\n    position: fixed;\n    top: 0px;\n    left: 0px;\n    width: 100%;\n    height: 40px;\n    background: #333333;\n    color: #ffffff;\n    display: flex;\n    align-items: center;\n    padding: 0 10px;\n    box-sizing: border-box;\n    z-index: 1000;\n}\n\n.fileManagerPathBar {\n    all: unset;\n    color: #ffffff;\n    width: calc(100% - 100px);\n    height: 100%;\n}\n\n.loadingScreen {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background: rgba(0, 0, 0, 0.8);\n    color: #ffffff;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: center;\n    z-index: 2000;\n    text-align: center;\n    font-size: 20px;\n    font-weight: bold;\n}\n\n.fileList {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: calc(100% - 100px);\n    height: 100%;\n    background: #444444;\n    display: flex;\n    flex-direction: column;\n    padding-top: 40px;\n    overflow: auto;\n    gap: 2px;\n}\n.fileListItem {\n    padding: 10px;\n    border-bottom: 1px solid #555555;\n    cursor: pointer;\n    color: #ffffff;\n    display: flex;\n    align-items: center;\n    gap: 8px;\n}\n\n.fileListItem:hover {\n    text-decoration: underline;\n    background-color: #555555;\n}\n\n.clickDropdownMenu {\n    position: fixed;\n    top: 0;\n    left: 0;\n    display: flex;\n    align-items: center;\n    flex-direction: column;\n    background: #333333;\n    border-radius: 3px;\n    box-sizing: border-box;\n}\n\n.dropdownItem {\n    padding: 10px;\n    border-bottom: 1px solid #555555;\n    cursor: pointer;\n    color: #ffffff;\n    display: flex;\n    align-items: center;\n    gap: 8px;\n    border-radius: 3px;\n    box-sizing: border-box;\n}\n\n.dropdownItem:hover {\n    text-decoration: underline;\n    background-color: #555555;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.bottomFileMarker {\n    height: calc(100% - 40px);\n    width: 100%;\n    flex-shrink: 0;\n}\n";
 
 /***/ }
 

@@ -215,6 +215,12 @@ module.exports = [
     ],
   },
   {
+    element: "div",
+    className: "logsContainer",
+    gid: "dedicatedServerLogs",
+    hidden: true,
+  },
+  {
     element: "canvas",
     className: "gameCanvas",
     gid: "gameCanvas",
@@ -229,38 +235,39 @@ module.exports = [
 (module) {
 
 var configstuff = {
-    iceServers: [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "stun:vpn.mikedev101.cc:3478" },
-      {
-        urls: "turn:vpn.mikedev101.cc:3478",
-        username: "free",
-        credential: "free",
-      },
-      { urls: "stun:freeturn.net:3478" },
-      { urls: "stun:freeturn.net:5349" },
-      { urls: "turn:freeturn.net:3478", username: "free", credential: "free" },
-      { urls: "turn:freeturn.net:5349", username: "free", credential: "free" },
-      {
-        urls: "turn:numb.viagenie.ca",
-        credential: "muazkh",
-        username: "webrtc@live.com",
-      },
-      {
-        urls: "turn:turn.bistri.com:80",
-        credential: "homeo",
-        username: "homeo",
-      },
-      {
-        urls: "turn:turn.anyfirewall.com:443?transport=tcp",
-        credential: "webrtc",
-        username: "webrtc",
-      }
-    ],
-    iceTransportPolicy: "all",
-  };
-  
+  iceServers: [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:vpn.mikedev101.cc:3478" },
+    {
+      urls: "turn:vpn.mikedev101.cc:3478",
+      username: "free",
+      credential: "free",
+    },
+    { urls: "stun:freeturn.net:3478" },
+    { urls: "stun:freeturn.net:5349" },
+    { urls: "turn:freeturn.net:3478", username: "free", credential: "free" },
+    { urls: "turn:freeturn.net:5349", username: "free", credential: "free" },
+    {
+      urls: "turn:numb.viagenie.ca",
+      credential: "muazkh",
+      username: "webrtc@live.com",
+    },
+    {
+      urls: "turn:turn.bistri.com:80",
+      credential: "homeo",
+      username: "homeo",
+    },
+    {
+      urls: "turn:turn.anyfirewall.com:443?transport=tcp",
+      credential: "webrtc",
+      username: "webrtc",
+    },
+  ],
+  iceTransportPolicy: "all",
+};
+
 module.exports = window.SRB2WEB_RTC_CONFIG || configstuff;
+
 
 /***/ },
 
@@ -314,11 +321,11 @@ class ConnectState {
         return;
       }
       if (!_this.webrtc) {
-              console.warn(
-        `[Relay Connection]: Disconnected unexpectedly, reconnecting...`
-      );
-      socket.onmessage = () => {};
-      _this.initWebsocket();
+        console.warn(
+          `[Relay Connection]: Disconnected unexpectedly, reconnecting...`,
+        );
+        socket.onmessage = () => {};
+        _this.initWebsocket();
       }
     };
     socket.binaryType = "arraybuffer";
@@ -368,27 +375,25 @@ class ConnectState {
   initWebrtc() {
     this.peer = new peer({
       initiator: false,
-      config: rtcConfig
+      config: rtcConfig,
     });
     var _this = this;
 
-    this.peer.on('error', (err) => {
+    this.peer.on("error", (err) => {
       //Shut up about your close locally errors.
     });
     this.peer.on("signal", function (data) {
       _this.socket.send(JSON.stringify({ signal: data }));
     });
-    
+
     this.peer.on("connect", function () {
       _this.isReady = true;
       _this.initialQueue = [];
     });
 
-    this.peer.on('close', () => {
-        
-    });
+    this.peer.on("close", () => {});
 
-    this.peer.on('data', (data) => {
+    this.peer.on("data", (data) => {
       attachSRB2.emitPacket(data, 0, PLACEHOLDER_IP);
     });
 
@@ -397,9 +402,7 @@ class ConnectState {
 
   handleSRB2Packet(data) {
     var { socket } = this;
-
-    // FIX: Check for WebRTC first. 
-    // If WebRTC is active and ready, we send via peer regardless of WebSocket state.
+    // WebRTC checks
     if (this.webrtc && this.isReady) {
       try {
         this.peer.send(data);
@@ -524,7 +527,38 @@ function disableServerWebRTC() {
 }
 
 async function listPublicGames() {
+  if (!enabled) {
+    return [];
+  }
+  if (!host) {
+    return [];
+  }
+  try {
+    var response = await fetch(`https://${host}/public`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch public games");
+    }
+  } catch (e) {
+    console.warn(
+      "Failed to fetch public games through https, trying http. Error message:",
+      e,
+    );
+    try {
+      var response = await fetch(`http://${host}/public`);
+      if (!response.ok) {
+        console.warn(
+          "Failed to fetch public games, response not ok. Status:",
+          response.status,
+        );
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+  var publicNetgames = await response.json();
 
+  return publicNetgames;
 }
 
 module.exports = {
@@ -534,6 +568,7 @@ module.exports = {
   disablePublic,
   enableServerWebRTC,
   disableServerWebRTC,
+  listPublicGames,
 };
 
 
@@ -573,7 +608,7 @@ function saveRelays() {
       used: usedRelay,
       enabled: relayEnabled,
       webrtc: webrtcHostEnabled,
-    })
+    }),
   );
 }
 
@@ -637,7 +672,7 @@ function reloadRelayConfig() {
         opt.dispose();
         saveRelays();
         reloadRelayConfig();
-      }
+      },
     );
     relayConfig.append(opt.div);
     relayOpts.push(opt);
@@ -675,7 +710,16 @@ relayServerCheckbox.onchange = function () {
   reloadRelayConfig();
 };
 
-webrtcHostCheckbox.onchange = function () {
+webrtcHostCheckbox.onchange = async function () {
+  if (!webrtcHostCheckbox.checked) {
+    var confirm = await dialog.confirm(
+      "Disabling WebRTC hosting will cause your hosted games to have slower connections and more input lag. Are you sure you want to disable it?",
+    );
+    if (!confirm) {
+      webrtcHostCheckbox.checked = true;
+      return;
+    }
+  }
   webrtcHostEnabled = webrtcHostCheckbox.checked;
   saveRelays();
   reloadRelayConfig();
@@ -698,7 +742,7 @@ if (storedConfig) {
   } catch (e) {
     relays = Array.from(defaultRelays);
     dialog.alert(
-      `Unable to load your relay configuration, it may have been corrupted.`
+      `Unable to load your relay configuration, it may have been corrupted.`,
     );
     console.error(e);
   }
@@ -779,7 +823,7 @@ attach.emitPacket = function (data, id, ip) {
     "SRB2_NetworkReceive",
     "void",
     ["number", "number", "number", "string"],
-    [dataPtr, data.length, +id || 0, ip]
+    [dataPtr, data.length, +id || 0, ip],
   );
   Module._free(dataPtr);
 };
@@ -851,7 +895,7 @@ class ListenState {
       ListenState.getChannelURL(this.wsHost, code),
       id,
       ip,
-      this.useRTC
+      this.useRTC,
     );
     this.connections[id] = ch;
     var _this = this;
@@ -877,7 +921,7 @@ class ListenState {
     var _this = this;
     var { wsHost, isPublic } = this;
     this.socket = new WebSocket(
-      getWebsocketURL(wsHost) + (isPublic ? "host/public" : "host")
+      getWebsocketURL(wsHost) + (isPublic ? "host/public" : "host"),
     );
     this.isOpen = false;
     this._lastServerInfo = {};
@@ -886,7 +930,7 @@ class ListenState {
       _this._lastServerInfo = {};
       _this.isOpen = false;
       console.warn(
-        `[Relay Connection]: Lost connection, connection might become unstable temporarily. Reconnecting...`
+        `[Relay Connection]: Lost connection, connection might become unstable temporarily. Reconnecting...`,
       );
       _this.openSocket();
     };
@@ -953,7 +997,7 @@ class ListenState {
     this._lastServerInfo = {};
     this.updateInterval = setInterval(
       this.handleUpdateInterval.bind(this),
-      100
+      100,
     );
   }
 
@@ -977,7 +1021,7 @@ module.exports = ListenState;
 /***/ 3448
 (module) {
 
-module.exports = "@font-face {\n  src: url(\"pixel.ttf\");\n  font-family: PixelFont;\n}\n\nbody {\n  background: #000000;\n  font-weight: bold;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  /* Use dynamic viewport height for iOS Safari compatibility */\n  height: 100dvh;\n  height: 100vh;\n  width: 100vw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/background.jpg\") center/cover no-repeat;\n  pointer-events: none;\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100svh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n  z-index: 9999;\n}\n\n.sectionHeader {\n  display: block;\n  font-weight: bold;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  font-weight: bold;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n  font-weight: bold;\n}\n\n.relayHost:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-weight: bold;\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n";
+module.exports = "@font-face {\n  src: url(\"pixel.ttf\");\n  font-family: PixelFont;\n}\n\nbody {\n  background: #000000;\n  font-weight: bold;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  /* Use dynamic viewport height for iOS Safari compatibility */\n  height: 100dvh;\n  height: 100vh;\n  width: 100vw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/background.jpg\") center/cover no-repeat;\n  pointer-events: none;\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100svh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n  z-index: 9999;\n}\n\n.sectionHeader {\n  display: block;\n  font-weight: bold;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  font-weight: bold;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n  font-weight: bold;\n}\n\n.relayHost:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-weight: bold;\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100svh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}";
 
 /***/ },
 
@@ -1538,6 +1582,7 @@ var dialog = {
 
 module.exports = dialog;
 
+
 /***/ },
 
 /***/ 6091
@@ -1594,14 +1639,12 @@ class ListenChannel {
           config: rtcConfig,
         });
 
-        this.peer.on('error', (err) => {
-          
-        });
+        this.peer.on("error", (err) => {});
 
         this.peer.on("signal", (data) => {
           _this.socket.send(JSON.stringify({ signal: data }));
         });
-        
+
         this.peer.on("connect", () => {
           _this.rtcOpen = true;
         });
@@ -1630,12 +1673,12 @@ class ListenChannel {
     var { socket } = this;
     if (this.useRTC && !this.rtcOpen) {
       if (this.peer) {
-        try{
+        try {
           this.peer.destroy();
-        }catch(e){}
+        } catch (e) {}
         this.peer = null;
       }
-      
+
       this.isOpen = false;
       this.rtcOpen = false;
       if (this.requestDispose) {
@@ -1675,14 +1718,14 @@ class ListenChannel {
       return;
     }
     if (this.useRTC && this.peer) {
-      try{
-      this.peer.send(data);
-      }catch(e){}
+      try {
+        this.peer.send(data);
+      } catch (e) {}
       return;
     }
     if (this.useRTC) {
       return;
-    } 
+    }
     if (!socket) {
       return;
     }
@@ -1707,6 +1750,18 @@ var IDBFS = null;
 var gameCanvas = elements.getGPId("gameCanvas");
 var didStart = false;
 var loaderContent = elements.getGPId("loaderContent");
+var serverOpts = null;
+
+function enableStartServer(dedicated = false) {
+  serverOpts = {
+    dedicated: !!dedicated,
+  };
+}
+
+function disableStartServer() {
+  serverOpts = null;
+}
+
 function loadScript() {
   return new Promise((resolve, reject) => {
     loaderContent.textContent = "Loading game script...";
@@ -1742,7 +1797,7 @@ async function downloadAndSaveAssets() {
     } else {
       // MISS: We need to download it
       console.log(
-        `[CACHE MISS] Downloading ${asset.filename} from internet...`
+        `[CACHE MISS] Downloading ${asset.filename} from internet...`,
       );
       loaderContent.textContent = `Downloading ${asset.filename}...`;
 
@@ -1757,7 +1812,7 @@ async function downloadAndSaveAssets() {
         // 2. Check for 404s or Server Errors
         if (!networkResponse.ok) {
           throw new Error(
-            `Server returned ${networkResponse.status} ${networkResponse.statusText} for file: ${asset.url}`
+            `Server returned ${networkResponse.status} ${networkResponse.statusText} for file: ${asset.url}`,
           );
         }
 
@@ -1801,7 +1856,7 @@ async function initGame() {
   FS.syncfs(true, (err) => {
     console.log("SyncFS done");
     console.log(err);
-    Module.callMain(["-home", "/home/web_user"]);
+    Module.callMain(["-home", "/home/web_user"].concat(Module.arguments));
   });
   setInterval(() => {
     FS.syncfs(false, (err) => {});
@@ -1830,14 +1885,24 @@ window.ChangeResolution = (x, y) => {
 };
 
 async function startGame() {
-  Module.arguments = [
-    "-mb",
-    "250",
-    "+drawdist",
-    "2048",
-    "+addons_option",
-    "CUSTOM",
-  ];
+  Module.arguments = [];
+  if (serverOpts) {
+    Module.arguments.push("-server");
+    if (serverOpts.dedicated) {
+      Module.arguments.push("-dedicated");
+    }
+  }
+  Module.arguments.push("+addons_option");
+  Module.arguments.push("CUSTOM");
+  Module.arguments.push("+addons_folder");
+  Module.arguments.push("/addons");
+  /*Module.arguments.push("-mb");
+  Module.arguments.push("250");
+  Module.arguments.push("+drawdist");
+  Module.arguments.push("2048");
+  Module.arguments.push("+addons_option");
+  Module.arguments.push("CUSTOM");*/
+
   Module.noInitialRun = true;
   Module.print = console.log;
   Module.printErrr = console.error;
@@ -1852,7 +1917,7 @@ async function startGame() {
     await loadScript();
   } catch (e) {
     dialog.alert(
-      "Error loading the game, look in the console for full error. \n" + e
+      "Error loading the game, look in the console for full error. \n" + e,
     );
     console.error("SRB2 Load error: ", e);
     return;
@@ -1879,7 +1944,7 @@ window.StartedMainLoopCallback = function () {
         "SRB2_AddMouseDelta",
         "void",
         ["number", "number"],
-        [Math.round(e.movementX), Math.round(e.movementY)]
+        [Math.round(e.movementX), Math.round(e.movementY)],
       );
     }
   });
@@ -1967,7 +2032,7 @@ window.SRB2RequestServerList = function () {
             server.max_players,
             100,
             server.gametype,
-          ]
+          ],
         );
       });
 
@@ -2019,7 +2084,7 @@ document.addEventListener(
       e.preventDefault();
     }
   },
-  true
+  true,
 );
 document.addEventListener(
   "mouseup",
@@ -2029,7 +2094,7 @@ document.addEventListener(
       e.preventDefault();
     }
   },
-  true
+  true,
 );
 document.addEventListener(
   "wheel",
@@ -2039,12 +2104,12 @@ document.addEventListener(
         "mouse_wheel_xy",
         "void",
         ["number", "number"],
-        [Math.round(e.deltaX), Math.round(e.deltaY)]
+        [Math.round(e.deltaX), Math.round(e.deltaY)],
       );
       e.preventDefault();
     }
   },
-  true
+  true,
 );
 var mouseMoveX = 0;
 var mouseMoveY = 0;
@@ -2054,7 +2119,7 @@ setInterval(() => {
       "SRB2_AddMouseDelta",
       "void",
       ["number", "number"],
-      [mouseMoveX, mouseMoveY]
+      [mouseMoveX, mouseMoveY],
     );
     mouseMoveX = 0;
     mouseMoveY = 0;
@@ -2069,7 +2134,7 @@ gameCanvas.addEventListener(
       e.preventDefault();
     }
   },
-  true
+  true,
 );
 window.addEventListener(
   "load",
@@ -2078,10 +2143,10 @@ window.addEventListener(
     document.addEventListener("keyup", CaptureFullscreenKey, true);
     document.addEventListener("keypress", CaptureFullscreenKey, true);
   },
-  { once: true }
+  { once: true },
 );
 
-module.exports = { startGame };
+module.exports = { startGame, enableStartServer, disableStartServer };
 
 
 /***/ },
