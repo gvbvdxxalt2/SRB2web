@@ -488,27 +488,29 @@ filePathInput.addEventListener("change", function () {
     FS = Module.FS;
     //document.body.textContent = (Object.keys(FS));
     FS.syncfs(true, (err) => {
-      try {
-        refreshFileList();
-      } catch (e) {
+      setTimeout(() => {
         try {
-          currentPath = "/";
           refreshFileList();
-          dialog.alert(
-            "To view the addons directory, play SRB2 Web first to create the necessary folders."
-          );
         } catch (e) {
-          dialog
-            .alert(
-              "Failed to load filesystem: " +
-                e +
-                "\nReload to try again.\nThis might have happened because you haven't loaded SRB2 Web."
-            )
-            .then(() => {
-              window.location.reload();
-            });
+          try {
+            currentPath = "/";
+            refreshFileList();
+            dialog.alert(
+              "To view the addons directory, play SRB2 Web first to create the necessary folders."
+            );
+          } catch (e) {
+            dialog
+              .alert(
+                "Failed to load filesystem: " +
+                  e +
+                  "\nReload to try again.\nThis might have happened because you haven't loaded SRB2 Web."
+              )
+              .then(() => {
+                window.location.reload();
+              });
+          }
         }
-      }
+      },500);
     });
   } catch (e) {
     dialog.alert("Failed to load filesystem: " + e + "\nReload to try again.");
