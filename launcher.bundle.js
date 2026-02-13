@@ -94,6 +94,24 @@ module.exports = [
         ],
       },
       {
+        element: "div",
+        style: {
+          display: "flex",
+        },
+        children: [
+          {
+            element: "span",
+            style: { fontWeight: "bold" },
+            textContent: "Enable WebRTC hosting (faster connection):",
+          },
+          {
+            element: "input",
+            type: "checkbox",
+            gid: "webrtcHostCheckbox",
+          },
+        ],
+      },
+      {
         element: "button",
         className: "button",
         gid: "addRelayButton",
@@ -524,6 +542,7 @@ var elements = __webpack_require__(5100);
 var dialog = __webpack_require__(5925);
 var relayConfig = elements.getGPId("relayConfig");
 var relayServerCheckbox = elements.getGPId("relayServerCheckbox");
+var webrtcHostCheckbox = elements.getGPId("webrtcHostCheckbox");
 var lstorageName = "SRB2WebRelayConfig";
 var RelayOption = __webpack_require__(9153);
 var net = __webpack_require__(1509);
@@ -533,6 +552,7 @@ var relayOpts = [];
 
 var usedRelay = 0;
 var relayEnabled = true;
+var webrtcHostEnabled = true;
 var defaultRelays = [
   {
     host: "srb2web-relay1.onrender.com",
@@ -548,6 +568,7 @@ function saveRelays() {
       relays,
       used: usedRelay,
       enabled: relayEnabled,
+      webrtc: webrtcHostEnabled,
     })
   );
 }
@@ -566,6 +587,11 @@ function updateRelayUsed() {
     net.enable(currentHost);
   } else {
     net.disable();
+  }
+  if (webrtcHostEnabled) {
+    net.enableServerWebRTC();
+  } else {
+    net.disableServerWebRTC();
   }
 }
 
@@ -620,6 +646,7 @@ function reloadRelayConfig() {
   }
 
   relayServerCheckbox.checked = relayEnabled;
+  webrtcHostCheckbox.checked = webrtcHostEnabled;
 
   if (relayOpts.length == 0) {
     elements.setInnerJSON(relayConfig, [
@@ -644,6 +671,12 @@ relayServerCheckbox.onchange = function () {
   reloadRelayConfig();
 };
 
+webrtcHostCheckbox.onchange = function () {
+  webrtcHostEnabled = webrtcHostCheckbox.checked;
+  saveRelays();
+  reloadRelayConfig();
+};
+
 setInterval(() => {
   relayOpts.forEach((r) => {
     r.fetchStatus();
@@ -657,6 +690,7 @@ if (storedConfig) {
     usedRelay = json.used;
     relays = json.relays;
     relayEnabled = json.enabled;
+    webrtcHostEnabled = json.webrtc;
   } catch (e) {
     relays = Array.from(defaultRelays);
     dialog.alert(
@@ -1747,6 +1781,8 @@ async function downloadAndSaveAssets() {
   }
 }
 
+const RUNNING_CHECK_NAME = "srb2web_running_check";
+
 async function initGame() {
   IDBFS = FS.filesystems.IDBFS;
 
@@ -1763,6 +1799,7 @@ async function initGame() {
   });
   setInterval(() => {
     FS.syncfs(false, (err) => {});
+    localStorage.setItem(RUNNING_CHECK_NAME, Date.now());
   }, 100);
 }
 

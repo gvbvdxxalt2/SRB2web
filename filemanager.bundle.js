@@ -517,6 +517,21 @@ filePathInput.addEventListener("change", function () {
 })();
 
 
+const RUNNING_CHECK_NAME = "srb2web_running_check";
+var previousRunCheck = localStorage.getItem(RUNNING_CHECK_NAME);
+
+var checkInterval = setInterval(() => {
+  var current = localStorage.getItem(RUNNING_CHECK_NAME);
+  if (current !== previousRunCheck) {
+    previousRunCheck = current;
+    clearInterval(checkInterval);
+    (async function () {
+      await dialog.alert("Another instance of SRB2 Web is running. \n" + "Please close other instances and press OK to reload.");
+      window.location.reload();
+    })();
+  }
+},100);
+
 /***/ },
 
 /***/ 3687
