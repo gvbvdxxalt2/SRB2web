@@ -791,21 +791,226 @@ var publicNetgameBrowser = elements.getGPId("publicNetgameBrowser");
 var publicNetgameBrowserLeft = elements.getGPId("publicNetgameBrowserLeft");
 var publicNetgameBrowserRight = elements.getGPId("publicNetgameBrowserRight");
 
-
-
-function displayPublicGames(games){
-  publicNetgameBrowser.hidden = false;
-  elements.setInnerJSON(publicNetgameBrowserLeft, []);
+function closePublicList() {
+  publicNetgameBrowserContainer.hidden = true;
 }
 
-browsePublicGames.addEventListener("click", async () => {
-  if (!relayEnabled) {
-    dialog.alert("You don't have the relay server enabled!");
+function getCloseButton() {
+  return {
+    element: "div",
+    className: "button publicNetgameBrowserCloseButton",
+    textContent: "Close",
+    onclick: closePublicList
+  };
+}
+
+function getHostButton(hostClicked) {
+  return {
+      element: "div",
+      className: "publicNetgameItem",
+      onclick: hostClicked,
+      children: [
+        {
+          element: "div",
+          style: {display: "flex", fontSize: "32px", alignItems: "center", justifyContent: "center"},
+          children: [
+            {
+              element: "img",
+              src: "images/host.svg",
+              className: "refreshIcon"
+            },
+            "Host public"
+          ]
+        }
+      ]
+    };
+}
+
+function getReloadButton(reload) {
+  return {
+      element: "div",
+      className: "publicNetgameItem",
+      onclick: reload,
+      children: [
+        {
+          element: "div",
+          style: {display: "flex", fontSize: "32px", alignItems: "center", justifyContent: "center"},
+          children: [
+            {
+              element: "img",
+              src: "images/refresh.svg",
+              className: "refreshIcon"
+            },
+            "Refresh"
+          ]
+        }
+      ]
+    };
+}
+
+function gameToButton(game, selectedURL, onClick) {
+  return {
+    element: "div",
+    className: "publicNetgameItem",
+    onclick: onClick,
+    children: [
+      {
+        element: "div",
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: "2px"
+        },
+        children: [
+          {
+            element: "img",
+            className: "netgameCommunicationType",
+            src: game.usesWebRTC ? "images/webrtc.svg" : "images/websocket.svg"
+          },
+          {
+            element: "span",
+            className: "netgameServerName",
+            textContent: game.name
+          },
+        ]
+      },
+      {
+        element: "span",
+        className: "netgameServerURL",
+        textContent: game.url
+      },
+    ]
+  };
+}
+
+var { startGame } = __webpack_require__(7063);
+
+async function launchToNetgame(game) {
+  var confirmed = await dialog.confirm(`Launch game to join ${game.name}?`);
+  if (!confirmed) return;
+
+  closePublicList();
+  startGame({
+    joinURL: game.url
+  });
+}
+
+async function launchToHost() {
+  var confirmed = await dialog.confirm(`Launch game to host publicly?`);
+  if (!confirmed) return;
+
+  var autoStart = await dialog.confirm(`Skip multiplayer menu?`);
+
+  closePublicList();
+  if (autoStart) {
+    startGame({
+      host: true
+    });
+  } else {
+    startGame();
   }
-  if (usedRelay < 0) {
-    dialog.alert("You don't have a relay server selected");
+}
+
+function displayPublicGames(games, selectedURL){
+  publicNetgameBrowser.hidden = false;
+  elements.setInnerJSON(publicNetgameBrowserLeft, [
+    getReloadButton(loadPublicList),
+    getHostButton(launchToHost),
+    {
+      element: "div",
+      className: "publicGameSeparator",
+    }
+  ].concat(games.map((game) => {
+    return gameToButton(game, selectedURL, () => {
+      displayPublicGames(games, game.url, () => launchToNetgame(game));
+    });
+  })));
+
+
+  var game = games.find((g) => selectedURL == g.url);
+  
+  if (!game) {
+    elements.setInnerJSON(publicNetgameBrowserRight, [
+      {
+        element: "span",
+        className: "viewPublicNetgameDetails",
+        textContent: "Click on a netgame to view it's details"
+      },
+      getCloseButton()
+    ]);
+
+    return;
   }
 
+  elements.setInnerJSON(publicNetgameBrowserRight, [
+    {
+      element: "div",
+      className: "publicNetgameDetails",
+      children: [
+        {
+          element: "span",
+          className: "netgameServerName",
+          textContent: game.name
+        },
+        {
+          element: "br"
+        },
+        {
+          element: "span",
+          className: "netgameServerURL",
+          textContent: game.url
+        },
+        {
+          element: "div",
+          className: "publicGameSeparator"
+        },
+        {
+          element: "br"
+        },
+        {
+          element: "li",
+          children: [
+            {
+              element: "ri",
+              textContent: game.mapTitle ? "Map Title: "+game.mapTitle : "(No map title)"
+            },
+          ]
+        },
+        {
+          element: "li",
+          children: [
+            {
+              element: "ri",
+              textContent: game.map ? "Map: "+game.map : "(No map)"
+            },
+          ]
+        },
+
+        {
+          element: "br"
+        },
+        {
+          element: "div",
+          className: "publicGameSeparator"
+        },
+        {
+          element: "span",
+          textContent: "Players: "+game.ingamePlayers
+        },
+        game.playerNames.map((name) => {
+          return {
+            element: "li",
+            textContent: name
+          };
+        })
+      ]
+    },
+    getCloseButton(),
+  ]);
+
+}
+
+async function loadPublicList() {
   publicNetgameBrowserContainer.hidden = false;
   publicNetgameBrowser.hidden = true;
   try{
@@ -818,6 +1023,17 @@ browsePublicGames.addEventListener("click", async () => {
   }
 
   displayPublicGames(games);
+}
+
+browsePublicGames.addEventListener("click", async () => {
+  if (!relayEnabled) {
+    dialog.alert("You don't have the relay server enabled!");
+  }
+  if (usedRelay < 0) {
+    dialog.alert("You don't have a relay server selected");
+  }
+
+  loadPublicList();
 });
 
 /***/ },
@@ -1075,7 +1291,7 @@ module.exports = ListenState;
 /***/ 3448
 (module) {
 
-module.exports = "@font-face {\n  src: url(\"pixel.ttf\");\n  font-family: PixelFont;\n}\n\nbody {\n  background: #000000;\n  font-weight: bold;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  /* Use dynamic viewport height for iOS Safari compatibility */\n  height: 100dvh;\n  height: 100vh;\n  width: 100vw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/background.jpg\") center/cover no-repeat;\n  pointer-events: none;\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100svh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n  z-index: 9999;\n}\n\n.sectionHeader {\n  display: block;\n  font-weight: bold;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  font-weight: bold;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n  font-weight: bold;\n}\n\n.relayHost:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-weight: bold;\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100svh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}\n\n.publicNetgameBrowserContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100svh;\n  background: rgba(0,0,0,0.5);\n}\n\n.publicNetgameBrowserDialog {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: calc(100% - 50px);\n  height: calc(100svh - 50px);\n  border-radius: 3px;\n  background: rgba(255,255,255,1);\n  display: flex;\n  flex-direction: row;\n}\n\n.publicNetgameBrowserLeft {\n  display: flex;\n  flex-direction: column;\n  min-width: 200px;\n  width: calc(100% - 450px);\n  max-width: 300px;\n  border-right: 2px solid rgba(0,0,0,0.3);\n  box-sizing: border-box;\n  flex-shrink: 0;\n  flex-grow: 0;\n}\n\n.publicNetgameBrowserRight {\n  display: block;\n  flex-grow: 1;\n\n}";
+module.exports = "@font-face {\n  src: url(\"pixel.ttf\");\n  font-family: PixelFont;\n}\n\nbody {\n  background: #000000;\n  font-weight: bold;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  /* Use dynamic viewport height for iOS Safari compatibility */\n  height: 100dvh;\n  height: 100vh;\n  width: 100vw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/background.jpg\") center/cover no-repeat;\n  pointer-events: none;\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100svh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n  z-index: 9999;\n}\n\n.sectionHeader {\n  display: block;\n  font-weight: bold;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  font-weight: bold;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n  font-weight: bold;\n}\n\n.relayHost:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-weight: bold;\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100svh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}\n\n.publicNetgameBrowserContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100svh;\n  background: rgba(0,0,0,0.5);\n}\n\n.publicNetgameBrowserDialog {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: calc(100% - 150px);\n  height: calc(100svh - 150px);\n  min-width: 640px;\n  min-height: 360px;\n  border-radius: 3px;\n  background: rgba(255,255,255,1);\n  display: flex;\n  flex-direction: row;\n}\n\n.publicNetgameBrowserLeft {\n  display: flex;\n  flex-direction: column;\n  min-width: 200px;\n  width: calc(100% - 450px);\n  max-width: 300px;\n  border-right: 2px solid rgba(0,0,0,0.3);\n  box-sizing: border-box;\n  flex-shrink: 0;\n  flex-grow: 0;\n  gap: 3px;\n  overflow: auto;\n}\n\n.publicNetgameItem {\n  width: 100%;\n  box-sizing: border-box;\n  height: fit-content;\n  min-height: 50px;\n  padding: 5px 5px;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 4px;\n}\n\n.publicNetgameItem:hover {\n  background: rgba(0,0,0,0.7);\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.publicNetgameItem[viewing] {\n  text-decoration: underline;\n  cursor: unset;\n}\n\n.publicGameSeparator {\n  width: 100%;\n  height: 0px;\n  margin-top: 3px;\n  margin-bottom: 3px;\n  border-bottom-color: black;\n  border-bottom-style: dashed;\n  border-bottom-width: 2px;\n  box-sizing: border-box;\n}\n\n.publicNetgameBrowserRight {\n  display: block;\n  flex-grow: 1;\n  position: relative;\n}\n\n.publicNetgameBrowserCloseButton {\n  position: absolute;\n  top: 0;\n  right: 0;\n  font-size: 30px;\n}\n\n.viewPublicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  font-weight: bold;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  padding: 5px 5px;\n  border-radius: 3px;\n}\n\n.publicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 100%;\n  height: 100%;\n  padding: 10px 10px;\n  box-sizing: border-box;\n}\n\n.refreshIcon {\n  width: 32px;\n  height: 32px;\n}\n\n.netgameServerName {\n  font-size: 30px;\n}\n\n.netgameServerURL {\n  font-size: 16px;\n  margin-left: 5px;\n  font-family: arial;\n}\n\n.netgameCommunicationType {\n  width: 25px;\n  height: 25px;\n  object-fit: contain;\n  padding: 5px 5px;\n  border-radius: 3px;\n  background: rgba(255,255,255,0.4);\n}\n";
 
 /***/ },
 
@@ -1805,6 +2021,8 @@ var gameCanvas = elements.getGPId("gameCanvas");
 var didStart = false;
 var loaderContent = elements.getGPId("loaderContent");
 var serverOpts = null;
+var launcherMain = elements.getGPId("launcherMain");
+var loaderMain = elements.getGPId("loaderMain");
 
 function enableStartServer(dedicated = false) {
   serverOpts = {
@@ -1938,13 +2156,23 @@ window.ChangeResolution = (x, y) => {
   }
 };
 
-async function startGame() {
+async function startGame({joinURL, host = false}) {
+  loaderMain.hidden = false;
+  launcherMain.hidden = true;
+
   Module.arguments = [];
   if (serverOpts) {
     Module.arguments.push("-server");
     if (serverOpts.dedicated) {
       Module.arguments.push("-dedicated");
     }
+  }
+  if (host) {
+    Module.arguments.push("-server");
+  }
+  if (joinURL) {
+    Module.arguments.push("-connect");
+    Module.arguments.push(joinURL);
   }
   Module.arguments.push("+addons_option");
   Module.arguments.push("CUSTOM");
@@ -2230,8 +2458,6 @@ var playButton = elements.getGPId("playButton");
 var { startGame } = __webpack_require__(7063);
 
 playButton.addEventListener("click", function () {
-  loaderMain.hidden = false;
-  launcherMain.hidden = true;
   startGame();
 });
 
