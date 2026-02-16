@@ -779,9 +779,7 @@ if (storedConfig) {
 }
 
 reloadRelayConfig();
-
-net.enablePublic();
-
+net.disablePublic();
 
 
 
@@ -902,6 +900,7 @@ async function launchToHost() {
   var autoStart = await dialog.confirm(`Skip multiplayer menu?`);
 
   closePublicList();
+  net.enablePublic();
   if (autoStart) {
     startGame({
       host: true
@@ -960,6 +959,42 @@ function displayPublicGames(games, selectedURL){
           className: "netgameServerURL",
           textContent: game.url
         },
+        {
+          element: "div",
+          className: "publicGameSeparator"
+        },
+
+        {
+          element: "button",
+          className: "button",
+          children: [
+            {
+              element: "div",
+              style: {
+                display: "flex",
+                alignItems: "center",
+                gap: "2px"
+              },
+              onclick: () => {launchToNetgame(game)},
+              children: [
+                {
+                  element: "img",
+                  style: {
+                    width: "32px",
+                    height: "32px",
+                    objectFit: "contain"
+                  },
+                  src: "images/wifi.svg"
+                },
+                {
+                  element: "span",
+                  textContent: "Connect/Join"
+                },
+              ]
+            },
+          ]
+        },
+
         {
           element: "div",
           className: "publicGameSeparator"
@@ -1028,9 +1063,11 @@ async function loadPublicList() {
 browsePublicGames.addEventListener("click", async () => {
   if (!relayEnabled) {
     dialog.alert("You don't have the relay server enabled!");
+    return;
   }
   if (usedRelay < 0) {
     dialog.alert("You don't have a relay server selected");
+    return;
   }
 
   loadPublicList();
@@ -2156,7 +2193,7 @@ window.ChangeResolution = (x, y) => {
   }
 };
 
-async function startGame({joinURL, host = false}) {
+async function startGame(options = {}) {
   loaderMain.hidden = false;
   launcherMain.hidden = true;
 
@@ -2167,12 +2204,14 @@ async function startGame({joinURL, host = false}) {
       Module.arguments.push("-dedicated");
     }
   }
-  if (host) {
-    Module.arguments.push("-server");
-  }
-  if (joinURL) {
-    Module.arguments.push("-connect");
-    Module.arguments.push(joinURL);
+  if (options) {
+    if (options.host) {
+      Module.arguments.push("-server");
+    }
+    if (options.joinURL) {
+      Module.arguments.push("-connect");
+      Module.arguments.push(options.joinURL);
+    }
   }
   Module.arguments.push("+addons_option");
   Module.arguments.push("CUSTOM");
