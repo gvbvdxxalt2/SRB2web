@@ -622,8 +622,12 @@ var relayEnabled = true;
 var webrtcHostEnabled = true;
 var defaultRelays = [
   {
-    host: "srb2web-relay1.onrender.com",
+    host: "srb2web-lan.onrender.com",
     name: "Public relay",
+  },
+  {
+    host: "srb2web-lan2.onrender.com",
+    name: "Public relay 2",
   },
 ];
 
@@ -1072,6 +1076,7 @@ browsePublicGames.addEventListener("click", async () => {
 
   loadPublicList();
 });
+
 
 /***/ },
 
