@@ -2218,10 +2218,6 @@ async function startGame(options = {}) {
       Module.arguments.push(options.joinURL);
     }
   }
-  Module.arguments.push("+addons_option");
-  Module.arguments.push("CUSTOM");
-  Module.arguments.push("+addons_folder");
-  Module.arguments.push("/addons");
   /*Module.arguments.push("-mb");
   Module.arguments.push("250");
   Module.arguments.push("+drawdist");
