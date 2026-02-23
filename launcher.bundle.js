@@ -4,6 +4,8 @@
 /***/ 288
 (module, __unused_webpack_exports, __webpack_require__) {
 
+var RelayOption = __webpack_require__(9153);
+
 module.exports = [
   {
     element: "style",
@@ -129,21 +131,93 @@ module.exports = [
         className: "relayConfig",
       },
       {
+        element: "button",
+        className: "button",
+        gid: "addDefaultServers",
+        textContent: "Add default servers",
+      },
+      {
         element: "div",
+        style: {
+          lineHeight: "20px"
+        },
         children: [
-          "Relay servers allow you to connect to netgames and let you host netgames. (without port forwarding)",
+          "Relay servers make it easy to host and join netgames without needing to set up port forwarding.",
           {
             element: "br",
           },
-          "The connection speed of a netgame depends on the relay server and the host's computer.",
+          "Keep in mind that connection speeds depend on both the relay server and the host's hardware.",
           {
             element: "br",
+          },
+          "To get started, click \"Use this server\" next to your preferred relay. If you run into connection issues, click the \"Add default servers\" button above to refresh the list.",
+          {
+            element: "br",
+          },
+          "Our default servers are hosted on free tiers, so they may take a moment to \"wake up\" if they have been inactive for a while.",
+          {
+            element: "br"
+          },
+          "Enabling WebRTC provides a much faster connection. This setting only applies if you are the host (clients will automatically use WebRTC if the host has it enabled).",
+          {
+            element: "br"
           },
           {
             element: "a",
             href: "https://github.com/gvbvdxxalt2/SRB2Web-Relay/",
             target: "_blank",
             textContent: "Source code for Relay Server.",
+          },
+          {
+            element: "br",
+          },
+          
+          {
+            element: "h2",
+            textContent: "Status details"
+          },
+          
+          {
+            element: "li",
+            children: [
+              {
+                element: "img",
+                className: "relayStatusImg",
+                src: RelayOption.FETCHING_IMG
+              },
+              {
+                element: "span",
+                textContent: " - Fetching: Attempting to connect to the server."
+              }
+            ]
+          },
+          {
+            element: "li",
+            children: [
+              {
+                element: "img",
+                className: "relayStatusImg",
+                src: RelayOption.ONLINE_IMG
+              },
+              {
+                element: "span",
+                textContent: " - Online: The server is active and ready to go!"
+              }
+            ]
+          },
+          {
+            element: "li",
+            children: [
+              {
+                element: "img",
+                className: "relayStatusImg",
+                src: RelayOption.OFFLINE_IMG
+              },
+              {
+                element: "span",
+                textContent: " - Offline: The server is offline, unreachable, or blocked."
+              }
+            ]
           },
         ],
       },
@@ -243,6 +317,20 @@ module.exports = [
     hidden: true,
 
     children: [
+      {
+        element: "div",
+        gid: "netgameLoadingListsContainer",
+        className: "netgameLoadingListsContainer",
+        children: [
+          {
+            element: "img",
+            src: "images/loading.gif",
+            className: "netgameLoadingListsImg"
+          },
+          "Loading..."
+        ]
+      },
+      
       {
         element: "div",
         gid: "publicNetgameBrowser",
