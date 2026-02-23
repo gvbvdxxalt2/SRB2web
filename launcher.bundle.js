@@ -2690,7 +2690,7 @@ var elements = __webpack_require__(5100);
 var dialog = __webpack_require__(5925);
 
 class RelayOption {
-  static FETCHING_IMG = "images/gray.png";
+  static FETCHING_IMG = "images/loading.gif";
   static FETCHING_TEXT = "Loading...";
 
   static ONLINE_IMG = "images/green.png";
@@ -2841,6 +2841,7 @@ class RelayOption {
     this.relay.host = hostInput.value;
     this.updateContents();
     this.fetchStatus();
+    this.requestSave();
   }
 
   async relayDeleteButtonClicked() {
@@ -2908,7 +2909,7 @@ class RelayOption {
               },
               {
                 element: "span",
-                className: "relayHost",
+                className: "relayHost relayHostClickable",
                 GPWhenCreated: (elm) => (_this.relayHostSpan = elm),
               },
             ],
