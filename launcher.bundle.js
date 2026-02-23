@@ -725,16 +725,21 @@ var relayOpts = [];
 var usedRelay = 0;
 var relayEnabled = true;
 var webrtcHostEnabled = true;
-var defaultRelays = [
-  {
-    host: "srb2web-lan.onrender.com",
-    name: "Public relay",
-  },
-  {
-    host: "srb2web-lan2.onrender.com",
-    name: "Public relay 2",
-  },
-];
+
+function getPublicHosts() {
+	return [
+		{
+      host: "srb2web-lan.onrender.com",
+      name: "Public server 1",
+		},
+  	{
+		  host: "srb2web-lan2.onrender.com",
+		  name: "Public server 2",
+	  },	
+	];
+}
+
+var defaultRelays = getPublicHosts();
 
 function saveRelays() {
   relays = relayOpts.map((r) => r.save());
@@ -749,6 +754,7 @@ function saveRelays() {
   );
 }
 
+var currentRelayName = null;
 var currentHost = null;
 
 function updateRelayUsed() {
@@ -756,6 +762,7 @@ function updateRelayUsed() {
     r.setUsed(usedRelay == i);
     if (usedRelay == i) {
       currentHost = r.relay.host;
+      currentRelayName = r.relay.name;
     }
   });
   if (relayEnabled) {
@@ -772,6 +779,21 @@ function updateRelayUsed() {
 }
 
 var addRelayButton = elements.getGPId("addRelayButton");
+var addDefaultServers = elements.getGPId("addDefaultServers");
+
+function addRelayIfNotExist(relay, useThisOne) {
+  if (!relay) {
+    return false;
+  }
+  if (relays.find((r) => r.host == relay.host)) {
+    return false;
+  }
+  relays.push(relay);
+  usedRelay = relays.length-1;
+  reloadRelayConfig();
+  saveRelays();
+  return true;
+}
 
 addRelayButton.onclick = async function () {
   var relay = await RelayOption.relayAddDialog();
@@ -783,8 +805,21 @@ addRelayButton.onclick = async function () {
     return;
   }
   relays.push(relay);
+  usedRelay = relays.length-1;
   reloadRelayConfig();
   saveRelays();
+};
+
+addDefaultServers.onclick = async function () {
+  var defaults = getPublicHosts();
+  if (defaults.length > 0) {
+    for (var relay of defaults) {
+      addRelayIfNotExist(relay);
+    }
+    usedRelay = relays.length-defaults.length;
+    reloadRelayConfig();
+    saveRelays();
+  }
 };
 
 function reloadRelayConfig() {
@@ -891,6 +926,7 @@ reloadRelayConfig();
 net.disablePublic();
 
 
+//Browser for public games.
 
 var browsePublicGames = elements.getGPId("browsePublicGames");
 var publicNetgameBrowserContainer = elements.getGPId("publicNetgameBrowserContainer");
@@ -1022,6 +1058,30 @@ async function launchToHost() {
 function displayPublicGames(games, selectedURL){
   publicNetgameBrowser.hidden = false;
   elements.setInnerJSON(publicNetgameBrowserLeft, [
+    {
+      element: "span",
+      style: {
+        fontWeight: "bold"
+      },
+      children: [
+        "Now viewing on server: ",
+        {
+          element: "br"
+        },
+        {
+          element: "span",
+          className: "relayHost",
+          textContent: currentHost,
+          style: {
+            fontSize: "20px"
+          }
+        }
+      ]
+    },
+    {
+      element: "div",
+      className: "publicGameSeparator",
+    },
     getReloadButton(loadPublicList),
     getHostButton(launchToHost),
     {
@@ -1160,7 +1220,7 @@ async function loadPublicList() {
   try{
     var games = await net.listPublicGames();
   }catch(e){
-    dialog.alert("Failed to fetch public hosted games. Make sure your selected relay server is working and try again.");
+    dialog.alert("Failed to fetch public hosted games. Make sure your selected relay server is working and try again.\nError: "+e);
     console.error(e);
     publicNetgameBrowserContainer.hidden = true;
     return;
