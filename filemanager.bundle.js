@@ -483,39 +483,35 @@ filePathInput.addEventListener("change", function () {
 
 (async function () {
   try {
-    await loadFilesystem();
+    // 1. Wait for everything to be created and synced
+    await loadFilesystem(); 
     loadingScreen.hidden = true;
 
+    // 2. Set the global FS reference from the Module
     FS = Module.FS;
-    //document.body.textContent = (Object.keys(FS));
-    FS.syncfs(true, (err) => {
-      setTimeout(() => {
-        try {
-          refreshFileList();
-        } catch (e) {
-          try {
-            currentPath = "/";
-            refreshFileList();
-            dialog.alert(
-              "To view the addons directory, play SRB2 Web first to create the necessary folders.",
-            );
-          } catch (e) {
-            dialog
-              .alert(
-                "Failed to load filesystem: " +
-                  e +
-                  "\nReload to try again.\nThis might have happened because you haven't loaded SRB2 Web.",
-              )
-              .then(() => {
-                window.location.reload();
-              });
-          }
-        }
-      }, 500);
-    });
+
+    // 3. Set the starting path for your file manager
+    // We use /addons/userdata because that's the symlink we created
+    currentPath = "/addons/userdata";
+
+    // 4. Small delay to ensure Emscripten's internal C structures are ready
+    setTimeout(() => {
+      try {
+        refreshFileList();
+        console.log("File list loaded successfully at " + currentPath);
+      } catch (e) {
+        console.error("Refresh failed:", e);
+        // Fallback to root if the symlink is being stubborn
+        currentPath = "/";
+        refreshFileList();
+        dialog.alert("Navigation failed. Resetting to root directory.");
+      }
+    }, 100);
+
   } catch (e) {
+    console.error("FS Load Error:", e);
     dialog.alert("Failed to load filesystem: " + e + "\nReload to try again.");
-    window.location.reload();
+    // window.location.reload(); // Optional: only reload if it's a fatal error
   }
 })();
 
@@ -543,10 +539,7 @@ var checkInterval = setInterval(() => {
 /***/ 3687
 (module) {
 
-var Module = {};
-if (window["Module"]) {
-  var Module = window["Module"];
-}
+var Module = window["Module"] || {};
 
 function loadScript() {
   return new Promise((resolve, reject) => {
@@ -557,23 +550,59 @@ function loadScript() {
     document.body.append(script);
   });
 }
-var IDBFS = null;
+
 var FS = null;
+
 async function loadFilesystem() {
   Module.noInitialRun = true;
   Module.canvas = document.createElement("canvas");
+  
   await loadScript();
   FS = Module.FS;
-  IDBFS = FS.filesystems.IDBFS;
 
-  FS.mkdirTree("/addons");
-  FS.symlink("/home/web_user/.srb2", "/addons/.srb2");
-  FS.symlink("/home/web_user/.srb2", "/addons/userdata");
-  FS.mount(IDBFS, {}, "/home/web_user");
+  // 1. Prepare the mount point
+  FS.mkdirTree("/home/web_user");
+  FS.mount(FS.filesystems.IDBFS, {}, "/home/web_user");
+
+  // 2. Sync from IndexedDB to MEMFS
+  await new Promise((resolve) => {
+    FS.syncfs(true, (err) => {
+      if (err) console.error("Sync Error:", err);
+      
+      // --- SETUP START (Inside callback to ensure persistence awareness) ---
+      
+      // Create the internal game folder
+      if (!FS.analyzePath("/home/web_user/.srb2").exists) {
+        FS.mkdir("/home/web_user/.srb2");
+      }
+
+      // Create the default subfolders
+      const subFolders = ["/home/web_user/.srb2/addons", "/home/web_user/.srb2/logs"];
+      subFolders.forEach(path => {
+        if (!FS.analyzePath(path).exists) FS.mkdir(path);
+      });
+
+      // 3. Setup the /addons/userdata symlink
+      // We do NOT mkdir /addons/userdata; we link the name directly to the target.
+      if (!FS.analyzePath("/addons").exists) FS.mkdir("/addons");
+      
+      try {
+        if (!FS.analyzePath("/addons/userdata").exists) {
+          FS.symlink("/home/web_user/.srb2", "/addons/userdata");
+        }
+      } catch (e) {
+        console.warn("Symlink issue:", e);
+      }
+
+      // --- SETUP END ---
+      resolve();
+    });
+  });
+
+  console.log("Filesystem ready. Default path: /addons/userdata");
 }
 
 module.exports = { loadFilesystem };
-
 
 /***/ },
 
