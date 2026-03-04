@@ -962,7 +962,7 @@ function getHostButton(hostClicked) {
               src: "images/host.svg",
               className: "refreshIcon"
             },
-            "Host public"
+            "Host public netgame"
           ]
         }
       ]
