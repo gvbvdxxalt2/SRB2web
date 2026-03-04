@@ -1246,7 +1246,7 @@ var publicNetgames = 0;
 
 async function setBrowsePublicGamesText(count) {
   if (count == 0) {
-    browsePublicGames.textContent = "Join/host a public netgame (no public netgames)";
+    browsePublicGames.textContent = "Join/host a public netgame (none active yet)";
     return;
   }
   browsePublicGames.textContent = `Join/host a public netgame (${count} netgames active)`;
@@ -1262,7 +1262,7 @@ async function updatePublicNetgameCount() {
 
 setBrowsePublicGamesText(0);
 updatePublicNetgameCount();
-setInterval(updatePublicNetgameCount,1000*60*2);
+setInterval(updatePublicNetgameCount,1000*60*1);
 
 
 /***/ },
