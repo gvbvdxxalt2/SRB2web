@@ -719,6 +719,12 @@ var lstorageName = "SRB2WebRelayConfig";
 var RelayOption = __webpack_require__(9153);
 var net = __webpack_require__(1509);
 
+var browsePublicGames = elements.getGPId("browsePublicGames");
+var publicNetgameBrowserContainer = elements.getGPId("publicNetgameBrowserContainer");
+var publicNetgameBrowser = elements.getGPId("publicNetgameBrowser");
+var publicNetgameBrowserLeft = elements.getGPId("publicNetgameBrowserLeft");
+var publicNetgameBrowserRight = elements.getGPId("publicNetgameBrowserRight");
+
 var relays = [];
 var relayOpts = [];
 
@@ -740,6 +746,25 @@ function getPublicHosts() {
 }
 
 var defaultRelays = getPublicHosts();
+
+
+async function setBrowsePublicGamesText(count) {
+  if (count == 0) {
+    browsePublicGames.textContent = "Join/host a public netgame (none active yet)";
+    return;
+  }
+  browsePublicGames.textContent = `Join/host a public netgame (${count} netgames active)`;
+}
+async function updatePublicNetgameCount() {
+  try{
+    var games = await net.listPublicGames();
+    setBrowsePublicGamesText(games.length);
+  }catch(e){
+    setBrowsePublicGamesText(0);
+  }
+}
+
+setInterval(updatePublicNetgameCount,1000*60*1);
 
 function saveRelays() {
   relays = relayOpts.map((r) => r.save());
@@ -776,6 +801,9 @@ function updateRelayUsed() {
   } else {
     net.disableServerWebRTC();
   }
+
+  setBrowsePublicGamesText(0);
+  updatePublicNetgameCount();
 }
 
 var addRelayButton = elements.getGPId("addRelayButton");
@@ -927,12 +955,6 @@ net.disablePublic();
 
 
 //Browser for public games.
-
-var browsePublicGames = elements.getGPId("browsePublicGames");
-var publicNetgameBrowserContainer = elements.getGPId("publicNetgameBrowserContainer");
-var publicNetgameBrowser = elements.getGPId("publicNetgameBrowser");
-var publicNetgameBrowserLeft = elements.getGPId("publicNetgameBrowserLeft");
-var publicNetgameBrowserRight = elements.getGPId("publicNetgameBrowserRight");
 
 function closePublicList() {
   publicNetgameBrowserContainer.hidden = true;
@@ -1241,29 +1263,6 @@ browsePublicGames.addEventListener("click", async () => {
 
   loadPublicList();
 });
-
-var publicNetgames = 0;
-
-async function setBrowsePublicGamesText(count) {
-  if (count == 0) {
-    browsePublicGames.textContent = "Join/host a public netgame (none active yet)";
-    return;
-  }
-  browsePublicGames.textContent = `Join/host a public netgame (${count} netgames active)`;
-}
-async function updatePublicNetgameCount() {
-  try{
-    var games = await net.listPublicGames();
-    setBrowsePublicGamesText(games.length);
-  }catch(e){
-    setBrowsePublicGamesText(0);
-  }
-}
-
-setBrowsePublicGamesText(0);
-updatePublicNetgameCount();
-setInterval(updatePublicNetgameCount,1000*60*1);
-
 
 /***/ },
 
