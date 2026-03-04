@@ -1056,6 +1056,7 @@ async function launchToHost() {
 }
 
 function displayPublicGames(games, selectedURL){
+  setBrowsePublicGamesText(games.length);
   publicNetgameBrowser.hidden = false;
   elements.setInnerJSON(publicNetgameBrowserLeft, [
     {
@@ -1240,6 +1241,28 @@ browsePublicGames.addEventListener("click", async () => {
 
   loadPublicList();
 });
+
+var publicNetgames = 0;
+
+async function setBrowsePublicGamesText(count) {
+  if (count == 0) {
+    browsePublicGames.textContent = "Join/host a public netgame (no active games)";
+    return;
+  }
+  browsePublicGames.textContent = `Join/host a public netgame (${count} active)`;
+}
+async function updatePublicNetgameCount() {
+  try{
+    var games = await net.listPublicGames();
+    setBrowsePublicGamesText(games.length);
+  }catch(e){
+    setBrowsePublicGamesText(0);
+  }
+}
+
+setBrowsePublicGamesText(0);
+updatePublicNetgameCount();
+setInterval(updatePublicNetgameCount,1000*60*2);
 
 
 /***/ },
