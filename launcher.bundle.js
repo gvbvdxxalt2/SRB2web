@@ -2309,27 +2309,27 @@ async function downloadAndSaveAssets() {
   const cache = await caches.open(CACHE_NAME);
 
   for (const asset of assetList) {
-    console.log(`Checking storage for ${asset.filename}...`);
+    //console.log(`Checking storage for ${asset.filename}...`);
 
     // 2. Check if we already have the file in cache
     let response = await cache.match(asset.url);
 
     if (response) {
       // HIT: We found it!
-      console.log(`[CACHE HIT] Loading ${asset.filename} from disk.`);
+      //console.log(`[CACHE HIT] Loading ${asset.filename} from disk.`);
       loaderContent.textContent = `Loading ${asset.filename} from cache...`;
     } else {
       // MISS: We need to download it
-      console.log(
-        `[CACHE MISS] Downloading ${asset.filename} from internet...`,
-      );
+      //console.log(
+      //  `[CACHE MISS] Downloading ${asset.filename} from internet...`,
+      //);
       loaderContent.textContent = `Downloading ${asset.filename}...`;
 
       try {
         // --- NEW CODE START ---
 
         // 1. Manually fetch the file first to check for errors
-        console.log(`[NETWORK] Fetching ${asset.url}...`);
+        //console.log(`[NETWORK] Fetching ${asset.url}...`);
         const request = new Request(asset.url);
         const networkResponse = await fetch(request);
 
@@ -2382,12 +2382,18 @@ async function initGame() {
   FS.symlink("/home/web_user/.srb2", "/addons/userdata");
   FS.mount(IDBFS, {}, "/home/web_user");
   FS.syncfs(true, (err) => {
-    console.log("SyncFS done");
-    console.log(err);
+    //console.log("SyncFS done");
+    //console.log(err);
     Module.callMain(["-home", "/home/web_user"].concat(Module.arguments));
   });
+  var isSyncing = false;
   setInterval(() => {
-    FS.syncfs(false, (err) => {});
+    if (!isSyncing) {
+      isSyncing = true;
+      FS.syncfs(false, (err) => {
+        isSyncing = false;
+      });
+    }
     localStorage.setItem(RUNNING_CHECK_NAME, Date.now());
   }, 100);
 }
@@ -2448,7 +2454,7 @@ async function startGame(options = {}) {
   Module.arguments.push("CUSTOM");*/
 
   Module.noInitialRun = true;
-  Module.print = console.log;
+  Module.print = () => {};
   Module.printErrr = console.error;
   Module.canvas = gameCanvas;
   Module.onRuntimeInitialized = initGame;
@@ -2477,7 +2483,7 @@ window.StartedMainLoopCallback = function () {
 
   // Add click listener after canvas is shown
   gameCanvas.addEventListener("click", () => {
-    console.log("Canvas clicked, locking mouse");
+    //console.log("Canvas clicked, locking mouse");
     window.LockMouse();
   });
 
@@ -2498,7 +2504,7 @@ window.StartedMainLoopCallback = function () {
     if (Module.SDL2 && Module.SDL2.audioContext) {
       if (Module.SDL2.audioContext.state === "suspended") {
         Module.SDL2.audioContext.resume().then(() => {
-          console.log("AudioContext resumed!");
+          //console.log("AudioContext resumed!");
         });
       }
     }
