@@ -491,7 +491,11 @@ class ConnectState {
         }
       }
 
-      attachSRB2.emitPacket(uint8array, 0, PLACEHOLDER_IP);
+      if (uint8array && typeof uint8array.length !== 'undefined') {
+        try{
+          attachSRB2.emitPacket(uint8array, 0, PLACEHOLDER_IP);
+        }catch(e){}
+      }
     };
 
     attachSRB2.onpacket = this.handleSRB2Packet.bind(this);
@@ -742,6 +746,10 @@ function getPublicHosts() {
 		  host: "srb2web-lan2.onrender.com",
 		  name: "Public server 2",
 	  },	
+    {
+      host: "srb2web-udp-relay.onrender.com",
+      name: "SRB2 UDP to SRB2web Relay (Experimental)",
+    }
 	];
 }
 
