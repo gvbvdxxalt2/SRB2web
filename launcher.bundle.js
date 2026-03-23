@@ -2843,7 +2843,7 @@ class RelayOption {
     }
 
     var allowedURLChars =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.-";
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.-:";
 
     for (var char of host) {
       if (allowedURLChars.indexOf(char) == -1) {
