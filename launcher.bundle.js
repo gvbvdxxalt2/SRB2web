@@ -739,19 +739,9 @@ var webrtcHostEnabled = true;
 function getPublicHosts() {
 	return [
 		{
-      host: "srb2web-lan.onrender.com",
-      name: "Public server 1",
+			host: "srb2web-lan.onrender.com",
+			name: "Public server 1",
 		},
-	  	{
-			  host: "srb2web-lan2.onrender.com",
-			  name: "Public server 2",
-		  },	
-	    /*
-		Seems like render.com doesn't allow UDP connections.
-		{
-	      host: "srb2web-udp-relay.onrender.com",
-	      name: "SRB2 UDP to SRB2web Relay (Experimental)",
-	    }*/
 	];
 }
 
