@@ -2430,7 +2430,7 @@ window.ChangeResolution = (x, y, resizeNow) => {
     const dpr = window.devicePixelRatio || 1;
     const targetX = Math.floor((x || GetViewportWidth()) * dpr);
     const targetY = Math.floor((y || GetViewportHeight()) * dpr);
-
+    
     gameCanvas.width = targetX;
     gameCanvas.height = targetY;
     
