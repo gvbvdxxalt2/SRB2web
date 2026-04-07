@@ -2407,9 +2407,8 @@ var GetViewportHeight = () => {
   return Math.round(document.documentElement.clientHeight);
 };
 
-window.ChangeResolution = (x, y) => {
-  if (didStart) {
-    // Use devicePixelRatio to fix the "tiny box in the corner" issue
+function getTargetSize(x,y) {
+  // Use devicePixelRatio to fix the "tiny box in the corner" issue
     const dpr = window.devicePixelRatio || 1;
     const targetX = Math.floor((x || GetViewportWidth()) * dpr);
     const targetY = Math.floor((y || GetViewportHeight()) * dpr);
@@ -2421,17 +2420,39 @@ window.ChangeResolution = (x, y) => {
     gameCanvas.style.width = (targetX / dpr) + "px";
     gameCanvas.style.height = (targetY / dpr) + "px";
 
-    setTimeout(() => {
-      Module.ccall("change_resolution", "number", ["number", "number"], [targetX, targetY]);
-    }, 100);
+    return {targetX, targetY};
+}
+
+window.ChangeResolution = (x, y, resizeNow) => {
+  if (didStart || resizeNow) {
+
+    // Use devicePixelRatio to fix the "tiny box in the corner" issue
+    const dpr = window.devicePixelRatio || 1;
+    const targetX = Math.floor((x || GetViewportWidth()) * dpr);
+    const targetY = Math.floor((y || GetViewportHeight()) * dpr);
+
+    gameCanvas.width = targetX;
+    gameCanvas.height = targetY;
+    
+    // Match the CSS size to the viewport size
+    gameCanvas.style.width = (targetX / dpr) + "px";
+    gameCanvas.style.height = (targetY / dpr) + "px";
+    
+    Module.ccall("change_resolution", "number", ["number", "number"], [targetX, targetY]);
   }
 };
 
 async function startGame(options = {}) {
   loaderMain.hidden = false;
   launcherMain.hidden = true;
+  var {targetX, targetY} = getTargetSize();
 
-  Module.arguments = [];
+  Module.arguments = [
+    /*'-width',
+    ""+targetX,
+    '-height',
+    ""+targetY*/
+  ];
   if (serverOpts) {
     Module.arguments.push("-server");
     if (serverOpts.dedicated) {
@@ -2475,11 +2496,18 @@ async function startGame(options = {}) {
   }
 }
 
+window.SRB2ReadyToResizeHandler = function () {
+  window.ChangeResolution(false,false,true);
+  setTimeout(() => {
+    window.ChangeResolution(false,false,true);
+  },500);
+};
+
 window.StartedMainLoopCallback = function () {
   didStart = true;
   gameCanvas.hidden = false;
   setTimeout(() => {
-    window.ChangeResolution();
+    //window.ChangeResolution();
   }, 10);
 
   // Add click listener after canvas is shown
