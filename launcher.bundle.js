@@ -1,267 +1,40 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 288
+/***/ 53
 (module, __unused_webpack_exports, __webpack_require__) {
 
-var RelayOption = __webpack_require__(9153);
-
 module.exports = [
-  {
-    element: "style",
-    textContent: __webpack_require__(3448),
-  },
-  {
-    element: "style",
-    textContent: "[hidden] { display: none !important; }",
-  },
-  {
-    element: "div",
-    className: "srb2BG",
-  },
   {
     element: "div",
     className: "launcherMain",
     gid: "launcherMain",
     children: [
-      {
-        element: "img",
-        style: {
-          width: "100%",
-          height: "200px",
-          objectFit: "contain",
-        },
-        src: "images/srb2logo.png",
-      },
-      {
-        element: "button",
-        className: "button playButton",
-        children: [
-          {
-            element: "img",
-            src: "images/play.svg",
-            style: {
-              height: "32px",
-            },
-          },
-          {
-            element: "span",
-            textContent: "Play",
-          },
-        ],
-        gid: "playButton",
-      },
-      {
-        element: "a",
-        className: "button fsButton",
-        href: "file.html",
-        target: "_blank",
-        children: [
-          {
-            element: "img",
-            src: "images/folder.svg",
-            style: {
-              height: "32px",
-            },
-          },
-          {
-            element: "span",
-            textContent: "Manage files & addons",
-          },
-        ],
-        gid: "fsButton",
-      },
+      ////////////////////////////////////////////
+
+      ...__webpack_require__(6439),
+
+      ////////////////////////////////////////////
+
+      ...__webpack_require__(9766),
+      ...__webpack_require__(7496),
+
+      ////////////////////////////////////////////
+
       { element: "div", className: "sep" },
-      {
-        element: "span",
-        className: "sectionHeader",
-        textContent: "Relay server configuration:",
-      },
+
       {
         element: "div",
-        style: {
-          display: "flex",
-        },
-        children: [
-          {
-            element: "span",
-            style: { fontWeight: "bold" },
-            textContent: "Enable relay server:",
-          },
-          {
-            element: "input",
-            type: "checkbox",
-            gid: "relayServerCheckbox",
-          },
-        ],
+        children: __webpack_require__(1713),
       },
-      {
-        element: "div",
-        style: {
-          display: "flex",
-        },
-        children: [
-          {
-            element: "span",
-            style: { fontWeight: "bold" },
-            textContent: "Enable WebRTC hosting (faster connection):",
-          },
-          {
-            element: "input",
-            type: "checkbox",
-            gid: "webrtcHostCheckbox",
-          },
-        ],
-      },
-      {
-        element: "button",
-        className: "button",
-        gid: "addRelayButton",
-        textContent: "Add relay server",
-      },
-      {
-        element: "button",
-        className: "button",
-        gid: "browsePublicGames",
-        textContent: "Browse public netgames",
-      },
-      {
-        element: "div",
-        gid: "relayConfig",
-        className: "relayConfig",
-      },
-      {
-        element: "button",
-        className: "button",
-        gid: "addDefaultServers",
-        textContent: "Add default servers",
-      },
-      {
-        element: "div",
-        style: {
-          lineHeight: "20px"
-        },
-        children: [
-          "Relay servers make it easy to host and join netgames without needing to set up port forwarding.",
-          {
-            element: "br",
-          },
-          "Keep in mind that connection speeds depend on both the relay server and the host's hardware.",
-          {
-            element: "br",
-          },
-          "To get started, click \"Use this server\" next to your preferred relay. If you run into connection issues, click the \"Add default servers\" button above to refresh the list.",
-          {
-            element: "br",
-          },
-          "Our default servers are hosted on free tiers, so they may take a moment to \"wake up\" if they have been inactive for a while.",
-          {
-            element: "br"
-          },
-          "Enabling WebRTC provides a much faster connection. This setting only applies if you are the host (clients will automatically use WebRTC if the host has it enabled).",
-          {
-            element: "br"
-          },
-          {
-            element: "a",
-            href: "https://github.com/gvbvdxxalt2/SRB2Web-Relay/",
-            target: "_blank",
-            textContent: "Source code for Relay Server.",
-          },
-          {
-            element: "br",
-          },
-          
-          {
-            element: "h2",
-            textContent: "Status details"
-          },
-          
-          {
-            element: "li",
-            children: [
-              {
-                element: "img",
-                className: "relayStatusImg",
-                src: RelayOption.FETCHING_IMG
-              },
-              {
-                element: "span",
-                textContent: " - Fetching: Attempting to connect to the server."
-              }
-            ]
-          },
-          {
-            element: "li",
-            children: [
-              {
-                element: "img",
-                className: "relayStatusImg",
-                src: RelayOption.ONLINE_IMG
-              },
-              {
-                element: "span",
-                textContent: " - Online: The server is active and ready to go!"
-              }
-            ]
-          },
-          {
-            element: "li",
-            children: [
-              {
-                element: "img",
-                className: "relayStatusImg",
-                src: RelayOption.OFFLINE_IMG
-              },
-              {
-                element: "span",
-                textContent: " - Offline: The server is offline, unreachable, or blocked."
-              }
-            ]
-          },
-        ],
-      },
+
+      ////////////////////////////////////////////
+
       { element: "div", className: "sep" },
+
       {
         element: "div",
-        children: [
-          "Sonic Robo Blast 2 is a 3D Sonic the Hedgehog fangame built on a heavily modified Doom Legacy engine.",
-          {
-            element: "br",
-          },
-          " Visit ",
-          {
-            element: "a",
-            href: "https://www.srb2.org/",
-            target: "_blank",
-            textContent: "srb2.org",
-          },
-          " for more information.",
-          {
-            element: "br",
-          },
-          "SRB2Web is developed by ",
-          {
-            element: "a",
-            href: "https://github.com/gvbvdxxalt2",
-            target: "_blank",
-            textContent: "Gvbvdxx",
-          },
-          ", with the help of Google Gemini and other AI tools.",
-          {
-            element: "br",
-          },
-          {
-            element: "a",
-            href: "https://github.com/gvbvdxxalt2/SRB2web",
-            target: "_blank",
-            textContent: "Click here to view the source code on GitHub.",
-          },
-          {
-            element: "br",
-          },
-          "Sonic Robo Blast 2, its name, characters, and all related elements are trademarks of their respective owners. This fangame is not affiliated with or endorsed by SEGA Corporation.",
-        ],
+        children: __webpack_require__(8752),
         style: {
           marginTop: "20px",
           fontSize: "14px",
@@ -269,88 +42,76 @@ module.exports = [
         },
         gid: "launcherInfo",
       },
+
+      ////////////////////////////////////////////
     ],
   },
+];
+
+
+/***/ },
+
+/***/ 492
+(module) {
+
+module.exports = "@font-face {\n  src: url(\"pixel3.ttf\");\n  font-family: PixelFont;\n  font-size: 20px;\n}\n\nbody {\n  background: #000000;\n  font-weight: bold;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  /* Use dynamic viewport height for iOS Safari compatibility */\n  height: 100dvh;\n  height: 100vh;\n  width: 100vw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/title-bg.png\") center/cover no-repeat;\n  pointer-events: none;\n  image-rendering: pixelated;\n  filter: brightness(0.6);\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100svh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n  z-index: 9999;\n}\n\n.sectionHeader {\n  display: block;\n  font-weight: bold;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: column;\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  font-weight: bold;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n  font-weight: bold;\n}\n\n.relayHostClickable:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-weight: bold;\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayPublicCount {\n  font-size: 14px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n  font-weight: bold;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100svh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}\n\n.publicNetgameBrowserContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100svh;\n  background: rgba(0,0,0,0.5);\n}\n\n.publicNetgameBrowserDialog {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: calc(100% - 150px);\n  height: calc(100svh - 150px);\n  min-width: 640px;\n  min-height: 360px;\n  border-radius: 3px;\n  background: rgba(255,255,255,1);\n  display: flex;\n  flex-direction: row;\n}\n\n.publicNetgameBrowserLeft {\n  display: flex;\n  flex-direction: column;\n  min-width: 200px;\n  width: calc(100% - 450px);\n  max-width: 300px;\n  border-right: 2px solid rgba(0,0,0,0.3);\n  box-sizing: border-box;\n  flex-shrink: 0;\n  flex-grow: 0;\n  gap: 3px;\n  overflow: auto;\n}\n\n.publicNetgameItem {\n  width: 100%;\n  box-sizing: border-box;\n  height: fit-content;\n  min-height: 50px;\n  padding: 5px 5px;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 4px;\n  flex-shrink: 0;\n}\n\n.publicNetgameItem:hover {\n  background: rgba(0,0,0,0.7);\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.publicNetgameItem[viewing] {\n  text-decoration: underline;\n  cursor: unset;\n}\n\n.publicGameSeparator {\n  width: 100%;\n  height: 0px;\n  margin-top: 3px;\n  margin-bottom: 3px;\n  border-bottom-color: black;\n  border-bottom-style: dashed;\n  border-bottom-width: 2px;\n  box-sizing: border-box;\n}\n\n.publicNetgameBrowserRight {\n  display: block;\n  flex-grow: 1;\n  position: relative;\n}\n\n.publicNetgameBrowserCloseButton {\n  position: absolute;\n  top: 0;\n  right: 0;\n  font-size: 30px;\n}\n\n.viewPublicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  font-weight: bold;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  padding: 5px 5px;\n  border-radius: 3px;\n}\n\n.publicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 100%;\n  height: 100%;\n  padding: 10px 10px;\n  box-sizing: border-box;\n}\n\n.refreshIcon {\n  width: 32px;\n  height: 32px;\n}\n\n.netgameServerName {\n  font-size: 30px;\n}\n\n.netgameServerURL {\n  font-size: 16px;\n  margin-left: 5px;\n  font-family: arial;\n}\n\n.netgameCommunicationType {\n  width: 25px;\n  height: 25px;\n  object-fit: contain;\n  padding: 5px 5px;\n  border-radius: 3px;\n  background: rgba(255,255,255,0.4);\n}\n\n.netgameLoadingListsContainer {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,1);\n  border-radius: 4px;\n  font-size: 20px;\n  font-weight: bold;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n  gap: 8px;\n}\n\n.netgameLoadingListsImg {\n  width: 30px;\n  height: 30px;\n}\n\n\n.dontSellText {\n  color: rgb(196, 0, 0);\n  font-weight: bold;\n  font-size: 35px;\n}";
+
+/***/ },
+
+/***/ 518
+(module, __unused_webpack_exports, __webpack_require__) {
+
+var RelayOption = __webpack_require__(9153);
+
+module.exports = [
   {
-    element: "div",
-    className: "loaderMain",
-    gid: "loaderMain",
+    element: "h2",
+    textContent: "Status details",
+  },
+
+  {
+    element: "li",
     children: [
       {
         element: "img",
-        style: {
-          width: "300px",
-          height: "160px",
-          objectFit: "contain",
-        },
-        src: "images/srb2logo.png",
+        className: "relayStatusImg",
+        src: RelayOption.FETCHING_IMG,
       },
       {
-        element: "div",
-        gid: "loaderContent",
-        textContent: "Loading...",
-        style: {
-          textAlign: "center",
-          fontWeight: "bold",
-          color: "#ffffff",
-        },
+        element: "span",
+        textContent: " - Fetching: Attempting to connect to the server.",
       },
     ],
   },
   {
-    element: "div",
-    className: "logsContainer",
-    gid: "dedicatedServerLogs",
-    hidden: true,
-  },
-  {
-    element: "canvas",
-    className: "gameCanvas",
-    gid: "gameCanvas",
-    tabindex: "0",
-  },
-
-  {
-    element: "div",
-    gid: "publicNetgameBrowserContainer",
-    className: "publicNetgameBrowserContainer",
-    hidden: true,
-
+    element: "li",
     children: [
       {
-        element: "div",
-        gid: "netgameLoadingListsContainer",
-        className: "netgameLoadingListsContainer",
-        children: [
-          {
-            element: "img",
-            src: "images/loading.gif",
-            className: "netgameLoadingListsImg"
-          },
-          "Loading..."
-        ]
+        element: "img",
+        className: "relayStatusImg",
+        src: RelayOption.ONLINE_IMG,
       },
-      
       {
-        element: "div",
-        gid: "publicNetgameBrowser",
-        className: "publicNetgameBrowserDialog",
-        hidden: true,
-        children: [
-          {
-            element: "div",
-            gid: "publicNetgameBrowserLeft",
-            className: "publicNetgameBrowserLeft"
-          },
-          {
-            element: "div",
-            gid: "publicNetgameBrowserRight",
-            className: "publicNetgameBrowserRight",
-          }
-        ]
-      }
-    ]
-  }
+        element: "span",
+        textContent: " - Online: The server is active and ready to go!",
+      },
+    ],
+  },
+  {
+    element: "li",
+    children: [
+      {
+        element: "img",
+        className: "relayStatusImg",
+        src: RelayOption.OFFLINE_IMG,
+      },
+      {
+        element: "span",
+        textContent:
+          " - Offline: The server is offline, unreachable, or blocked.",
+      },
+    ],
+  },
 ];
 
 
@@ -491,10 +252,10 @@ class ConnectState {
         }
       }
 
-      if (uint8array && typeof uint8array.length !== 'undefined') {
-        try{
+      if (uint8array && typeof uint8array.length !== "undefined") {
+        try {
           attachSRB2.emitPacket(uint8array, 0, PLACEHOLDER_IP);
-        }catch(e){}
+        } catch (e) {}
       }
     };
 
@@ -724,7 +485,9 @@ var RelayOption = __webpack_require__(9153);
 var net = __webpack_require__(1509);
 
 var browsePublicGames = elements.getGPId("browsePublicGames");
-var publicNetgameBrowserContainer = elements.getGPId("publicNetgameBrowserContainer");
+var publicNetgameBrowserContainer = elements.getGPId(
+  "publicNetgameBrowserContainer",
+);
 var publicNetgameBrowser = elements.getGPId("publicNetgameBrowser");
 var publicNetgameBrowserLeft = elements.getGPId("publicNetgameBrowserLeft");
 var publicNetgameBrowserRight = elements.getGPId("publicNetgameBrowserRight");
@@ -737,34 +500,34 @@ var relayEnabled = true;
 var webrtcHostEnabled = true;
 
 function getPublicHosts() {
-	return [
-		{
-			host: "srb2web-lan.onrender.com",
-			name: "Public server 1",
-		},
-	];
+  return [
+    {
+      host: "srb2web-lan.onrender.com",
+      name: "Public server 1",
+    },
+  ];
 }
 
 var defaultRelays = getPublicHosts();
 
-
 async function setBrowsePublicGamesText(count) {
   if (count == 0) {
-    browsePublicGames.textContent = "Join/host a public netgame (none active yet)";
+    browsePublicGames.textContent =
+      "Join/host a public netgame (none active yet)";
     return;
   }
   browsePublicGames.textContent = `Join/host a public netgame (${count} netgames active)`;
 }
 async function updatePublicNetgameCount() {
-  try{
+  try {
     var games = await net.listPublicGames();
     setBrowsePublicGamesText(games.length);
-  }catch(e){
+  } catch (e) {
     setBrowsePublicGamesText(0);
   }
 }
 
-setInterval(updatePublicNetgameCount,1000*60*1);
+setInterval(updatePublicNetgameCount, 1000 * 60 * 1);
 
 function saveRelays() {
   relays = relayOpts.map((r) => r.save());
@@ -817,7 +580,7 @@ function addRelayIfNotExist(relay, useThisOne) {
     return false;
   }
   relays.push(relay);
-  usedRelay = relays.length-1;
+  usedRelay = relays.length - 1;
   reloadRelayConfig();
   saveRelays();
   return true;
@@ -833,7 +596,7 @@ addRelayButton.onclick = async function () {
     return;
   }
   relays.push(relay);
-  usedRelay = relays.length-1;
+  usedRelay = relays.length - 1;
   reloadRelayConfig();
   saveRelays();
 };
@@ -844,7 +607,7 @@ addDefaultServers.onclick = async function () {
     for (var relay of defaults) {
       addRelayIfNotExist(relay);
     }
-    usedRelay = relays.length-defaults.length;
+    usedRelay = relays.length - defaults.length;
     reloadRelayConfig();
     saveRelays();
   }
@@ -925,11 +688,14 @@ webrtcHostCheckbox.onchange = async function () {
   reloadRelayConfig();
 };
 
-setInterval(() => {
-  relayOpts.forEach((r) => {
-    r.fetchStatus();
-  });
-}, 1000*60*1);
+setInterval(
+  () => {
+    relayOpts.forEach((r) => {
+      r.fetchStatus();
+    });
+  },
+  1000 * 60 * 1,
+);
 
 var storedConfig = localStorage.getItem(lstorageName);
 if (storedConfig) {
@@ -953,7 +719,6 @@ if (storedConfig) {
 reloadRelayConfig();
 net.disablePublic();
 
-
 //Browser for public games.
 
 function closePublicList() {
@@ -965,86 +730,96 @@ function getCloseButton() {
     element: "div",
     className: "button publicNetgameBrowserCloseButton",
     textContent: "Close",
-    onclick: closePublicList
+    onclick: closePublicList,
   };
 }
 
 function getHostButton(hostClicked) {
   return {
-      element: "div",
-      className: "publicNetgameItem",
-      onclick: hostClicked,
-      children: [
-        {
-          element: "div",
-          style: {display: "flex", fontSize: "32px", alignItems: "center", justifyContent: "center"},
-          children: [
-            {
-              element: "img",
-              src: "images/host.svg",
-              className: "refreshIcon"
-            },
-            "Host public netgame"
-          ]
-        }
-      ]
-    };
+    element: "div",
+    className: "publicNetgameItem",
+    onclick: hostClicked,
+    children: [
+      {
+        element: "div",
+        style: {
+          display: "flex",
+          fontSize: "32px",
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        children: [
+          {
+            element: "img",
+            src: "images/host.svg",
+            className: "refreshIcon",
+          },
+          "Host public netgame",
+        ],
+      },
+    ],
+  };
 }
 
 function getReloadButton(reload) {
   return {
-      element: "div",
-      className: "publicNetgameItem",
-      onclick: reload,
-      children: [
-        {
-          element: "div",
-          style: {display: "flex", fontSize: "32px", alignItems: "center", justifyContent: "center"},
-          children: [
-            {
-              element: "img",
-              src: "images/refresh.svg",
-              className: "refreshIcon"
-            },
-            "Refresh"
-          ]
-        }
-      ]
-    };
+    element: "div",
+    className: "publicNetgameItem",
+    onclick: reload,
+    children: [
+      {
+        element: "div",
+        style: {
+          display: "flex",
+          fontSize: "32px",
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        children: [
+          {
+            element: "img",
+            src: "images/refresh.svg",
+            className: "refreshIcon",
+          },
+          "Refresh",
+        ],
+      },
+    ],
+  };
 }
 
 function gameToButton(game, selectedURL, onClick) {
   return {
     element: "div",
     className: "publicNetgameItem",
-    eventListeners: [{event: "click", func: onClick}],
+    eventListeners: [{ event: "click", func: onClick }],
     children: [
       {
         element: "div",
         style: {
           display: "flex",
           alignItems: "center",
-          gap: "2px"
+          gap: "2px",
         },
         children: [
           {
             element: "img",
             className: "netgameCommunicationType",
-            src: game.usesWebRTC ? "images/webrtc.svg" : "images/websocket.svg"
+            src: game.usesWebRTC ? "images/webrtc.svg" : "images/websocket.svg",
           },
           {
             element: "span",
             className: "netgameServerName",
-            textContent: game.name
+            textContent: game.name,
           },
-        ]
+        ],
       },
       {
         element: "span",
         className: "netgameServerURL",
-        textContent: game.url
+        textContent: game.url,
       },
-    ]
+    ],
   };
 }
 
@@ -1056,7 +831,7 @@ async function launchToNetgame(game) {
 
   closePublicList();
   startGame({
-    joinURL: game.url
+    joinURL: game.url,
   });
 }
 
@@ -1070,64 +845,68 @@ async function launchToHost() {
   net.enablePublic();
   if (autoStart) {
     startGame({
-      host: true
+      host: true,
     });
   } else {
     startGame();
   }
 }
 
-function displayPublicGames(games, selectedURL){
+function displayPublicGames(games, selectedURL) {
   setBrowsePublicGamesText(games.length);
   publicNetgameBrowser.hidden = false;
-  elements.setInnerJSON(publicNetgameBrowserLeft, [
-    {
-      element: "span",
-      style: {
-        fontWeight: "bold"
-      },
-      children: [
-        "Now viewing on server: ",
-        {
-          element: "br"
+  elements.setInnerJSON(
+    publicNetgameBrowserLeft,
+    [
+      {
+        element: "span",
+        style: {
+          fontWeight: "bold",
         },
-        {
-          element: "span",
-          className: "relayHost",
-          textContent: currentHost,
-          style: {
-            fontSize: "20px"
-          }
-        }
-      ]
-    },
-    {
-      element: "div",
-      className: "publicGameSeparator",
-    },
-    getReloadButton(loadPublicList),
-    getHostButton(launchToHost),
-    {
-      element: "div",
-      className: "publicGameSeparator",
-    }
-  ].concat(games.map((game) => {
-    return gameToButton(game, selectedURL, () => {
-      displayPublicGames(games, game.url);
-    });
-  })));
-
+        children: [
+          "Now viewing on server: ",
+          {
+            element: "br",
+          },
+          {
+            element: "span",
+            className: "relayHost",
+            textContent: currentHost,
+            style: {
+              fontSize: "20px",
+            },
+          },
+        ],
+      },
+      {
+        element: "div",
+        className: "publicGameSeparator",
+      },
+      getReloadButton(loadPublicList),
+      getHostButton(launchToHost),
+      {
+        element: "div",
+        className: "publicGameSeparator",
+      },
+    ].concat(
+      games.map((game) => {
+        return gameToButton(game, selectedURL, () => {
+          displayPublicGames(games, game.url);
+        });
+      }),
+    ),
+  );
 
   var game = games.find((g) => selectedURL == g.url);
-  
+
   if (!game) {
     elements.setInnerJSON(publicNetgameBrowserRight, [
       {
         element: "span",
         className: "viewPublicNetgameDetails",
-        textContent: "Click on a netgame to view it's details"
+        textContent: "Click on a netgame to view it's details",
       },
-      getCloseButton()
+      getCloseButton(),
     ]);
 
     return;
@@ -1141,19 +920,19 @@ function displayPublicGames(games, selectedURL){
         {
           element: "span",
           className: "netgameServerName",
-          textContent: game.name
+          textContent: game.name,
         },
         {
-          element: "br"
+          element: "br",
         },
         {
           element: "span",
           className: "netgameServerURL",
-          textContent: game.url
+          textContent: game.url,
         },
         {
           element: "div",
-          className: "publicGameSeparator"
+          className: "publicGameSeparator",
         },
 
         {
@@ -1165,84 +944,92 @@ function displayPublicGames(games, selectedURL){
               style: {
                 display: "flex",
                 alignItems: "center",
-                gap: "2px"
+                gap: "2px",
               },
-              onclick: () => {launchToNetgame(game)},
+              onclick: () => {
+                launchToNetgame(game);
+              },
               children: [
                 {
                   element: "img",
                   style: {
                     width: "32px",
                     height: "32px",
-                    objectFit: "contain"
+                    objectFit: "contain",
                   },
-                  src: "images/wifi.svg"
+                  src: "images/wifi.svg",
                 },
                 {
                   element: "span",
-                  textContent: "Connect/Join"
+                  textContent: "Connect/Join",
                 },
-              ]
+              ],
             },
-          ]
+          ],
         },
 
         {
           element: "div",
-          className: "publicGameSeparator"
+          className: "publicGameSeparator",
         },
         {
-          element: "br"
+          element: "br",
         },
         {
           element: "li",
           children: [
             {
               element: "ri",
-              textContent: game.mapTitle ? "Map Title: "+game.mapTitle : "(No map title)"
+              textContent: game.mapTitle
+                ? "Map Title: " + game.mapTitle
+                : "(No map title)",
             },
-          ]
+          ],
         },
         {
           element: "li",
           children: [
             {
               element: "ri",
-              textContent: game.map ? "Map: "+game.map : "(No map)"
+              textContent: game.map ? "Map: " + game.map : "(No map)",
             },
-          ]
+          ],
         },
 
         {
-          element: "br"
+          element: "br",
         },
         {
           element: "div",
-          className: "publicGameSeparator"
+          className: "publicGameSeparator",
         },
         {
           element: "span",
-          textContent: `Players: ${game.ingamePlayers} / ${game.maxPlayers || "(Unknown)"}`
+          textContent: `Players: ${game.ingamePlayers} / ${game.maxPlayers || "(Unknown)"}`,
         },
-      ].concat(game.playerNames.map((name) => {
+      ].concat(
+        game.playerNames.map((name) => {
           return {
             element: "li",
-            textContent: name
+            textContent: name,
           };
-        }))
+        }),
+      ),
     },
     getCloseButton(),
   ]);
-
 }
 
 async function loadPublicList() {
   publicNetgameBrowserContainer.hidden = false;
   publicNetgameBrowser.hidden = true;
-  try{
+  try {
     var games = await net.listPublicGames();
-  }catch(e){
-    dialog.alert("Failed to fetch public hosted games. Make sure your selected relay server is working and try again.\nError: "+e);
+  } catch (e) {
+    dialog.alert(
+      "Failed to fetch public hosted games. Make sure your selected relay server is working and try again.\nError: " +
+        e,
+    );
     console.error(e);
     publicNetgameBrowserContainer.hidden = true;
     return;
@@ -1263,6 +1050,151 @@ browsePublicGames.addEventListener("click", async () => {
 
   loadPublicList();
 });
+
+
+/***/ },
+
+/***/ 1652
+(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = [
+  {
+    element: "div",
+    className: "loaderMain",
+    gid: "loaderMain",
+    children: [
+      ////////////////////////////////////////
+
+      ...__webpack_require__(5151),
+
+      ////////////////////////////////////////
+
+      {
+        element: "div",
+        className: "dontSellText",
+        textContent: "THIS GAME SHOULD NOT BE SOLD!",
+      },
+
+      ////////////////////////////////////////
+
+      {
+        element: "div",
+        gid: "loaderContent",
+        textContent: "Loading...",
+        style: {
+          textAlign: "center",
+          fontWeight: "bold",
+          color: "#ffffff",
+        },
+      },
+
+      ////////////////////////////////////////
+    ],
+  },
+];
+
+
+/***/ },
+
+/***/ 1713
+(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = [
+  /////////////////////////////////////////////////////////
+
+  {
+    element: "span",
+    className: "sectionHeader",
+    textContent: "Relay server configuration:",
+  },
+
+  /////////////////////////////////////////////////////////
+
+  //Enable relay server toggle
+  {
+    element: "div",
+    style: {
+      display: "flex",
+    },
+    children: [
+      {
+        element: "span",
+        style: { fontWeight: "bold" },
+        textContent: "Enable relay server:",
+      },
+      {
+        element: "input",
+        type: "checkbox",
+        gid: "relayServerCheckbox",
+      },
+    ],
+  },
+
+  /////////////////////////////////////////////////////////
+
+  //Enable WebRTC hosting toggle
+
+  {
+    element: "div",
+    style: {
+      display: "flex",
+    },
+    children: [
+      {
+        element: "span",
+        style: { fontWeight: "bold" },
+        textContent: "Enable WebRTC hosting (faster connection):",
+      },
+      {
+        element: "input",
+        type: "checkbox",
+        gid: "webrtcHostCheckbox",
+      },
+    ],
+  },
+
+  /////////////////////////////////////////////////////////
+
+  {
+    element: "button",
+    className: "button",
+    gid: "addRelayButton",
+    textContent: "Add relay server",
+  },
+
+  /////////////////////////////////////////////////////////
+
+  {
+    element: "button",
+    className: "button",
+    gid: "browsePublicGames",
+    textContent: "Browse public netgames",
+  },
+
+  /////////////////////////////////////////////////////////
+
+  //Relay configuration, options are rendered in relayconfig.js
+
+  {
+    element: "div",
+    gid: "relayConfig",
+    className: "relayConfig",
+  },
+
+  /////////////////////////////////////////////////////////
+
+  {
+    element: "button",
+    className: "button",
+    gid: "addDefaultServers",
+    textContent: "Add default servers",
+  },
+
+  /////////////////////////////////////////////////////////
+
+  //Useful details for relay servers
+  ...__webpack_require__(3313),
+];
 
 
 /***/ },
@@ -1517,10 +1449,77 @@ module.exports = ListenState;
 
 /***/ },
 
-/***/ 3448
-(module) {
+/***/ 3313
+(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = "@font-face {\n  src: url(\"pixel3.ttf\");\n  font-family: PixelFont;\n  font-size: 20px;\n}\n\nbody {\n  background: #000000;\n  font-weight: bold;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  /* Use dynamic viewport height for iOS Safari compatibility */\n  height: 100dvh;\n  height: 100vh;\n  width: 100vw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/title-bg.png\") center/cover no-repeat;\n  pointer-events: none;\n  image-rendering: pixelated;\n  filter: brightness(0.6);\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100svh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  font-weight: bold;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n  z-index: 9999;\n}\n\n.sectionHeader {\n  display: block;\n  font-weight: bold;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  font-weight: bold;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n  font-weight: bold;\n}\n\n.relayHostClickable:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-weight: bold;\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayPublicCount {\n  font-size: 14px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n  font-weight: bold;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100svh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}\n\n.publicNetgameBrowserContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100svh;\n  background: rgba(0,0,0,0.5);\n}\n\n.publicNetgameBrowserDialog {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: calc(100% - 150px);\n  height: calc(100svh - 150px);\n  min-width: 640px;\n  min-height: 360px;\n  border-radius: 3px;\n  background: rgba(255,255,255,1);\n  display: flex;\n  flex-direction: row;\n}\n\n.publicNetgameBrowserLeft {\n  display: flex;\n  flex-direction: column;\n  min-width: 200px;\n  width: calc(100% - 450px);\n  max-width: 300px;\n  border-right: 2px solid rgba(0,0,0,0.3);\n  box-sizing: border-box;\n  flex-shrink: 0;\n  flex-grow: 0;\n  gap: 3px;\n  overflow: auto;\n}\n\n.publicNetgameItem {\n  width: 100%;\n  box-sizing: border-box;\n  height: fit-content;\n  min-height: 50px;\n  padding: 5px 5px;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 4px;\n  flex-shrink: 0;\n}\n\n.publicNetgameItem:hover {\n  background: rgba(0,0,0,0.7);\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.publicNetgameItem[viewing] {\n  text-decoration: underline;\n  cursor: unset;\n}\n\n.publicGameSeparator {\n  width: 100%;\n  height: 0px;\n  margin-top: 3px;\n  margin-bottom: 3px;\n  border-bottom-color: black;\n  border-bottom-style: dashed;\n  border-bottom-width: 2px;\n  box-sizing: border-box;\n}\n\n.publicNetgameBrowserRight {\n  display: block;\n  flex-grow: 1;\n  position: relative;\n}\n\n.publicNetgameBrowserCloseButton {\n  position: absolute;\n  top: 0;\n  right: 0;\n  font-size: 30px;\n}\n\n.viewPublicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  font-weight: bold;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  padding: 5px 5px;\n  border-radius: 3px;\n}\n\n.publicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 100%;\n  height: 100%;\n  padding: 10px 10px;\n  box-sizing: border-box;\n}\n\n.refreshIcon {\n  width: 32px;\n  height: 32px;\n}\n\n.netgameServerName {\n  font-size: 30px;\n}\n\n.netgameServerURL {\n  font-size: 16px;\n  margin-left: 5px;\n  font-family: arial;\n}\n\n.netgameCommunicationType {\n  width: 25px;\n  height: 25px;\n  object-fit: contain;\n  padding: 5px 5px;\n  border-radius: 3px;\n  background: rgba(255,255,255,0.4);\n}\n\n.netgameLoadingListsContainer {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,1);\n  border-radius: 4px;\n  font-size: 20px;\n  font-weight: bold;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n  gap: 8px;\n}\n\n.netgameLoadingListsImg {\n  width: 30px;\n  height: 30px;\n}\n";
+module.exports = [
+  {
+    element: "div",
+    style: {
+      lineHeight: "20px",
+    },
+    children: [
+      /////////////////////////////////////////////////////////
+
+      {
+        element: "h2",
+        textContent: "What is a relay server?",
+      },
+      "Relay servers mock the behavior of port-forwarded routers, allowing people to host & join netgames without needing to configure your internet settings.",
+      {
+        element: "br",
+      },
+      "Connection speeds depend on the hosts method (WebRTC or Websocket), how fast their game is running, and your internet connection.",
+
+      /////////////////////////////////////////////////////////
+
+      {
+        element: "h2",
+        textContent: "Having trouble connecting to a server?",
+      },
+      'To get started, click "Use this server" next to your preferred relay. If you run into connection issues, click the "Add default servers" button above to refresh the list.',
+      {
+        element: "br",
+      },
+      'Our default servers are hosted on free tiers, so they may take a moment to "wake up" if they have been inactive for a while.',
+      {
+        element: "br",
+      },
+      "Enabling WebRTC provides a much faster connection. This setting only applies if you are the host, clients will automatically use WebRTC if the host has it enabled.",
+
+      /////////////////////////////////////////////////////////
+
+      {
+        element: "h2",
+        textContent: "Source code",
+      },
+
+      {
+        element: "a",
+        href: "https://github.com/gvbvdxxalt2/SRB2Web-Relay/",
+        target: "_blank",
+        textContent: "Source code for SRB2web relay servers",
+      },
+      {
+        element: "br",
+      },
+      {
+        element: "a",
+        href: "https://github.com/gvbvdxxalt2/SRB2web/",
+        target: "_blank",
+        textContent: "Source code for SRB2web",
+      },
+      {
+        element: "br",
+      },
+
+      /////////////////////////////////////////////////////////
+
+      ...__webpack_require__(518),
+    ],
+  },
+];
+
 
 /***/ },
 
@@ -1544,6 +1543,23 @@ function getWebsocketURL(wsHost) {
 var PLACEHOLDER_IP = "0.0.0.0";
 
 module.exports = { getWebsocketURL, PLACEHOLDER_IP };
+
+
+/***/ },
+
+/***/ 4682
+(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = [
+  {
+    element: "style",
+    textContent: __webpack_require__(492),
+  },
+  {
+    element: "style",
+    textContent: "[hidden] { display: none !important; }",
+  },
+];
 
 
 /***/ },
@@ -1755,6 +1771,24 @@ var elements = {
   __GP_elements: __GP_elements,
 };
 module.exports = elements;
+
+
+/***/ },
+
+/***/ 5151
+(module) {
+
+module.exports = [
+  {
+    element: "img",
+    style: {
+      width: "300px",
+      height: "160px",
+      objectFit: "contain",
+    },
+    src: "images/srb2logo.png",
+  },
+];
 
 
 /***/ },
@@ -2237,6 +2271,74 @@ module.exports = ListenChannel;
 
 /***/ },
 
+/***/ 6439
+(module) {
+
+module.exports = [
+  {
+    element: "img",
+    style: {
+      width: "100%",
+      height: "200px",
+      objectFit: "contain",
+    },
+    src: "images/srb2logo.png",
+  },
+];
+
+
+/***/ },
+
+/***/ 6495
+(module) {
+
+module.exports = [
+  {
+    element: "div",
+    gid: "publicNetgameBrowserContainer",
+    className: "publicNetgameBrowserContainer",
+    hidden: true,
+
+    children: [
+      {
+        element: "div",
+        gid: "netgameLoadingListsContainer",
+        className: "netgameLoadingListsContainer",
+        children: [
+          {
+            element: "img",
+            src: "images/loading.gif",
+            className: "netgameLoadingListsImg",
+          },
+          "Loading...",
+        ],
+      },
+
+      {
+        element: "div",
+        gid: "publicNetgameBrowser",
+        className: "publicNetgameBrowserDialog",
+        hidden: true,
+        children: [
+          {
+            element: "div",
+            gid: "publicNetgameBrowserLeft",
+            className: "publicNetgameBrowserLeft",
+          },
+          {
+            element: "div",
+            gid: "publicNetgameBrowserRight",
+            className: "publicNetgameBrowserRight",
+          },
+        ],
+      },
+    ],
+  },
+];
+
+
+/***/ },
+
 /***/ 7063
 (module, __unused_webpack_exports, __webpack_require__) {
 
@@ -2255,13 +2357,17 @@ var loaderMain = elements.getGPId("loaderMain");
 
 async function keepAlive() {
   if (navigator.requestWakeLock) {
-    await navigator.requestWakeLock('screen');
+    await navigator.requestWakeLock("screen");
   }
-  
+
   if (navigator.locks) {
-    navigator.locks.request('srb2_game_running', { mode: 'exclusive' }, async () => {
-      await new Promise(resolve => {}); 
-    });
+    navigator.locks.request(
+      "srb2_game_running",
+      { mode: "exclusive" },
+      async () => {
+        await new Promise((resolve) => {});
+      },
+    );
   }
 
   startAudioKeepAlive();
@@ -2324,7 +2430,7 @@ async function downloadAndSaveAssets() {
       //console.log(
       //  `[CACHE MISS] Downloading ${asset.filename} from internet...`,
       //);
-      loaderContent.textContent = `Downloading ${asset.filename}...`;
+      loaderContent.textContent = `Downloading ${asset.filename}... (This may take a few minutes on first load!)`;
 
       try {
         // --- NEW CODE START ---
@@ -2407,20 +2513,20 @@ var GetViewportHeight = () => {
   return Math.round(document.documentElement.clientHeight);
 };
 
-function getTargetSize(x,y) {
+function getTargetSize(x, y) {
   // Use devicePixelRatio to fix the "tiny box in the corner" issue
-    const dpr = window.devicePixelRatio || 1;
-    const targetX = Math.floor((x || GetViewportWidth()) * dpr);
-    const targetY = Math.floor((y || GetViewportHeight()) * dpr);
+  const dpr = window.devicePixelRatio || 1;
+  const targetX = Math.floor((x || GetViewportWidth()) * dpr);
+  const targetY = Math.floor((y || GetViewportHeight()) * dpr);
 
-    gameCanvas.width = targetX;
-    gameCanvas.height = targetY;
-    
-    // Match the CSS size to the viewport size
-    gameCanvas.style.width = (targetX / dpr) + "px";
-    gameCanvas.style.height = (targetY / dpr) + "px";
+  gameCanvas.width = targetX;
+  gameCanvas.height = targetY;
 
-    return {targetX, targetY};
+  // Match the CSS size to the viewport size
+  gameCanvas.style.width = targetX / dpr + "px";
+  gameCanvas.style.height = targetY / dpr + "px";
+
+  return { targetX, targetY };
 }
 
 window.ChangeResolution = (x, y) => {
@@ -2438,7 +2544,7 @@ window.ChangeResolution = (x, y) => {
 async function startGame(options = {}) {
   loaderMain.hidden = false;
   launcherMain.hidden = true;
-  var {targetX, targetY} = getTargetSize();
+  var { targetX, targetY } = getTargetSize();
 
   Module.arguments = [
     /*'-width',
@@ -2709,11 +2815,20 @@ window.addEventListener(
   { once: true },
 );
 
-const wakeupWorker = new Worker(URL.createObjectURL(new Blob([`
+const wakeupWorker = new Worker(
+  URL.createObjectURL(
+    new Blob(
+      [
+        `
   setInterval(() => {
     self.postMessage('ping');
   }, 15); // Send a message every 15ms
-`], {type: 'text/javascript'})));
+`,
+      ],
+      { type: "text/javascript" },
+    ),
+  ),
+);
 
 wakeupWorker.onmessage = () => {
   //Empty so it keeps tab alive.
@@ -2728,6 +2843,65 @@ module.exports = { startGame, enableStartServer, disableStartServer };
 
 /***/ },
 
+/***/ 7255
+(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = [
+  ...__webpack_require__(4682),
+  {
+    element: "div",
+    className: "srb2BG",
+  },
+  ...__webpack_require__(53),
+  ...__webpack_require__(1652),
+  {
+    element: "div",
+    className: "logsContainer",
+    gid: "dedicatedServerLogs",
+    hidden: true,
+  },
+  {
+    element: "canvas",
+    className: "gameCanvas",
+    gid: "gameCanvas",
+    tabindex: "0",
+  },
+
+  ...__webpack_require__(6495),
+];
+
+
+/***/ },
+
+/***/ 7496
+(module) {
+
+module.exports = [
+  {
+    element: "a",
+    className: "button fsButton",
+    href: "file.html",
+    target: "_blank",
+    children: [
+      {
+        element: "img",
+        src: "images/folder.svg",
+        style: {
+          height: "32px",
+        },
+      },
+      {
+        element: "span",
+        textContent: "Manage files & addons",
+      },
+    ],
+    gid: "fsButton",
+  },
+];
+
+
+/***/ },
+
 /***/ 7919
 () {
 
@@ -2735,11 +2909,89 @@ module.exports = { startGame, enableStartServer, disableStartServer };
 
 /***/ },
 
+/***/ 8752
+(module) {
+
+module.exports = [
+  /////////////////////////////////////////////////////////
+
+  {
+    element: "h2",
+    textContent: "Experience SRB2 Anywhere",
+  },
+
+  "SRB2web is an advanced, browser-based launcher for Sonic Robo Blast 2—the premier fan-made 3D Sonic the Hedgehog experience. Built on the Doom Legacy engine, this port allows you to jump into high-speed platforming and full online multiplayer directly in your browser, no installation required.",
+
+  /////////////////////////////////////////////////////////
+
+  {
+    element: "h2",
+    textContent: "Development & Credits",
+  },
+
+  "This project is developed and maintained by ",
+  {
+    element: "a",
+    href: "https://github.com/gvbvdxxalt2",
+    target: "_blank",
+    textContent: "Gvbvdxx",
+  },
+  ". The realization of this port was made possible through the power of Emscripten and the collaborative assistance of Google Gemini and other generative AI tools.",
+
+  {
+    element: "br",
+  },
+
+  "It stands as a testament to modern web technology, bringing classic fangame heritage to the modern web platform.",
+
+  /////////////////////////////////////////////////////////
+
+  {
+    element: "h2",
+    textContent: "Found a Bug?",
+  },
+
+  "As this is an experimental web port, you may encounter technical issues or performance bugs. If the game crashes, please check your browser's developer console (F12) for error logs and report them on our ",
+  {
+    element: "a",
+    href: "https://github.com/gvbvdxxalt2/SRB2web/issues",
+    target: "_blank",
+    textContent: "GitHub Issues page",
+  },
+  ". Your feedback helps improve the experience for everyone!",
+
+  /////////////////////////////////////////////////////////
+
+  {
+    element: "h2",
+    textContent: "Legal & Disclaimers",
+  },
+
+  "Sonic Robo Blast 2, including its name, characters, and related themes, are trademarks and copyrights of their respective owners. This project is a non-profit, fan-made initiative and is not affiliated with, endorsed by, or representative of SEGA Corporation or Sonic Team.",
+
+  {
+    element: "br",
+  },
+
+  "This project is strictly for personal, non-commercial use and must not be sold or redistributed for profit. All rights to the original game assets belong to the SRB2 Community and their respective creators.",
+
+  {
+    element: "br",
+  },
+
+  "By using this launcher, you acknowledge that the developers are not liable for any issues arising from the use of this software and that you are using this fan-port for personal enjoyment only.",
+
+  /////////////////////////////////////////////////////////
+];
+
+
+/***/ },
+
 /***/ 8769
 (__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 var elements = __webpack_require__(5100);
-elements.appendElementsFromJSON(document.body, __webpack_require__(288));
+elements.appendElementsFromJSON(document.body, __webpack_require__(7255));
 
 var gameCanvas = elements.getGPId("gameCanvas");
 var launcherMain = elements.getGPId("launcherMain");
@@ -3092,7 +3344,7 @@ class RelayOption {
   }
 
   setPublicCount(count) {
-    var {relayPublicCountSpan} = this;
+    var { relayPublicCountSpan } = this;
     if (count == "requesting") {
       relayPublicCountSpan.textContent = "Loading public netgames...";
       return;
@@ -3111,7 +3363,7 @@ class RelayOption {
   async fetchPublicCount() {
     var url = this.getFetchURL();
     this.setPublicCount("loading");
-    try{
+    try {
       var response = await fetch(url + "public");
       if (response.ok) {
         var json = await response.json();
@@ -3119,7 +3371,7 @@ class RelayOption {
       } else {
         this.setPublicCount("error");
       }
-    }catch(e){
+    } catch (e) {
       this.setPublicCount("error");
     }
   }
@@ -3205,6 +3457,33 @@ module.exports = {
   ConnectState: __webpack_require__(1133),
   ListenState: __webpack_require__(3052),
 };
+
+
+/***/ },
+
+/***/ 9766
+(module) {
+
+module.exports = [
+  {
+    element: "button",
+    className: "button playButton",
+    children: [
+      {
+        element: "img",
+        src: "images/play.svg",
+        style: {
+          height: "32px",
+        },
+      },
+      {
+        element: "span",
+        textContent: "Play",
+      },
+    ],
+    gid: "playButton",
+  },
+];
 
 
 /***/ }
