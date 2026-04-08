@@ -2372,6 +2372,8 @@ var serverOpts = null;
 var launcherMain = elements.getGPId("launcherMain");
 var loaderMain = elements.getGPId("loaderMain");
 
+var connectAddr = null;
+
 async function keepAlive() {
   if (navigator.requestWakeLock) {
     await navigator.requestWakeLock("screen");
@@ -2564,6 +2566,8 @@ async function startGame(options = {}) {
   var { targetX, targetY } = getTargetSize();
 
   Module.arguments = [
+    //"-connect",
+    //"0.0.0.0"
     /*'-width',
     ""+targetX,
     '-height',
@@ -2580,10 +2584,10 @@ async function startGame(options = {}) {
       Module.arguments.push("-server");
     }
     if (options.joinURL) {
-      Module.arguments.push("-connect");
-      Module.arguments.push(options.joinURL);
+      connectAddr = options.joinURL;
     }
   }
+
   /*Module.arguments.push("-mb");
   Module.arguments.push("250");
   Module.arguments.push("+drawdist");
@@ -2616,6 +2620,19 @@ window.StartedMainLoopCallback = function () {
   didStart = true;
   gameCanvas.hidden = false;
   window.ChangeResolution();
+  function sendConnectCommand() {
+    if (connectAddr) {
+      //Javascript side patch because we can't
+      //pass a connect flag into Module.arguments without causing the resize logic to crash.
+      Module.ccall('SRB2_SendGreenTerminal', 'void', ['string'], [`connect ${connectAddr}\n`]);
+      connectAddr = null;
+    }
+  }
+  setTimeout(() => {
+    requestAnimationFrame(() => {
+      sendConnectCommand();
+    });
+  }, 90);
 
   // Add click listener after canvas is shown
   gameCanvas.addEventListener("click", () => {
