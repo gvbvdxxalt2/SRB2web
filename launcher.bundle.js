@@ -2423,22 +2423,15 @@ function getTargetSize(x,y) {
     return {targetX, targetY};
 }
 
-window.ChangeResolution = (x, y, resizeNow) => {
-  if (didStart || resizeNow) {
-
-    // Use devicePixelRatio to fix the "tiny box in the corner" issue
-    const dpr = window.devicePixelRatio || 1;
-    const targetX = Math.floor((x || GetViewportWidth()) * dpr);
-    const targetY = Math.floor((y || GetViewportHeight()) * dpr);
-    
-    gameCanvas.width = targetX;
-    gameCanvas.height = targetY;
-    
-    // Match the CSS size to the viewport size
-    gameCanvas.style.width = (targetX / dpr) + "px";
-    gameCanvas.style.height = (targetY / dpr) + "px";
-    
-    Module.ccall("change_resolution", "number", ["number", "number"], [targetX, targetY]);
+window.ChangeResolution = (x, y) => {
+  if (didStart) {
+    if (typeof x === "undefined") x = GetViewportWidth();
+    if (typeof y === "undefined") y = GetViewportHeight();
+    gameCanvas.width = x;
+    gameCanvas.height = y;
+    gameCanvas.style.width = x + "px";
+    gameCanvas.style.height = y + "px";
+    Module.ccall("change_resolution", "number", ["number", "number"], [x, y]);
   }
 };
 
@@ -2496,18 +2489,11 @@ async function startGame(options = {}) {
   }
 }
 
-window.SRB2ReadyToResizeHandler = function () {
-  window.ChangeResolution(false,false,true);
-  setTimeout(() => {
-    window.ChangeResolution(false,false,true);
-  },500);
-};
-
 window.StartedMainLoopCallback = function () {
   didStart = true;
   gameCanvas.hidden = false;
   setTimeout(() => {
-    //window.ChangeResolution();
+    window.ChangeResolution();
   }, 10);
 
   // Add click listener after canvas is shown
