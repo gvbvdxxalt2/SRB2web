@@ -2492,9 +2492,7 @@ async function startGame(options = {}) {
 window.StartedMainLoopCallback = function () {
   didStart = true;
   gameCanvas.hidden = false;
-  setTimeout(() => {
-    window.ChangeResolution();
-  }, 10);
+  window.ChangeResolution();
 
   // Add click listener after canvas is shown
   gameCanvas.addEventListener("click", () => {
