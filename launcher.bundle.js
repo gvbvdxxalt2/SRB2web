@@ -1379,6 +1379,7 @@ class ListenState {
     };
     this.socket.onopen = function () {
       _this.isOpen = true;
+      _this._lastServerInfo = {};
       attachSRB2.onpacket = _this.handleSRB2Send.bind(_this);
     };
   }
