@@ -829,6 +829,7 @@ function gameToButton(game, selectedURL, onClick) {
   };
 }
 
+var { getDisplayOptions } = __webpack_require__(1973);
 var { startGame } = __webpack_require__(7063);
 
 async function launchToNetgame(game) {
@@ -837,6 +838,7 @@ async function launchToNetgame(game) {
 
   closePublicList();
   startGame({
+    ...getDisplayOptions(),
     joinURL: game.url,
   });
 }
@@ -851,10 +853,11 @@ async function launchToHost() {
   net.enablePublic();
   if (autoStart) {
     startGame({
+      ...getDisplayOptions(),
       host: true,
     });
   } else {
-    startGame();
+    startGame(getDisplayOptions());
   }
 }
 
@@ -1202,6 +1205,55 @@ module.exports = [
   ...__webpack_require__(3313),
 ];
 
+
+/***/ },
+
+/***/ 1973
+(module, __unused_webpack_exports, __webpack_require__) {
+
+var elements = __webpack_require__(5100);
+
+var resizeModeSelect = elements.getGPId("resizeModeSelect");
+var resizeModes = ["safe", "force"];
+
+function getSafeValue(elm,safeValues) {
+    var val = ""+elm.value;
+    if (safeValues.indexOf(val) == -1) {
+        return safeValues[0];
+    }
+    return val;
+}
+
+function getDisplayOptions() {
+    return {
+        resolutionChangeMethod: getSafeValue(resizeModeSelect, resizeModes)
+    };
+}
+
+function addLocalStorageHandler(elm, id) {
+    var loadedValue = localStorage.getItem(""+id);
+    if (loadedValue) {
+        elm.value = loadedValue;
+
+        for (var c of elm.children) {
+            if (c.value == loadedValue) {
+                c.selected = true;
+            } else {
+                c.selected = false;
+            }
+        }
+    }
+
+    elm.addEventListener("change", () => {
+        localStorage.setItem(""+id, elm.value);
+    });
+}
+
+addLocalStorageHandler(resizeModeSelect, "srb2web-resize-mode-select");
+
+module.exports = {
+    getDisplayOptions
+};
 
 /***/ },
 
@@ -3106,8 +3158,10 @@ launcherMain.hidden = false;
 var playButton = elements.getGPId("playButton");
 var { startGame } = __webpack_require__(7063);
 
+var { getDisplayOptions } = __webpack_require__(1973);
+
 playButton.addEventListener("click", function () {
-  startGame();
+  startGame(getDisplayOptions());
 });
 
 __webpack_require__(1618);
