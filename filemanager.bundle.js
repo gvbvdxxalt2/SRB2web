@@ -73,12 +73,15 @@ module.exports = {
 /***/ 2167
 (__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
+if (!window["Module"]) {
+  window["Module"] = {};
+}
+
 var elements = __webpack_require__(5100);
 elements.appendElementsFromJSON(document.body, __webpack_require__(7826));
 var { loadFilesystem } = __webpack_require__(3687);
 var { joinPaths } = __webpack_require__(892);
 var dialog = __webpack_require__(5925);
-var Module = {};
 if (window["Module"]) {
   var Module = window["Module"];
 }
