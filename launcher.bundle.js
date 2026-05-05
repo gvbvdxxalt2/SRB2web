@@ -61,7 +61,7 @@ module.exports = [
 (module, __unused_webpack_exports, __webpack_require__) {
 
 var { TouchControlButton } = __webpack_require__(7841);
-var { KeyName, KeyNum } = __webpack_require__(627);
+var { KeyName, KeyNum, getButtonLabels } = __webpack_require__(627);
 var dialog = __webpack_require__(5925);
 var elements = __webpack_require__(5100);
 var processRate = 1/60;
@@ -109,6 +109,35 @@ function loadButtons(data) {
     buttons = buttonsArray.map(buttonData => createButton(buttonData));
 }
 
+var touchPositions = [];
+var touches = [];
+var processState = {};
+document.addEventListener("touchstart", function (e) {
+    touches = e.touches;
+    updateTouchPositions();
+});
+document.addEventListener("touchmove", function (e) {
+    touches = e.touches;
+    updateTouchPositions();
+});
+document.addEventListener("touchend", function (e) {
+    touches = e.touches;
+    updateTouchPositions();
+});
+
+function updateTouchPositions() {
+    touchPositions = [];
+    for (var i = 0; i < touches.length; i++) {
+        var touch = touches[i];
+        touchPositions.push({
+            left: touch.clientX,
+            top: touch.clientY,
+            width: touch.radiusX < 2 ? 2 : touch.radiusX,
+            height: touch.radiusY < 2 ? 2 : touch.radiusY
+        });
+    }
+}
+
 function startInputProcessor(editMode) {
     stopInputProcessor();
 
@@ -120,7 +149,10 @@ function startInputProcessor(editMode) {
     touchControlsContainer.hidden = false;
 
     processInterval = setInterval(() => {
-        
+        updateTouchPositions();
+        buttons.forEach(button => {
+            button.process(touchPositions, processState);
+        });
     },processRate);
 }
 
@@ -129,6 +161,7 @@ function stopInputProcessor() {
     inEditMode = false;
     touchControlsDialogDiv.hidden = true;
     touchControlsContainer.hidden = true;
+    processState = {};
     destroyButtons();
 }
 
@@ -137,6 +170,48 @@ elements.getGPId("touchControlsClose").addEventListener("click", function () {
 });
 
 var touchControlsAddDropdown = elements.getGPId("touchControlsAddDropdown");
+var touchControlsAdd = elements.getGPId("touchControlsAdd");
+function closeAddDropdown() {
+    touchControlsAddDropdown.hidden = true;
+    elements.removeAllChildren(touchControlsAddDropdown);
+}
+touchControlsAdd.addEventListener("click", function (e) {
+    e.stopPropagation();
+    if (touchControlsAddDropdown.hidden) {
+        touchControlsAddDropdown.hidden = false;
+        elements.removeAllChildren(touchControlsAddDropdown);
+        function clickHandler(event, keyid) {
+            var button = createButton(TouchControlButton.createEmptyButtonData(keyid));
+            buttons.push(button);
+            closeAddDropdown();
+            event.stopPropagation();
+        }
+        elements.setInnerJSON(
+            touchControlsAddDropdown,
+            getButtonLabels().map((key) => {
+                if (!key.label) {
+                    return;
+                }
+                return {
+                    element: "div",
+                    className: "option",
+                    textContent: key.label,
+                    eventListeners: [
+                        {
+                            event: "click",
+                            func: (e) => {clickHandler(e, key.id)}
+                        }
+                    ]
+                };
+            })
+        );
+    } else {
+        closeAddDropdown();
+    }
+});
+document.addEventListener("click", function () { //Allow the user to tap off.
+    closeAddDropdown();
+});
 
 module.exports = {
     startInputProcessor,
@@ -148,7 +223,7 @@ module.exports = {
 /***/ 492
 (module) {
 
-module.exports = "body {\n  background: #000000;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  height: 100dvh;\n  width: 100dvw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/title-bg.png\") center/cover no-repeat;\n  pointer-events: none;\n  image-rendering: pixelated;\n  filter: brightness(0.6);\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100dvh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n  z-index: 9999;\n}\n\n.sectionHeader {\n  display: block;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: column;\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n}\n\n.relayHostClickable:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayPublicCount {\n  font-size: 14px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100dvh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}\n\n.publicNetgameBrowserContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.5);\n}\n\n.publicNetgameBrowserDialog {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: calc(100% - 150px);\n  height: calc(100dvh - 150px);\n  min-width: 640px;\n  min-height: 360px;\n  border-radius: 3px;\n  background: rgba(255,255,255,1);\n  display: flex;\n  flex-direction: row;\n}\n\n.publicNetgameBrowserLeft {\n  display: flex;\n  flex-direction: column;\n  min-width: 200px;\n  width: calc(100% - 450px);\n  max-width: 300px;\n  border-right: 2px solid rgba(0,0,0,0.3);\n  box-sizing: border-box;\n  flex-shrink: 0;\n  flex-grow: 0;\n  gap: 3px;\n  overflow: auto;\n}\n\n.publicNetgameItem {\n  width: 100%;\n  box-sizing: border-box;\n  height: fit-content;\n  min-height: 50px;\n  padding: 5px 5px;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 4px;\n  flex-shrink: 0;\n}\n\n.publicNetgameItem:hover {\n  background: rgba(0,0,0,0.7);\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.publicNetgameItem[viewing] {\n  text-decoration: underline;\n  cursor: unset;\n}\n\n.publicGameSeparator {\n  width: 100%;\n  height: 0px;\n  margin-top: 3px;\n  margin-bottom: 3px;\n  border-bottom-color: black;\n  border-bottom-style: dashed;\n  border-bottom-width: 2px;\n  box-sizing: border-box;\n}\n\n.publicNetgameBrowserRight {\n  display: block;\n  flex-grow: 1;\n  position: relative;\n}\n\n.publicNetgameBrowserCloseButton {\n  position: absolute;\n  top: 0;\n  right: 0;\n  font-size: 30px;\n}\n\n.viewPublicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  padding: 5px 5px;\n  border-radius: 3px;\n}\n\n.publicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 100%;\n  height: 100%;\n  padding: 10px 10px;\n  box-sizing: border-box;\n}\n\n.refreshIcon {\n  width: 32px;\n  height: 32px;\n}\n\n.netgameServerName {\n  font-size: 30px;\n}\n\n.netgameServerURL {\n  font-size: 16px;\n  margin-left: 5px;\n  font-family: arial;\n}\n\n.netgameCommunicationType {\n  width: 25px;\n  height: 25px;\n  object-fit: contain;\n  padding: 5px 5px;\n  border-radius: 3px;\n  background: rgba(255,255,255,0.4);\n}\n\n.netgameLoadingListsContainer {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,1);\n  border-radius: 4px;\n  font-size: 20px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n  gap: 8px;\n}\n\n.netgameLoadingListsImg {\n  width: 30px;\n  height: 30px;\n}\n\n\n.dontSellText {\n  color: rgb(196, 0, 0);\n  font-size: 35px;\n}\n\n.displayOption {\n  display: flex;\n  align-items: center;\n  gap: 2px;\n}\n\n.selectOptions {\n  all: unset;\n  display: block;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  color: black;\n  background: rgba(255,255,255,0.7);\n  appearance: auto;\n  border-radius: 5px;\n}\n\n.touchControlPosition[data-position=\"left\"] {\n  position: fixed;\n  left: 0;\n  bottom: 0;\n}\n\n.touchControlPosition[data-position=\"right\"] {\n  position: fixed;\n  right: 0;\n  bottom: 0;\n}\n\n.touchActionButton {\n  all: unset;\n  position: absolute;\n  width: var(--button-width);\n  height: var(--button-height);\n  min-width: 2vmin;\n  min-height: 2vmin;\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  cursor: not-allowed;\n  font-size: 7vmin;\n  box-sizing: border-box;\n  padding: 3vmin 3vmin;\n  /* The actual touch events are handled by the JavaScript collision tests */\n  pointer-events: none;\n  user-select: none;\n}\n.touchActionButton[data-touching] {\n  background: rgba(255,255,255,0.8);\n}\n\n.blackDialogBG {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.8);\n}\n\n.whiteDialogBox {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(255,255,255,1);\n  color: rgba(0,0,0,1);\n  padding: 10px 10px;\n  box-sizing: border-box;\n  border-radius: 5px;\n}\n\n.touchControlsDialog {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n}\n.touchControlsDialogTitle {\n  font-size: 7vmin;\n  position: fixed;\n  top: 0;\n  left: 50%;\n  user-select: none;\n  pointer-events: none;\n  color: rgba(255,255,255,1);\n  transform: translate(-50%, 0);\n}\n\n.touchControlsDialogButton {\n  all: unset;\n  background: rgba(255,255,255,0.8);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  font-size: 4vmin;\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 1vmin 1vmin;\n}\n\n.touchControlsDialogButton:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.touchControlsDialogRedButton {\n  background: rgba(255,50,0,0.8);\n}\n.touchControlsDialogGreenButton {\n  background: rgba(4, 255, 0, 0.8);\n}\n\n.touchControlDialogEditButtons {\n  display: flex;\n  position: fixed;\n  flex-direction: row;\n  top: 15vmin;\n  left: 50%;\n  transform: translate(-50%, 0);\n}\n.touchControlsDialogTip {\n  position: fixed;\n  top: 6vmin;\n  left: 50%;\n  transform: translate(-50%, 0);\n  color: rgb(255, 0, 0);\n  font-size: 4vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsDialogTip2 {\n  position: fixed;\n  top: 11vmin;\n  left: 50%;\n  text-wrap: nowrap;\n  color: rgba(255,255,255,1);\n  transform: translate(-50%, 0);\n  font-size: 3.5vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  pointer-events: none;\n}\n\n.touchControlsAddDropdownContainer {\n  position: relative;\n  width: 0px;\n  height: 0px;\n}\n.touchControlsAddDropdown {\n  text-decoration: unset;\n  position: absolute;\n  top: 0;\n  left: 0;\n  transform: translate(0, 6vmin);\n  width: fit-content;\n  max-height: 50vmin;\n  z-index: 99999;\n  background: rgba(255,255,255,0.9);\n  border-radius: 0.5vmin;\n  display: flex;\n  flex-direction: column;\n  gap: 3vmin;\n  padding: 2vmin 2vmin;\n  overflow: auto;\n}";
+module.exports = "body {\n  background: #000000;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  height: 100dvh;\n  width: 100dvw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/title-bg.png\") center/cover no-repeat;\n  pointer-events: none;\n  image-rendering: pixelated;\n  filter: brightness(0.6);\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100dvh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n  z-index: 9999;\n}\n\n.sectionHeader {\n  display: block;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: column;\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n}\n\n.relayHostClickable:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayPublicCount {\n  font-size: 14px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100dvh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}\n\n.publicNetgameBrowserContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.5);\n}\n\n.publicNetgameBrowserDialog {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: calc(100% - 150px);\n  height: calc(100dvh - 150px);\n  min-width: 640px;\n  min-height: 360px;\n  border-radius: 3px;\n  background: rgba(255,255,255,1);\n  display: flex;\n  flex-direction: row;\n}\n\n.publicNetgameBrowserLeft {\n  display: flex;\n  flex-direction: column;\n  min-width: 200px;\n  width: calc(100% - 450px);\n  max-width: 300px;\n  border-right: 2px solid rgba(0,0,0,0.3);\n  box-sizing: border-box;\n  flex-shrink: 0;\n  flex-grow: 0;\n  gap: 3px;\n  overflow: auto;\n}\n\n.publicNetgameItem {\n  width: 100%;\n  box-sizing: border-box;\n  height: fit-content;\n  min-height: 50px;\n  padding: 5px 5px;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 4px;\n  flex-shrink: 0;\n}\n\n.publicNetgameItem:hover {\n  background: rgba(0,0,0,0.7);\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.publicNetgameItem[viewing] {\n  text-decoration: underline;\n  cursor: unset;\n}\n\n.publicGameSeparator {\n  width: 100%;\n  height: 0px;\n  margin-top: 3px;\n  margin-bottom: 3px;\n  border-bottom-color: black;\n  border-bottom-style: dashed;\n  border-bottom-width: 2px;\n  box-sizing: border-box;\n}\n\n.publicNetgameBrowserRight {\n  display: block;\n  flex-grow: 1;\n  position: relative;\n}\n\n.publicNetgameBrowserCloseButton {\n  position: absolute;\n  top: 0;\n  right: 0;\n  font-size: 30px;\n}\n\n.viewPublicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  padding: 5px 5px;\n  border-radius: 3px;\n}\n\n.publicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 100%;\n  height: 100%;\n  padding: 10px 10px;\n  box-sizing: border-box;\n}\n\n.refreshIcon {\n  width: 32px;\n  height: 32px;\n}\n\n.netgameServerName {\n  font-size: 30px;\n}\n\n.netgameServerURL {\n  font-size: 16px;\n  margin-left: 5px;\n  font-family: arial;\n}\n\n.netgameCommunicationType {\n  width: 25px;\n  height: 25px;\n  object-fit: contain;\n  padding: 5px 5px;\n  border-radius: 3px;\n  background: rgba(255,255,255,0.4);\n}\n\n.netgameLoadingListsContainer {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,1);\n  border-radius: 4px;\n  font-size: 20px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n  gap: 8px;\n}\n\n.netgameLoadingListsImg {\n  width: 30px;\n  height: 30px;\n}\n\n\n.dontSellText {\n  color: rgb(196, 0, 0);\n  font-size: 35px;\n}\n\n.displayOption {\n  display: flex;\n  align-items: center;\n  gap: 2px;\n}\n\n.selectOptions {\n  all: unset;\n  display: block;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  color: black;\n  background: rgba(255,255,255,0.7);\n  appearance: auto;\n  border-radius: 5px;\n}\n\n.touchControlPosition[data-position=\"left\"] {\n  position: fixed;\n  left: 0;\n  bottom: 0;\n}\n\n.touchControlPosition[data-position=\"right\"] {\n  position: fixed;\n  right: 0;\n  bottom: 0;\n}\n\n.touchActionButton {\n  all: unset;\n  position: absolute;\n  width: var(--button-width);\n  height: var(--button-height);\n  min-width: 2vmin;\n  min-height: 2vmin;\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  cursor: not-allowed;\n  font-size: 4vmin;\n  box-sizing: border-box;\n  padding: 3vmin 3vmin;\n  /* The actual touch events are handled by the JavaScript collision tests */\n  pointer-events: none;\n  user-select: none;\n}\n.touchActionButton[data-touching] {\n  background: rgba(255,255,255,0.8);\n}\n\n.blackDialogBG {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.8);\n}\n\n.whiteDialogBox {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(255,255,255,1);\n  color: rgba(0,0,0,1);\n  padding: 10px 10px;\n  box-sizing: border-box;\n  border-radius: 5px;\n}\n\n.touchControlsDialog {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n}\n.touchControlsDialogTitle {\n  font-size: 7vmin;\n  color: rgba(255,255,255,1);\n}\n\n.touchControlsDialogButton {\n  all: unset;\n  background: rgba(255,255,255,0.8);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  font-size: 4vmin;\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 1vmin 1vmin;\n}\n\n.touchControlsDialogButton:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.touchControlsDialogRedButton {\n  background: rgba(255,50,0,0.8);\n}\n.touchControlsDialogGreenButton {\n  background: rgba(4, 255, 0, 0.8);\n}\n\n.touchControlDialogEditButtons {\n  position: relative;\n  display: flex;\n  flex-direction: row;\n}\n\n.touchControlsDialogTip {\n  color: rgb(255, 0, 0);\n  font-size: 4vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsDialogTip2 {\n  color: rgba(255,255,255,1);\n  font-size: 3.5vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  pointer-events: none;\n}\n\n.touchControlsAddDropdownContainer {\n  position: relative;\n  width: 0px;\n  height: 0px;\n}\n.touchControlsAddDropdown {\n  text-decoration: unset;\n  position: absolute;\n  top: 0;\n  left: 0;\n  transform: translate(0, 6vmin);\n  width: 50vmin;\n  max-height: 40vmin;\n  z-index: 99999;\n  background: rgba(255,255,255,0.9);\n  border-radius: 0.5vmin;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2vmin;\n  padding: 0.2vmin 0.2vmin;\n  overflow: auto;\n}\n\n.touchControlsAddDropdown > .option {\n  all: unset;\n  padding: 1vmin 1vmin;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 0.5vmin;\n  font-size: 3vmin;\n}\n.touchControlsAddDropdown > .option:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n.touchControlsEditButtonsSpacing {\n  all: unset;\n  margin-left: 0.5vmin;\n}\n\n.touchControlsContent {\n  position: fixed;\n  top: 0;\n  left: 50%;\n  transform: translate(-50%, 0);\n  display: flex;\n  align-items: center;\n  flex-direction: column;\n  text-align: center;\n}";
 
 /***/ },
 
@@ -305,7 +380,8 @@ function getButtonLabels() {
 
 module.exports = {
     KeyNum,
-    KeyName
+    KeyName,
+	getButtonLabels
 };
 
 /***/ },
@@ -3302,12 +3378,20 @@ var { KeyNum, KeyName } = __webpack_require__(627);
 var elements = __webpack_require__(5100);
 
 class TouchControlButton {
+    static calculatePercentSize(x,y, cx = window.innerWidth, cy = window.innerHeight) {
+        var percentX = (x/cx)*100;
+        var percentY = (y/cy)*100;
+        return {percentX, percentY};
+    }
+
     static fromSavedData(data) {
         var button = new TouchControlButton(
             data.id,
             data.side,
             data.xPos,
-            data.yPos
+            data.yPos,
+            data.width,
+            data.height
         );
         return button;
     }
@@ -3315,28 +3399,30 @@ class TouchControlButton {
     static createEmptyButtonData(id) {
         var button = new TouchControlButton(
             id,
-            "left",
-            0,
-            0
+            "left"
         );
         var data = button.save();
         button.destroy();
         return data;
     }
 
-    constructor(id, side, xPos, yPos) {
+    constructor(id, side, xPos, yPos, width, height) {
         this.side = side || "left";
         this.xPos = +xPos || 0;
         this.yPos = +yPos || 0;
+        this.width = +width || 0;
+        this.height = +height || 0;
         this.id = id;
+        this.randomId = Date.now()+"_"+(Math.random()*100000); //Random ID to identify this button in edit mode, since the id can be duplicated.
         this.editMode = false;
-        this.setInfo();
-        this.generateElement();
+
+        this.setInfo(this.id);
+        this._justPressed = false;
     }
 
-    isCollide(position) {
+    isCollide(position, elm) {
         var aRect = position;
-        var bRect = this.elm.getBoundingClientRect();
+        var bRect = elm.getBoundingClientRect();
 
         return !(
         aRect.top + aRect.height < bRect.top ||
@@ -3345,26 +3431,55 @@ class TouchControlButton {
         aRect.left > bRect.left + bRect.width
         );
     }
+    
+    isTouchingOneOf(touchPositions, elm = this.elm) {
+        for (var position of touchPositions) {
+            if (this.isCollide(position, elm)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    isTouchingFirst(touchPositions, elm = this.elm) {
+        if (touchPositions.length == 0) return false;
+        return this.isCollide(touchPositions[0], elm);
+    }
 
     generateElement() {
-
+        var editBoxElm = null;
+        if (this.elm) {
+            this.elm.remove();
+        }
         this.elm = elements.createElementsFromJSON([
             {
                 element: "div",
                 className: "touchActionButton touchControlPosition",
                 "data-position": this.side,
-                style: {
-                    left: this.xPos+"%",
-                    top: this.yPos+"%"
+                styleProperties: {
+                    "--button-x": this.xPos+"%",
+                    "--button-y": this.yPos+"%",
+                    "--button-width": this.width+"%",
+                    "--button-height": this.height+"%",
                 },
-                textContent: this.name,
+                children: [
+                    {
+                        element: "span",
+                        textContent: this.name,
+                    },
+                ]
             }
         ])[0];
     }
 
     setInfo (id) {
-        this.name = KeyName[id || this.id] || "Unknown";
-        this.pressNum = KeyNum[id || this.id] || 0;
+        var targetId = id || this.id;
+        if (this._lastid !== targetId) {
+            this._lastid = targetId;
+            this.name = KeyName[targetId] || "Unknown";
+            this.pressNum = KeyNum[targetId] || 0;
+            this.generateElement();
+        }   
     }
 
     append (container) {
@@ -3383,15 +3498,37 @@ class TouchControlButton {
             id: this.id,
             side: this.side,
             xPos: this.xPos,
-            yPos: this.yPos
+            yPos: this.yPos,
+            width: this.width,
+            height: this.height,
         };
     }
 
-    process (touchPosition) {
-        if (this.isCollide(touchPosition)) {
-            this.elm.classList.add("active");
-            return this.pressNum;
+    editModeProcess (touchPositions, processState) {
+        var elm = this.elm;
+
+        if (processState.editing == null) {
+            if (this.isTouchingFirst(touchPositions, elm)) {
+                processState.editing = this.randomId;
+                processState.offsetX = touchPositions[0].left - elm.getBoundingClientRect().left;
+                processState.offsetY = touchPositions[0].top - elm.getBoundingClientRect().top;
+            }
         }
+
+        if (this.isTouchingOneOf(touchPositions, elm)) {
+            elm.setAttribute("data-touching", "");
+        } else {
+            elm.removeAttribute("data-touching");
+        }
+    }
+
+    process (touchPositions, processState) {
+        if (this.editMode) {
+            this.editModeProcess(touchPositions, processState);
+            return;
+        }
+
+
     }
 }
 
@@ -3411,9 +3548,13 @@ module.exports = {
 /***/ 8364
 (module) {
 
-module.exports = [
-    ///////////////////////////////////////
+var editSpacing = {element: "div",className: "touchControlsEditButtonsSpacing"};
 
+////////////////////////////////////////////////////////////////////////////////
+
+var content = [
+    ///////////////////////////////////////
+    //Title and tips.
     {
         element: "span",
         className: "touchControlsDialogTitle",
@@ -3432,7 +3573,6 @@ module.exports = [
 
     ///////////////////////////////////////
     //Buttons to customize touch controls.
-
     {
         element: "div",
         className: "touchControlDialogEditButtons",
@@ -3445,8 +3585,7 @@ module.exports = [
                 className: "touchControlsDialogButton touchControlsDialogRedButton",
                 textContent: "Close",
                 gid: "touchControlsClose",
-                hidden: true,
-            },
+            },editSpacing,
             ////////////////////
             //Add button and dropdown.
             {
@@ -3457,6 +3596,7 @@ module.exports = [
                         element: "div",
                         className: "touchControlsAddDropdown",
                         gid: "touchControlsAddDropdown",
+                        hidden: true,
                     },
                 ]
             },
@@ -3470,7 +3610,7 @@ module.exports = [
                         textContent: "Add control"
                     }
                 ]
-            },
+            },editSpacing,
             ////////////////////
             //Reset button.
             {
@@ -3478,12 +3618,20 @@ module.exports = [
                 className: "touchControlsDialogButton touchControlsDialogRedButton",
                 textContent: "Reset",
                 gid: "touchControlsReset"
-            },
+            },editSpacing,
             ////////////////////
         ]
     },
 
     ///////////////////////////////////////
+];
+
+module.exports = [
+    {
+        element: "div",
+        className: "touchControlsContent",
+        children: content,
+    }
 ];
 
 /***/ },
