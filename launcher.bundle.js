@@ -69,24 +69,14 @@ var processInterval = null;
 var inEditMode = false;
 var buttons = [];
 
-var defaultPreset = [
-    {"id":"UI_JOYSTICK","side":"left","xPos":1.1403353287569775,"yPos":7.67374946199395,"width":22.195300078496754,"height":47.54102296144616},
-    {"id":"GC_FORWARD","side":"left","xPos":55.30791387376463,"yPos":38.65620353584098,"width":6.076422449784956,"height":7.880072744939483},
-    {"id":"GC_BACKWARD","side":"left","xPos":55.23218738561494,"yPos":9.989447744939483,"width":6.486349929653184,"height":9.382383317899624},
-    {"id":"GC_STRAFELEFT","side":"left","xPos":47.923960204005766,"yPos":21.96407668379591,"width":5.820220008950631,"height":12.203389519642112},
-    {"id":"GC_STRAFERIGHT","side":"left","xPos":62.53229590844619,"yPos":21.709389917440518,"width":6.090697348554173,"height":12.186699104627504},
-    {"id":"GC_JUMP","side":"left","xPos":76.95432246865849,"yPos":8.209951970732462,"width":17.48846855554539,"height":24.95631350101732},
-    {"id":"GC_PAUSE","side":"left","xPos":79.66868008212847,"yPos":86.72850390706516,"width":6.95483720145498,"height":8.53108044657763},
-    {"id":"GC_SYSTEMMENU","side":"left","xPos":74.65383325802983,"yPos":70.71779789232053,"width":11.105335062454246,"height":10.717774456450856},
-    {"id":"GC_CONSOLE","side":"left","xPos":88.72702837339432,"yPos":85.81520297093464,"width":10,"height":10},
-    {"id":"GC_TALKKEY","side":"left","xPos":87.7018985776217,"yPos":59.1738387220889,"width":10,"height":10}
-];
+var defaultPreset = [{"id":"UI_JOYSTICK","side":"left","xPos":2.3032555642972756,"yPos":6.405970807465565,"width":22.107455922429768,"height":48.776241041384075},{"id":"GC_JUMP","side":"left","xPos":77.95130449018576,"yPos":6.35752988379069,"width":18.549890476299414,"height":32.48455168607836},{"id":"GC_SPIN","side":"left","xPos":71.91969060269491,"yPos":40.010837561300086,"width":24.75001680030655,"height":19.114005927848496},{"id":"GC_TURNLEFT","side":"left","xPos":27.41190517978473,"yPos":8.108067074681756,"width":10.60757683101894,"height":10.033380830029214},{"id":"GC_TURNRIGHT","side":"left","xPos":27.44954501552777,"yPos":20.495473005138777,"width":10.893052465570097,"height":9.315611468332639},{"id":"GC_PAUSE","side":"left","xPos":77.40271192693082,"yPos":88.83235975975585,"width":10,"height":10},{"id":"GC_SYSTEMMENU","side":"left","xPos":87.66887882618045,"yPos":88.86195773473366,"width":10,"height":10},{"id":"UI_SHOW_KEYBOARD","side":"left","xPos":77.29218735701868,"yPos":79.30181181689534,"width":20.438477277406662,"height":8.664611408825909},{"id":"GC_TALKKEY","side":"left","xPos":55.771904494367966,"yPos":31.181241196264608,"width":10,"height":10},{"id":"GC_TEAMKEY","side":"left","xPos":66.5833145074579,"yPos":24.83782378182387,"width":10,"height":10},{"id":"GC_FIRE","side":"left","xPos":50.00334218864385,"yPos":20.780381853871035,"width":10,"height":10},{"id":"GC_TOSSFLAG","side":"left","xPos":60.81479520783767,"yPos":13.134786004017101,"width":10,"height":10}];
 
 var touchControlsDialogDiv = elements.getGPId("touchControlsDialog");
 var touchControlsContainer = elements.getGPId("touchControlsContainer");
 
 function destroyButtons () {
-    buttons.forEach(button => button.destroy());
+    buttons.forEach((button) => {button.destroy();});
+    buttons = [];
 }
 
 function createButton(data) {
@@ -97,7 +87,7 @@ function createButton(data) {
 }
 
 function saveButtons() {
-    var data = buttons.map(button => button.save());
+    var data = buttons.map((button) => {return button.save();});
     localStorage.setItem("touchControls", JSON.stringify(data));
     dialog.alert("Touch controls saved.");
 }
@@ -188,10 +178,11 @@ function startInputProcessor(editMode) {
 
     processInterval = setInterval(() => {
         updateTouchPositions();
-        Array.from(buttons).forEach(button => {
-            button.process(touchPositions, processState);
-            if (button.remove) {
-                buttons = buttons.filter(b => b != button.randomId);
+        Array.from(buttons).reverse().forEach(button => {
+            if (button.destroyed) {
+                buttons = buttons.filter(b => b.randomId !== button.randomId);
+            } else {
+                button.process(touchPositions, processState);
             }
         });
     },processRate);
@@ -276,11 +267,16 @@ touchControlsReset.addEventListener("click", function () {
 });
 
 var touchControlsSave = elements.getGPId("touchControlsSave");
-touchControlsSave.addEventListener("click", function () {
+touchControlsSave.addEventListener("click", function (event) {
     if (!active) {
         return;
     }
-    saveButtons();
+    if (event.shiftKey) {
+        var data = buttons.map(button => button.save());
+        dialog.alert(JSON.stringify(data));
+    } else {
+        saveButtons();
+    }
 });
 
 module.exports = {
@@ -425,12 +421,12 @@ var KeyName = {
 	//Source: m_menu.c
 
     //GC_NULL: "Nothing",
-    GC_FORWARD: "Move Forward",
-	GC_BACKWARD: "Move Backward",
-	GC_STRAFELEFT: "Move Left",
-	GC_STRAFERIGHT: "Move Right",
-	GC_JUMP: "Jump",
-	GC_SPIN: "Spin",
+    GC_FORWARD: "Move Forward (Up)",
+	GC_BACKWARD: "Move Backward (Down)",
+	GC_STRAFELEFT: "Move Left (Left)",
+	GC_STRAFERIGHT: "Move Right (Right)",
+	GC_JUMP: "Jump (Select)",
+	GC_SPIN: "Spin (Back)",
 
 	GC_LOOKUP: "Look Up",
 	GC_LOOKDOWN: "Look Down",
@@ -439,7 +435,35 @@ var KeyName = {
 	GC_CENTERVIEW: "Center View",
 	GC_MOUSEAIMING: "Toggle Mouselook",
 	GC_CAMTOGGLE: "Toggle Third-Person",
-	GC_CAMRESET: "Reset Camera"
+	GC_CAMRESET: "Reset Camera",
+
+	GC_PAUSE: "Pause / Run Retry",
+	GC_SCREENSHOT: "Screenshot",
+	GC_RECORDGIF: "Toggle GIF Recording",
+	GC_SYSTEMMENU: "Open/Close Menu (ESC)",
+	GC_VIEWPOINTNEXT: "Next Viewpoint",
+	GC_VIEWPOINTPREV: "Prev Viewpoint",
+	GC_CONSOLE: "Console",
+
+	GC_TALKKEY: "Talk",
+	GC_TEAMKEY: "Talk (Team only)",
+
+	GC_FIRE: "Fire",
+	GC_FIRENORMAL: "Fire Normal",
+	GC_TOSSFLAG: "Toss Flag",
+	GC_WEAPONNEXT: "Next Weapon",
+	GC_WEAPONPREV: "Prev Weapon",
+	GC_WEPSLOT1: "Normal / Infinity",
+	GC_WEPSLOT2: "Automatic",
+	GC_WEPSLOT3: "Bounce",
+	GC_WEPSLOT4: "Scatter",
+	GC_WEPSLOT5: "Grenade",
+	GC_WEPSLOT6: "Explosion",
+	GC_WEPSLOT7: "Rail",
+
+	GC_CUSTOM1: "Custom Action 1",
+	GC_CUSTOM2: "Custom Action 2",
+	GC_CUSTOM3: "Custom Action 3",
 };
 
 //////////////////////////////////////////////////////////////
@@ -3510,7 +3534,9 @@ class TouchControlButton {
     static createEmptyButtonData(id) {
         var button = new TouchControlButton(
             id,
-            "left"
+            "left",
+            0,
+            0
         );
         var data = button.save();
         button.destroy();
@@ -3518,6 +3544,7 @@ class TouchControlButton {
     }
 
     constructor(id, side, xPos, yPos, width, height) {
+        this.destroyed = false;
         this.side = side || "left";
         this.xPos = +xPos || 0;
         this.yPos = +yPos || 0;
@@ -3657,6 +3684,7 @@ class TouchControlButton {
         this.editBoxElm.remove();
         this.editBoxElm2.remove();
         this.container = null;
+        this.destroyed = true;
     }
 
     save () {
@@ -3754,6 +3782,7 @@ class TouchControlButton {
     }
 
     process (touchPositions, processState) {
+        var elm = this.elm;
         if (this.editMode) {
             this.editModeProcess(touchPositions, processState);
             return;
@@ -3764,11 +3793,13 @@ class TouchControlButton {
         if (this.isTouchingOneOf(touchPositions)) {
             if (!this._justPressed) {
                 sendInput(this.id, true);
+                elm.setAttribute("data-touching", "");
                 this._justPressed = true;
             }
         } else {
             if (this._justPressed) {
                 sendInput(this.id, false);
+                elm.removeAttribute("data-touching");
                 this._justPressed = false;
             }
         }
