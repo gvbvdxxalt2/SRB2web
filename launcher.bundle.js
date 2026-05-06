@@ -664,6 +664,7 @@ class ConnectState {
   initWebrtc() {
     this.peer = new peer({
       initiator: false,
+      trickle: false,
       config: rtcConfig,
       channelConfig: {
         ordered: false,          // Do NOT wait for missing packets
@@ -2903,6 +2904,7 @@ class ListenChannel {
         var _this = this;
         this.peer = new peer({
           initiator: true,
+          trickle: false,
           config: rtcConfig,
           channelConfig: {
             ordered: false,          // Do NOT wait for missing packets
