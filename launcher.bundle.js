@@ -4507,7 +4507,7 @@ function sendJoystick(x,y) {
     if (!Module.ccall) {
         return;
     }
-    var range = 0.2;
+    var range = 0.7;
     sendInput("GC_FORWARD", y > range);
     sendInput("GC_BACKWARD", y < -range);
     sendInput("GC_STRAFELEFT", x < -range);
