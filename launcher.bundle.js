@@ -3636,8 +3636,8 @@ gameCanvas.addEventListener("touchmove", function (e) {
             t.width = touch.radiusX < 2 ? 2 : touch.radiusX;
             t.height = touch.radiusY < 2 ? 2 : touch.radiusY;
 
-            mouseMoveX += movementX*10;
-            mouseMoveY += movementY*10;
+            mouseMoveX += movementX*5;
+            mouseMoveY += movementY*5;
         }
     }
     e.preventDefault();
