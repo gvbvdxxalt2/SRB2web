@@ -62,6 +62,7 @@ module.exports = [
 
 var { TouchControlButton } = __webpack_require__(7841);
 var { KeyName, KeyNum, getButtonLabels } = __webpack_require__(627);
+var { showKeyboard, hideKeyboard, toggleKeyboard, keyboardIsActive } = __webpack_require__(5000);
 var dialog = __webpack_require__(5925);
 var elements = __webpack_require__(5100);
 var processRate = 1000/60;
@@ -69,7 +70,7 @@ var processInterval = null;
 var inEditMode = false;
 var buttons = [];
 
-var defaultPreset = [{"id":"UI_JOYSTICK","side":"left","xPos":2.3032555642972756,"yPos":6.405970807465565,"width":22.107455922429768,"height":48.776241041384075},{"id":"GC_JUMP","side":"left","xPos":77.95130449018576,"yPos":6.35752988379069,"width":18.549890476299414,"height":32.48455168607836},{"id":"GC_SPIN","side":"left","xPos":71.91969060269491,"yPos":40.010837561300086,"width":24.75001680030655,"height":19.114005927848496},{"id":"GC_TURNLEFT","side":"left","xPos":78.3445523040012,"yPos":65.56221734303266,"width":10.60757683101894,"height":10.033380830029214},{"id":"GC_TURNRIGHT","side":"left","xPos":66.50842356646916,"yPos":65.56292041912302,"width":10.893052465570097,"height":10},{"id":"GC_PAUSE","side":"left","xPos":77.40271192693082,"yPos":88.83235975975585,"width":10,"height":10},{"id":"GC_SYSTEMMENU","side":"left","xPos":87.66887882618045,"yPos":88.86195773473366,"width":10,"height":10},{"id":"UI_SHOW_KEYBOARD","side":"left","xPos":77.29218735701868,"yPos":79.30181181689534,"width":20.438477277406662,"height":10},{"id":"GC_TALKKEY","side":"left","xPos":55.771904494367966,"yPos":31.181241196264608,"width":10,"height":10},{"id":"GC_TEAMKEY","side":"left","xPos":66.5833145074579,"yPos":24.83782378182387,"width":10,"height":10},{"id":"GC_FIRE","side":"left","xPos":50.00228770131771,"yPos":20.779424040066772,"width":10,"height":10},{"id":"GC_TOSSFLAG","side":"left","xPos":60.81479520783767,"yPos":13.134786004017101,"width":10,"height":10}];
+var defaultPreset = __webpack_require__(7819);
 
 var touchControlsDialogDiv = elements.getGPId("touchControlsDialog");
 var touchControlsContainer = elements.getGPId("touchControlsContainer");
@@ -128,7 +129,7 @@ var processState = {};
 function generateTouchRandomId() {
     return Date.now()+"_"+(Math.random()*100000);
 }
-document.addEventListener("touchstart", function (e) {
+touchControlsContainer.addEventListener("touchstart", function (e) {
     if (!active) {
         return;
     }
@@ -151,9 +152,10 @@ document.addEventListener("touchstart", function (e) {
     }
     if (processState.disableDefault) {
         e.preventDefault();
+        e.stopPropagation();
     }
 }, { passive: false });
-document.addEventListener("touchmove", function (e) {
+touchControlsContainer.addEventListener("touchmove", function (e) {
     if (!active) {
         return;
     }
@@ -172,9 +174,10 @@ document.addEventListener("touchmove", function (e) {
     }
     if (processState.disableDefault) {
         e.preventDefault();
+        e.stopPropagation();
     }
 }, { passive: false });
-document.addEventListener("touchend", function (e) {
+touchControlsContainer.addEventListener("touchend", function (e) {
     if (!active) {
         return;
     }
@@ -187,6 +190,7 @@ document.addEventListener("touchend", function (e) {
     }
     if (processState.disableDefault) {
         e.preventDefault();
+        e.stopPropagation();
     }
 }, { passive: false });
 
@@ -317,7 +321,7 @@ module.exports = {
 /***/ 492
 (module) {
 
-module.exports = "body {\n  background: #000000;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  height: 100dvh;\n  width: 100dvw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/title-bg.png\") center/cover no-repeat;\n  pointer-events: none;\n  image-rendering: pixelated;\n  filter: brightness(0.6);\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100dvh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100%;\n  height: 100%;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n  z-index: 9999;\n}\n\n.sectionHeader {\n  display: block;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: column;\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n}\n\n.relayHostClickable:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayPublicCount {\n  font-size: 14px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100dvh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}\n\n.publicNetgameBrowserContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.5);\n}\n\n.publicNetgameBrowserDialog {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: calc(100% - 150px);\n  height: calc(100dvh - 150px);\n  min-width: 640px;\n  min-height: 360px;\n  border-radius: 3px;\n  background: rgba(255,255,255,1);\n  display: flex;\n  flex-direction: row;\n}\n\n.publicNetgameBrowserLeft {\n  display: flex;\n  flex-direction: column;\n  min-width: 200px;\n  width: calc(100% - 450px);\n  max-width: 300px;\n  border-right: 2px solid rgba(0,0,0,0.3);\n  box-sizing: border-box;\n  flex-shrink: 0;\n  flex-grow: 0;\n  gap: 3px;\n  overflow: auto;\n}\n\n.publicNetgameItem {\n  width: 100%;\n  box-sizing: border-box;\n  height: fit-content;\n  min-height: 50px;\n  padding: 5px 5px;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 4px;\n  flex-shrink: 0;\n}\n\n.publicNetgameItem:hover {\n  background: rgba(0,0,0,0.7);\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.publicNetgameItem[viewing] {\n  text-decoration: underline;\n  cursor: unset;\n}\n\n.publicGameSeparator {\n  width: 100%;\n  height: 0px;\n  margin-top: 3px;\n  margin-bottom: 3px;\n  border-bottom-color: black;\n  border-bottom-style: dashed;\n  border-bottom-width: 2px;\n  box-sizing: border-box;\n}\n\n.publicNetgameBrowserRight {\n  display: block;\n  flex-grow: 1;\n  position: relative;\n}\n\n.publicNetgameBrowserCloseButton {\n  position: absolute;\n  top: 0;\n  right: 0;\n  font-size: 30px;\n}\n\n.viewPublicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  padding: 5px 5px;\n  border-radius: 3px;\n}\n\n.publicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 100%;\n  height: 100%;\n  padding: 10px 10px;\n  box-sizing: border-box;\n}\n\n.refreshIcon {\n  width: 32px;\n  height: 32px;\n}\n\n.netgameServerName {\n  font-size: 30px;\n}\n\n.netgameServerURL {\n  font-size: 16px;\n  margin-left: 5px;\n  font-family: arial;\n}\n\n.netgameCommunicationType {\n  width: 25px;\n  height: 25px;\n  object-fit: contain;\n  padding: 5px 5px;\n  border-radius: 3px;\n  background: rgba(255,255,255,0.4);\n}\n\n.netgameLoadingListsContainer {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,1);\n  border-radius: 4px;\n  font-size: 20px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n  gap: 8px;\n}\n\n.netgameLoadingListsImg {\n  width: 30px;\n  height: 30px;\n}\n\n\n.dontSellText {\n  color: rgb(196, 0, 0);\n  font-size: 35px;\n}\n\n.displayOption {\n  display: flex;\n  align-items: center;\n  gap: 2px;\n}\n\n.selectOptions {\n  all: unset;\n  display: block;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  color: black;\n  background: rgba(255,255,255,0.7);\n  appearance: auto;\n  border-radius: 5px;\n}\n\n.touchControlPosition[data-position=\"left\"] {\n  position: fixed;\n  left: var(--button-x);\n  bottom: var(--button-y);\n  will-change: left, right, bottom;\n  contain: layout paint; \n  user-select: none;\n  -webkit-user-select: none;\n  touch-action: none;\n}\n\n.touchControlPosition[data-position=\"right\"] {\n  position: fixed;\n  right: var(--button-x);\n  bottom: var(--button-y);\n  will-change: left, right, bottom;\n  contain: layout paint; \n  user-select: none;\n  -webkit-user-select: none;\n  touch-action: none;\n}\n\n.touchControlBox {\n  background: rgba(255,255,255,1);\n  border-radius: 0px;\n  border-width: 0.5vmin;\n  border-color: rgba(0,0,0,1);\n  border-style: solid;\n  width: 2vmin;\n  height: 2vmin;\n  transform: translate(-50%, 50%);\n}\n.touchControlBox[data-position=\"left\"]  {\n  position: fixed;\n  bottom: var(--button-y);\n  left: calc(calc(var(--button-x) + var(--button-width)));\n}\n\n.touchControlDeleteBox {\n  background: rgb(255, 0, 0);\n  border-radius: 0px;\n  border-width: 0.5vmin;\n  border-color: rgba(0,0,0,1);\n  border-style: solid;\n  width: 2vmin;\n  height: 2vmin;\n  transform: translate(-50%, 50%);\n}\n.touchControlDeleteBox[data-position=\"left\"]  {\n  position: fixed;\n  bottom: calc(var(--button-y));\n  left: var(--button-x);\n}\n\n.touchActionButton {\n  all: unset;\n  position: absolute;\n  width: var(--button-width);\n  height: var(--button-height);\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  cursor: not-allowed;\n  font-size: 4vmin;\n  box-sizing: border-box;\n  padding: 3vmin 3vmin;\n  /* The actual touch events are handled by the JavaScript collision tests */\n  touch-action: none;\n  overflow: hidden;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.touchActionButton[data-touching] {\n  background: rgba(255,255,255,0.8);\n}\n\n.blackDialogBG {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.8);\n}\n\n.whiteDialogBox {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(255,255,255,1);\n  color: rgba(0,0,0,1);\n  padding: 10px 10px;\n  box-sizing: border-box;\n  border-radius: 5px;\n}\n\n.touchControlsDialog {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n}\n.touchControlsDialogTitle {\n  font-size: 7vmin;\n  color: rgba(255,255,255,1);\n}\n\n.touchControlsDialogButton {\n  all: unset;\n  background: rgba(255,255,255,0.8);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  font-size: 4vmin;\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 1vmin 1vmin;\n}\n\n.touchControlsDialogButton:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.touchControlsDialogRedButton {\n  background: rgba(255,50,0,0.8);\n}\n.touchControlsDialogGreenButton {\n  background: rgba(4, 255, 0, 0.8);\n}\n\n.touchControlDialogEditButtons {\n  position: relative;\n  display: flex;\n  flex-direction: row;\n}\n\n.touchControlsDialogTip {\n  color: rgb(255, 0, 0);\n  font-size: 4vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsDialogTip2 {\n  color: rgba(255,255,255,1);\n  font-size: 3.5vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  z-index: 99999;\n  pointer-events: none;\n}\n\n.touchControlsAddDropdownContainer {\n  position: relative;\n  width: 0px;\n  height: 0px;\n}\n.touchControlsAddDropdown {\n  text-decoration: unset;\n  position: absolute;\n  top: 0;\n  left: 0;\n  transform: translate(0, 6vmin);\n  width: 50vmin;\n  max-height: 40vmin;\n  z-index: 99999;\n  background: rgba(255,255,255,0.9);\n  border-radius: 0.5vmin;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2vmin;\n  padding: 0.2vmin 0.2vmin;\n  overflow: auto;\n}\n\n.touchControlsAddDropdown > .option {\n  all: unset;\n  padding: 1vmin 1vmin;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 0.5vmin;\n  font-size: 3vmin;\n}\n.touchControlsAddDropdown > .option:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n.touchControlsEditButtonsSpacing {\n  all: unset;\n  margin-left: 0.5vmin;\n}\n\n.touchControlsContent {\n  position: fixed;\n  top: 0;\n  left: 50%;\n  transform: translate(-50%, 0);\n  display: flex;\n  align-items: center;\n  flex-direction: column;\n  text-align: center;\n}\n\n.touchControlsJoystickContainer {\n  width: var(--button-width);\n  height: var(--button-height);\n  overflow: visible;\n}\n\n.touchControlsJoystick {\n  width: var(--joystick-size);\n  height: var(--joystick-size);\n  background: rgba(255,255,255,0.3);\n  border-radius: 50%;\n  position: relative;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  touch-action: none;\n  pointer-events: none;\n  overflow: visible;\n}\n\n.touchControlsJoystickCircle {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 50%;\n  height: 50%;\n  background: rgba(0,0,255,0.5);\n  border-radius: 50%;\n  overflow: visible;\n}";
+module.exports = "body {\n  background: #000000;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  height: 100dvh;\n  width: 100dvw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/title-bg.png\") center/cover no-repeat;\n  pointer-events: none;\n  image-rendering: pixelated;\n  filter: brightness(0.6);\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100dvh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100dvw;\n  height: 100dvh;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n}\n\n.sectionHeader {\n  display: block;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: column;\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n}\n\n.relayHostClickable:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayPublicCount {\n  font-size: 14px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n  z-index: 99999999;\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100dvh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}\n\n.publicNetgameBrowserContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.5);\n}\n\n.publicNetgameBrowserDialog {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: calc(100% - 150px);\n  height: calc(100dvh - 150px);\n  min-width: 640px;\n  min-height: 360px;\n  border-radius: 3px;\n  background: rgba(255,255,255,1);\n  display: flex;\n  flex-direction: row;\n}\n\n.publicNetgameBrowserLeft {\n  display: flex;\n  flex-direction: column;\n  min-width: 200px;\n  width: calc(100% - 450px);\n  max-width: 300px;\n  border-right: 2px solid rgba(0,0,0,0.3);\n  box-sizing: border-box;\n  flex-shrink: 0;\n  flex-grow: 0;\n  gap: 3px;\n  overflow: auto;\n}\n\n.publicNetgameItem {\n  width: 100%;\n  box-sizing: border-box;\n  height: fit-content;\n  min-height: 50px;\n  padding: 5px 5px;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 4px;\n  flex-shrink: 0;\n}\n\n.publicNetgameItem:hover {\n  background: rgba(0,0,0,0.7);\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.publicNetgameItem[viewing] {\n  text-decoration: underline;\n  cursor: unset;\n}\n\n.publicGameSeparator {\n  width: 100%;\n  height: 0px;\n  margin-top: 3px;\n  margin-bottom: 3px;\n  border-bottom-color: black;\n  border-bottom-style: dashed;\n  border-bottom-width: 2px;\n  box-sizing: border-box;\n}\n\n.publicNetgameBrowserRight {\n  display: block;\n  flex-grow: 1;\n  position: relative;\n}\n\n.publicNetgameBrowserCloseButton {\n  position: absolute;\n  top: 0;\n  right: 0;\n  font-size: 30px;\n}\n\n.viewPublicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  padding: 5px 5px;\n  border-radius: 3px;\n}\n\n.publicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 100%;\n  height: 100%;\n  padding: 10px 10px;\n  box-sizing: border-box;\n}\n\n.refreshIcon {\n  width: 32px;\n  height: 32px;\n}\n\n.netgameServerName {\n  font-size: 30px;\n}\n\n.netgameServerURL {\n  font-size: 16px;\n  margin-left: 5px;\n  font-family: arial;\n}\n\n.netgameCommunicationType {\n  width: 25px;\n  height: 25px;\n  object-fit: contain;\n  padding: 5px 5px;\n  border-radius: 3px;\n  background: rgba(255,255,255,0.4);\n}\n\n.netgameLoadingListsContainer {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,1);\n  border-radius: 4px;\n  font-size: 20px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n  gap: 8px;\n}\n\n.netgameLoadingListsImg {\n  width: 30px;\n  height: 30px;\n}\n\n\n.dontSellText {\n  color: rgb(196, 0, 0);\n  font-size: 35px;\n}\n\n.displayOption {\n  display: flex;\n  align-items: center;\n  gap: 2px;\n}\n\n.selectOptions {\n  all: unset;\n  display: block;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  color: black;\n  background: rgba(255,255,255,0.7);\n  appearance: auto;\n  border-radius: 5px;\n}\n\n.touchControlPosition[data-position=\"left\"] {\n  position: fixed;\n  left: var(--button-x);\n  bottom: var(--button-y);\n  will-change: left, right, bottom;\n  contain: layout paint; \n  user-select: none;\n  -webkit-user-select: none;\n}\n\n.touchControlPosition[data-position=\"right\"] {\n  position: fixed;\n  right: var(--button-x);\n  bottom: var(--button-y);\n  will-change: left, right, bottom;\n  contain: layout paint; \n  user-select: none;\n  -webkit-user-select: none;\n}\n\n.touchControlBox {\n  background: rgba(255,255,255,1);\n  border-radius: 0px;\n  border-width: 0.5vmin;\n  border-color: rgba(0,0,0,1);\n  border-style: solid;\n  width: 2vmin;\n  height: 2vmin;\n  transform: translate(-50%, 50%);\n}\n.touchControlBox[data-position=\"left\"]  {\n  position: fixed;\n  bottom: var(--button-y);\n  left: calc(calc(var(--button-x) + var(--button-width)));\n}\n\n.touchControlDeleteBox {\n  background: rgb(255, 0, 0);\n  border-radius: 0px;\n  border-width: 0.5vmin;\n  border-color: rgba(0,0,0,1);\n  border-style: solid;\n  width: 2vmin;\n  height: 2vmin;\n  transform: translate(-50%, 50%);\n}\n.touchControlDeleteBox[data-position=\"left\"]  {\n  position: fixed;\n  bottom: calc(var(--button-y));\n  left: var(--button-x);\n}\n\n.touchActionButton {\n  all: unset;\n  position: absolute;\n  width: var(--button-width);\n  height: var(--button-height);\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  cursor: not-allowed;\n  font-size: 4vmin;\n  box-sizing: border-box;\n  padding: 3vmin 3vmin;\n  /* The actual touch events are handled by the JavaScript collision tests */\n  overflow: hidden;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  user-select: none;\n}\n.touchActionButton[data-touching] {\n  background: rgba(255,255,255,0.8);\n}\n\n.blackDialogBG {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.8);\n}\n\n.whiteDialogBox {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(255,255,255,1);\n  color: rgba(0,0,0,1);\n  padding: 10px 10px;\n  box-sizing: border-box;\n  border-radius: 5px;\n}\n\n.touchControlsDialog {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n}\n.touchControlsDialogTitle {\n  font-size: 7vmin;\n  color: rgba(255,255,255,1);\n}\n\n.touchControlsDialogButton {\n  all: unset;\n  background: rgba(255,255,255,0.8);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  font-size: 4vmin;\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 1vmin 1vmin;\n}\n\n.touchControlsDialogButton:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.touchControlsDialogRedButton {\n  background: rgba(255,50,0,0.8);\n}\n.touchControlsDialogGreenButton {\n  background: rgba(4, 255, 0, 0.8);\n}\n\n.touchControlDialogEditButtons {\n  position: relative;\n  display: flex;\n  flex-direction: row;\n}\n\n.touchControlsDialogTip {\n  color: rgb(255, 0, 0);\n  font-size: 4vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsDialogTip2 {\n  color: rgba(255,255,255,1);\n  font-size: 3.5vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  /*width: 100%;\n  height: 100dvh;*/\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsAddDropdownContainer {\n  position: relative;\n  width: 0px;\n  height: 0px;\n}\n.touchControlsAddDropdown {\n  text-decoration: unset;\n  position: absolute;\n  top: 0;\n  left: 0;\n  transform: translate(0, 6vmin);\n  width: 50vmin;\n  max-height: 40vmin;\n  z-index: 99999;\n  background: rgba(255,255,255,0.9);\n  border-radius: 0.5vmin;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2vmin;\n  padding: 0.2vmin 0.2vmin;\n  overflow: auto;\n}\n\n.touchControlsAddDropdown > .option {\n  all: unset;\n  padding: 1vmin 1vmin;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 0.5vmin;\n  font-size: 3vmin;\n}\n.touchControlsAddDropdown > .option:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n.touchControlsEditButtonsSpacing {\n  all: unset;\n  margin-left: 0.5vmin;\n}\n\n.touchControlsContent {\n  position: fixed;\n  top: 0;\n  left: 50%;\n  transform: translate(-50%, 0);\n  display: flex;\n  align-items: center;\n  flex-direction: column;\n  text-align: center;\n}\n\n.touchControlsJoystickContainer {\n  display: block;\n  width: var(--button-width);\n  height: var(--button-height);\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsJoystick {\n  display: block;\n  width: var(--joystick-size);\n  height: var(--joystick-size);\n  background: rgba(255,255,255,0.3);\n  border-radius: 50%;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsJoystickCircle {\n  display: block;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 50%;\n  height: 50%;\n  background: rgba(0,0,255,0.4);\n  border-radius: 50%;\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsJoystickCircle[data-touching] {\n  background: rgba(0,0,255,0.7);\n}\n\n.touchControlsInput {\n  all: unset;\n  position: fixed;\n  top: -100px;\n  left: -100px;\n  background: rgba(0,0,0,0);\n  color: rgba(0,0,0,0);\n  width: 1px;\n  height: 10px;\n  opacity: 0;\n  user-select: none;\n}";
 
 /***/ },
 
@@ -442,7 +446,7 @@ var KeyNum = {
 
 var KeyName = {
 	//Purely custom key names, not used by C logic, but are added to keep the UI for them consistent with the rest of the controls:
-	UI_SHOW_KEYBOARD: "Show touch keyboard",
+	UI_SHOW_KEYBOARD: "Toggle touch keyboard",
 	UI_JOYSTICK: "Virtual joystick",
 
 	///////////////////////////////////////////
@@ -1746,6 +1750,7 @@ module.exports = attach;
 var { KeyNum, KeyName } = __webpack_require__(627);
 var { TouchControlButton } = __webpack_require__(7841);
 var { startInputProcessor, stopInputProcessor } = __webpack_require__(101);
+var { showKeyboard, hideKeyboard, toggleKeyboard, keyboardIsActive, activateKeyboardChecks, deactivateKeyboardChecks } = __webpack_require__(5000);
 
 var state = {
     ingameTouch: false,
@@ -1762,15 +1767,23 @@ function startupTouchControls() {
         }
         state.ingameTouch = true;
         startInputProcessor();
+        activateKeyboardChecks();
         e.preventDefault();
         e.stopPropagation();
     }
     function deactivate(e) {
+        if (document.activeElement) { //So using the touch keyboard doesn't cause the touch controls to disappear.
+            if (document.activeElement.tagName == "INPUT" || document.activeElement.tagName == "TEXTAREA") {
+                return;
+            }
+        }
         if (!state.ingameTouch) {
             return;
         }
         state.ingameTouch = false;
         stopInputProcessor();
+        deactivateKeyboardChecks();
+        hideKeyboard();
     }
     document.addEventListener("touchstart", activate);
     document.addEventListener("keydown", deactivate);
@@ -1779,6 +1792,7 @@ function startupTouchControls() {
 
 function startTouchCustomization() {
     startInputProcessor(true);
+    deactivateKeyboardChecks();
 }
 
 module.exports = {
@@ -2161,6 +2175,135 @@ class WSErrorCodes {
 
 module.exports = WSErrorCodes;
 
+
+/***/ },
+
+/***/ 5000
+(module) {
+
+if (window["Module"]) {
+  var Module = window["Module"];
+}
+
+var input = document.createElement("input");
+input.type = "text";
+input.className = "touchControlsInput";
+input.value = " "; //Intentionally have a space to detect deletion.
+document.body.appendChild(input);
+
+input.addEventListener("input", function (e) {
+    input.value = " ";
+    var data = e.data;
+    var type = e.inputType;
+
+    if (!Module.ccall) {
+        return;
+    }
+    if (!keyboardActive) {
+        return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+
+    var isInsert = (type == "insertText" || type == "insertFromPaste" || type == "insertReplacementText");
+
+    try {
+        if (isInsert && typeof data === "string" && data.length > 0) {
+            Module.ccall(
+                'inject_text',
+                'void',
+                ['string'],
+                [data]
+            );
+        }
+
+        if (type == "deleteContentBackward") {
+            Module.ccall('inject_keycode',
+                null,
+                ['int','int'],
+                [8,false]
+            );
+            Module.ccall('inject_keycode',
+                null,
+                ['int','int'],
+                [8,true]
+            );
+        }
+    } catch (err) {
+        console.error("touch keyboard input failed", err);
+    }
+});
+
+var keyboardActive = false;
+
+input.addEventListener("focus", () => {keyboardActive = true;});
+input.addEventListener("blur", () => {keyboardActive = false;});
+
+var focusLoop = null;
+
+function showKeyboard() {
+    clearInterval(focusLoop);
+    focusLoop = setInterval(() => {
+        try{
+            input.focus();
+        }catch(e){}
+    },100);
+    try{
+        input.focus();
+    }catch(e){}
+}
+
+function hideKeyboard() {
+    try{
+        input.blur();
+    }catch(e){}
+    clearInterval(focusLoop);
+}
+
+function toggleKeyboard() {
+    if (keyboardActive) {
+        hideKeyboard();
+    } else {
+        showKeyboard();
+    }
+}
+
+function keyboardIsActive() {
+    return keyboardActive;
+}
+
+var checkInterval = null;
+function activateKeyboardChecks() {
+    var state = false;
+    deactivateKeyboardChecks();
+    checkInterval = setInterval(() => {
+        if (!Module.ccall) {
+            return;
+        }
+        /*var needs = Module.ccall('SRB2_KeyboardNeeded', 'boolean', [], []);
+        if (needs && !state) {
+            state = true;
+            showKeyboard();
+        } else if (!needs && state) {
+            state = false;
+            hideKeyboard();
+        }*/
+    }, 1000/30);
+}
+
+function deactivateKeyboardChecks() {
+    clearInterval(checkInterval);
+    hideKeyboard();
+}
+
+module.exports = {
+    showKeyboard,
+    hideKeyboard,
+    toggleKeyboard,
+    keyboardIsActive,
+    activateKeyboardChecks,
+    deactivateKeyboardChecks
+};
 
 /***/ },
 
@@ -3450,6 +3593,69 @@ window.addEventListener(
   { once: true },
 );
 
+var touches = [];
+
+gameCanvas.addEventListener("touchstart", function (e) {
+    if (!didStart) {
+        return;
+    }
+    for (var touch of e.changedTouches) {
+        if (!touches.find(t => t.id == touch.identifier)) {
+            touches.push({
+                id: touch.identifier,
+                rid: Math.random() + "_" + Date.now(),
+                clientX: touch.clientX,
+                clientY: touch.clientY,
+                radiusX: touch.radiusX,
+                radiusY: touch.radiusY,
+                top: touch.clientY,
+                left: touch.clientX,
+                width: touch.radiusX < 2 ? 2 : touch.radiusX,
+                height: touch.radiusY < 2 ? 2 : touch.radiusY,
+                touching: true
+            });
+        }
+    }
+    e.preventDefault();
+}, { passive: false });
+gameCanvas.addEventListener("touchmove", function (e) {
+    if (!didStart) {
+        return;
+    }
+    for (var touch of e.changedTouches) {
+        var t = touches.find(t => t.id == touch.identifier);
+        if (t) {
+            var movementX = touch.clientX - t.clientX;
+            var movementY = touch.clientY - t.clientY;
+            t.clientX = touch.clientX;
+            t.clientY = touch.clientY;
+            t.radiusX = touch.radiusX;
+            t.radiusY = touch.radiusY;
+            t.left = touch.clientX;
+            t.top = touch.clientY;
+            t.width = touch.radiusX < 2 ? 2 : touch.radiusX;
+            t.height = touch.radiusY < 2 ? 2 : touch.radiusY;
+
+            mouseMoveX += movementX*10;
+            mouseMoveY += movementY*10;
+        }
+    }
+    e.preventDefault();
+}, { passive: false });
+gameCanvas.addEventListener("touchend", function (e) {
+    if (!didStart) {
+        return;
+    }
+    for (var touch of e.changedTouches) {
+        var t = touches.find(t => t.id == touch.identifier);
+        if (t) {
+            t.touching = false;
+            touches = touches.filter(t => t.id !== touch.identifier);
+        }
+    }
+    e.preventDefault();
+}, { passive: false });
+
 //Intentional debug logic, keep the if so it can be turned on and off.
 if (false) // removed by dead control flow
 {}
@@ -3531,11 +3737,18 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ 7819
+(module) {
+
+module.exports = [{"id":"UI_JOYSTICK","side":"left","xPos":2.28010543443448,"yPos":8.870374778276286,"width":26.543442822480095,"height":39.361777074746975},{"id":"GC_JUMP","side":"left","xPos":77.95130449018576,"yPos":6.35752988379069,"width":18.549890476299414,"height":32.48455168607836},{"id":"GC_SPIN","side":"left","xPos":71.91969060269491,"yPos":40.010837561300086,"width":24.75001680030655,"height":19.114005927848496},{"id":"GC_TURNLEFT","side":"left","xPos":78.3445523040012,"yPos":65.56221734303266,"width":10.60757683101894,"height":10.033380830029214},{"id":"GC_TURNRIGHT","side":"left","xPos":66.50805270863836,"yPos":65.56239565943238,"width":10.893052465570097,"height":10},{"id":"GC_PAUSE","side":"left","xPos":77.40271192693082,"yPos":88.83235975975585,"width":10,"height":10},{"id":"GC_SYSTEMMENU","side":"left","xPos":87.66887882618045,"yPos":88.86195773473366,"width":10,"height":10},{"id":"GC_TALKKEY","side":"left","xPos":55.771904494367966,"yPos":31.181241196264608,"width":10,"height":10},{"id":"GC_TEAMKEY","side":"left","xPos":66.5833145074579,"yPos":24.83782378182387,"width":10,"height":10},{"id":"GC_FIRE","side":"left","xPos":50.00228770131771,"yPos":20.779424040066772,"width":10,"height":10},{"id":"GC_TOSSFLAG","side":"left","xPos":60.81479520783767,"yPos":13.134786004017101,"width":10,"height":10},{"id":"GC_CONSOLE","side":"left","xPos":68.49959500537611,"yPos":92.77388329099932,"width":8.382255587710468,"height":5},{"id":"UI_SHOW_KEYBOARD","side":"left","xPos":40.206542790023335,"yPos":61.99213960930979,"width":19.76465898237326,"height":10.258081910606219}];
+
+/***/ },
+
 /***/ 7841
 (module, __unused_webpack_exports, __webpack_require__) {
 
 var { KeyNum, KeyName } = __webpack_require__(627);
-var { sendInput, sendJoystick } = __webpack_require__(8897);
+var { sendInput, sendJoystick, keyboardIsActive } = __webpack_require__(8897);
 
 var elements = __webpack_require__(5100);
 
@@ -3662,7 +3875,7 @@ class TouchControlButton {
 
         var touch = null;
         for (var position of touchPositions) {
-            if (this.isCollide(position, elm)) {
+            if (this.isCollide(position, joystickMain)) {
                 touch = position;
                 break;
             }
@@ -3685,15 +3898,13 @@ class TouchControlButton {
             var percent = TouchControlButton.calculatePercentSize(deltaX, deltaY, bounding.width, bounding.height);
             
             this.joystickX = Math.max(-1, Math.min(1, percent.percentX/50));
-            this.joystickY = Math.max(-1, Math.min(1, percent.percentY/50));
+            this.joystickY = -Math.max(-1, Math.min(1, percent.percentY/50));
 
-            var distance = Math.sqrt(this.joystickX*this.joystickX + this.joystickY*this.joystickY);
+            var distance = Math.sqrt(this.joystickX*this.joystickX + (-this.joystickY)*(-this.joystickY));
             if (distance > 1) {
                 this.joystickX /= distance;
                 this.joystickY /= distance;
             }
-
-            sendJoystick(this.joystickX, this.joystickY);
         } else {
             if (processState.touchingJoystick == this.randomId) {
                 processState.touchingJoystick = null;
@@ -3706,15 +3917,18 @@ class TouchControlButton {
         if (this.touch) {
             if (this.touch.touching) {
                 sendJoystick(this.joystickX, this.joystickY);
+                joystickCircle.setAttribute("data-touching", "");
             } else {
                 this.touch = null;
                 this.joystickX = 0;
                 this.joystickY = 0;
+                sendJoystick(this.joystickX, this.joystickY);
                 processState.touchingJoystick = null;
+                joystickCircle.removeAttribute("data-touching");
             }
         }
 
-        joystickCircle.style.top = (50 + this.joystickY*50) + "%";
+        joystickCircle.style.top = (50 + this.joystickY*-50) + "%";
         joystickCircle.style.left = (50 + this.joystickX*50) + "%";
     }
 
@@ -3724,11 +3938,11 @@ class TouchControlButton {
             this.elm.remove();
         }
 
-        if (this.width < 10) {
-            this.width = 10;
+        if (this.width < 0) {
+            this.width = 0;
         }
-        if (this.height < 10) {
-            this.height = 10;
+        if (this.height < 0) {
+            this.height = 0;
         }
 
         this.elm = elements.createElementsFromJSON([
@@ -3742,6 +3956,7 @@ class TouchControlButton {
                     "--button-width": this.width+"%",
                     "--button-height": this.height+"%",
                 },
+                style: (this.isJoystick) ? ({"overflow": "visible !important"}) : ({}),
                 children: [
                     {
                         element: "span",
@@ -3924,7 +4139,9 @@ class TouchControlButton {
         this.resizeJoystick();
         var elm = this.elm;
 
-        //Disabled for testing.
+        if (KeyNum[this.id] == KeyNum.UI_SHOW_KEYBOARD) {
+            this.elm.textContent = keyboardIsActive() ? "Hide touch keyboard" : "Show touch keyboard";
+        }
         if (this.editMode) {
             this.editModeProcess(touchPositions, processState);
             return;
@@ -4241,6 +4458,8 @@ window.cancelAnimationFrame = function (r) {
 (module, __unused_webpack_exports, __webpack_require__) {
 
 var { KeyNum, KeyName } = __webpack_require__(627);
+var { showKeyboard, hideKeyboard, toggleKeyboard, keyboardIsActive } = __webpack_require__(5000);
+var keyState = {};
 
 if (window["Module"]) {
   var Module = window["Module"];
@@ -4250,7 +4469,9 @@ function sendInput(nameid, down) {
     var number = KeyNum[nameid];
 
     if (number == KeyNum.UI_SHOW_KEYBOARD) {
-        //Does nothing for now.
+        if (down) {
+            toggleKeyboard();
+        }
         return;
     }
     if (number == KeyNum.UI_JOYSTICK) {
@@ -4259,8 +4480,12 @@ function sendInput(nameid, down) {
     }
 
     var downNumber = down ? 1 : 0;
+    var downBool = !!down;
 
     if (!Module.ccall) {
+        return;
+    }
+    if (!!keyState[number] == !!downBool) {
         return;
     }
     Module.ccall(
@@ -4269,6 +4494,12 @@ function sendInput(nameid, down) {
         ['number','number'],
         [number, downNumber]
     );
+
+    if (downBool) {
+        keyState[number] = downBool; 
+    } else {
+        delete keyState[number];
+    }
     //window.alert("sent direct action: "+nameid+","+down);
 }
 
@@ -4276,17 +4507,17 @@ function sendJoystick(x,y) {
     if (!Module.ccall) {
         return;
     }
-    Module.ccall(
-        'SRB2_SetAnalogStick',
-        'void',
-        ['number','number'],
-        [Math.round(x*127), Math.round(y*127)]
-    );
+    var range = 0.2;
+    sendInput("GC_FORWARD", y > range);
+    sendInput("GC_BACKWARD", y < -range);
+    sendInput("GC_STRAFELEFT", x < -range);
+    sendInput("GC_STRAFERIGHT", x > range);
 }
 
 module.exports = {
     sendInput,
-    sendJoystick
+    sendJoystick,
+    keyboardIsActive
 }
 
 /***/ },
