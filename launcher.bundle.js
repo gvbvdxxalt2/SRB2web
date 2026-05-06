@@ -1703,15 +1703,14 @@ class SRB2WebNet {
 }
 window.SRB2WebNet = SRB2WebNet;
 
+var SRB2_NetworkReceive = null;
 attach.emitPacket = function (data, id, ip) {
+  if (!SRB2_NetworkReceive) {
+    SRB2_NetworkReceive = Module.cwrap("SRB2_NetworkReceive", "void", ["number", "number", "number", "string"]);
+  }
   var dataPtr = Module._malloc(data.length);
-  Module.HEAPU8.set(data, dataPtr);
-  Module.ccall(
-    "SRB2_NetworkReceive",
-    "void",
-    ["number", "number", "number", "string"],
-    [dataPtr, data.length, +id || 0, ip],
-  );
+  Module.HEAPU8.set(data, sharedBufferPtr);
+  SRB2_NetworkReceive(sharedBufferPtr, data.length, +id || 0, ip);
   Module._free(dataPtr);
 };
 
