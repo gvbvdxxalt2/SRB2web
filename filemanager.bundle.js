@@ -502,7 +502,7 @@ filePathInput.addEventListener("change", function () {
       try {
         refreshFileList();
         console.log("File list loaded successfully at " + currentPath);
-        dialog.alert("Welcome to the file manager!\nRight click on open space to create folders and upload files.\nRight click on files/folders for more options.\nHere is where you can add addons to your SRB2 Web experience, just like you would with a normal SRB2 installation!");
+        dialog.alert("Welcome to the file manager!\nRight click on empty space to create folders and upload files.\nRight click on files/folders for more options.\nHere is where you can add addons to your SRB2 Web experience, just like you would with a normal SRB2 installation!");
       } catch (e) {
         console.error("Refresh failed:", e);
         // Fallback to root if the symlink is being stubborn
