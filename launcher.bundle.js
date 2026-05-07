@@ -3274,9 +3274,12 @@ async function initGame() {
   FS.symlink("/home/web_user/.srb2", "/addons/userdata");
   FS.mount(IDBFS, {}, "/home/web_user");
   FS.syncfs(true, (err) => {
-    //console.log("SyncFS done");
-    //console.log(err);
-    Module.callMain(["-home", "/home/web_user"].concat(Module.arguments));
+    console.log("SyncFS done");
+
+    //Give some breathing room for the sync to complete before starting the game, seems to help with stability on some browsers.
+    setTimeout(() => {
+      Module.callMain(["-home", "/home/web_user"].concat(Module.arguments));
+    },500);
   });
   var isSyncing = false;
   setInterval(() => {
