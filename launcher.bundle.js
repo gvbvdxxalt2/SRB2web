@@ -611,7 +611,12 @@ class ConnectState {
           `[Relay Connection]: Disconnected unexpectedly, reconnecting...`,
         );
         socket.onmessage = () => {};
-        _this.initWebsocket();
+        setTimeout(() => {
+          if (_this.disposed) {
+            return;
+          }
+          _this.initWebsocket();
+        },500);
       }
     };
     socket.binaryType = "arraybuffer";
@@ -1755,6 +1760,9 @@ attach.emitClose = function (id) {
 
 attach.logInSRB2 = function (msg) {
   try {
+    if (!Module.ccall) {
+      return;
+    }
     Module.ccall("SRB2_LOG", "void", ["string"], [msg + "\n"]);
   } catch (e) {}
 };
@@ -1931,6 +1939,7 @@ class ListenState {
     this.connections = {};
     this.address = PLACEHOLDER_IP + ":5029";
     this.isPublic = isPublic;
+    this.disposed = false;
     this.useRTC = !!useRTC;
     this.openSocket();
     this.setUpdateInterval();
@@ -1982,7 +1991,13 @@ class ListenState {
       console.warn(
         `[Relay Connection]: Lost connection, connection might become unstable temporarily. Reconnecting...`,
       );
-      _this.openSocket();
+      attachSRB2.logInSRB2("[RELAY CONNECTION]: Lost connection to relay server, attempting to reconnect...");
+      setTimeout(() => {
+        if (_this.disposed) {
+          return;
+        }
+        _this.openSocket();
+      }, 500);
     };
     this.socket.onmessage = function (event) {
       var json = JSON.parse(event.data);
@@ -2058,6 +2073,7 @@ class ListenState {
       this.socket.close();
     }
     this.socket = null;
+    this.disposed = true;
     this.disconnectAll();
     clearInterval(this.updateInterval);
     attachSRB2.onpacket = null;
