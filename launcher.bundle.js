@@ -578,6 +578,7 @@ class ConnectState {
   }
 
   constructor(wsHost, { address, port }) {
+    this.connect = true;
     this.address = address;
     this.port = port;
 
@@ -753,6 +754,7 @@ module.exports = ConnectState;
 
 var { ConnectState, ListenState } = __webpack_require__(9391);
 var attachSRB2 = __webpack_require__(2052);
+var dialog = __webpack_require__(5925);
 
 var enabled = false;
 var publicEnabled = false;
@@ -863,6 +865,33 @@ async function listPublicGames() {
 
   return publicNetgames;
 }
+
+var isAlerting = false;
+document.addEventListener("visibilitychange", (e) => {
+  if (document.visibilityState == "hidden") {
+    if (!curState) {
+      return;
+    }
+
+    if (isAlerting) { //Don't stack multiple alerts if the user keeps switching back and forth.
+      return;
+    }
+    if (curState.listen) {
+      var promise = dialog.alert("Warning: Switching off this page can cause connection problems on other players, to avoid this, please move the tab onto a portion of your desktop thats always visible.");
+      isAlerting = true;
+      promise.then(() => {
+        isAlerting = false;
+      });
+    }
+    if (curState.connect) {
+      var promise = dialog.alert("Warning: Switching off this page can cause connection problems, to avoid this, please move the tab onto a portion of your desktop thats always visible.");
+      isAlerting = true;
+      promise.then(() => {
+        isAlerting = false;
+      });
+    }
+  }
+});
 
 module.exports = {
   enable,
@@ -1896,6 +1925,7 @@ class ListenState {
   }
 
   constructor(wsHost, isPublic = true, useRTC = false) {
+    this.listen = true;
     this.wsHost = wsHost;
     this.isOpen = false;
     this.connections = {};
