@@ -1268,7 +1268,7 @@ var { getDisplayOptions } = __webpack_require__(1973);
 var { startGame } = __webpack_require__(7063);
 
 async function launchToNetgame(game) {
-  var confirmed = await dialog.confirm(`Launch game to join ${game.name}?`);
+  var confirmed = await dialog.confirm(`Launch game to join "${game.name}"?`);
   if (!confirmed) return;
 
   closePublicList();
