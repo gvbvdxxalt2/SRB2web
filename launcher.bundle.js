@@ -1186,11 +1186,12 @@ function getHostButton(hostClicked) {
           fontSize: "32px",
           alignItems: "center",
           justifyContent: "center",
+          gap: "4px"
         },
         children: [
           {
             element: "img",
-            src: "images/host.svg",
+            src: "images/wifi.svg",
             className: "refreshIcon",
           },
           "Host public netgame",
@@ -1213,6 +1214,7 @@ function getReloadButton(reload) {
           fontSize: "32px",
           alignItems: "center",
           justifyContent: "center",
+          gap: "4px"
         },
         children: [
           {
@@ -1277,26 +1279,25 @@ async function launchToNetgame(game) {
 }
 
 async function launchToHost() {
-  var confirmed = await dialog.confirm(`Launch game to host publicly?`);
+  var confirmed = await dialog.confirm(`Launch game to host public netgame?`);
   if (!confirmed) return;
-
-  var autoStart = await dialog.confirm(`Skip multiplayer menu?`);
 
   closePublicList();
   net.enablePublic();
-  if (autoStart) {
-    startGame({
-      ...getDisplayOptions(),
-      host: true,
-    });
-  } else {
-    startGame(getDisplayOptions());
-  }
+  startGame({
+    ...getDisplayOptions(),
+    host: true,
+  });
 }
 
 function displayPublicGames(games, selectedURL) {
   setBrowsePublicGamesText(games.length);
   publicNetgameBrowser.hidden = false;
+  var gameslist = games.map((game) => {
+        return gameToButton(game, selectedURL, () => {
+          displayPublicGames(games, game.url);
+        });
+      });
   elements.setInnerJSON(
     publicNetgameBrowserLeft,
     [
@@ -1331,11 +1332,19 @@ function displayPublicGames(games, selectedURL) {
         className: "publicGameSeparator",
       },
     ].concat(
-      games.map((game) => {
-        return gameToButton(game, selectedURL, () => {
-          displayPublicGames(games, game.url);
-        });
-      }),
+      gameslist.length > 0 ? gameslist : [
+        {
+          element: "span",
+          textContent: "No active public netgames found.",
+        },
+        {
+          element: "br"
+        },
+        {
+          element: "span",
+          textContent: "Click \"Host public netgame\" to host one yourself! It's simple as one click!"
+        }
+      ],
     ),
   );
 
@@ -1346,7 +1355,17 @@ function displayPublicGames(games, selectedURL) {
       {
         element: "span",
         className: "viewPublicNetgameDetails",
-        textContent: "Click on a netgame to view it's details",
+        children: [
+          {
+            element: "span",
+            textContent: "Select a public netgame on the left to view its details and connect to it!",
+          },
+          { element: "br" },
+          {
+            element: "span",
+            textContent: "Host your own by clicking the \"Host public netgame\" button above! It's simple as one click!",
+          }
+        ]
       },
       getCloseButton(),
     ]);
