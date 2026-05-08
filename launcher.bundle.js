@@ -3213,7 +3213,7 @@ function loadScript() {
   return new Promise((resolve, reject) => {
     loaderContent.textContent = "Loading game script...";
     var script = document.createElement("script");
-    script.src = "srb2.js";
+    script.src = "srb2.js?n=1&v=" + Date.now();
     script.onload = resolve;
     script.onerror = reject;
     document.body.append(script);
