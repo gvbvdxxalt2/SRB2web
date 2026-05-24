@@ -27,6 +27,19 @@ input.addEventListener("input", function (e) {
         type === "insertCompositionText"
     );
 
+  if (type == "deleteContentBackward") {
+            Module.ccall('inject_keycode',
+                null,
+                ['int','int'],
+                [8,false]
+            );
+            Module.ccall('inject_keycode',
+                null,
+                ['int','int'],
+                [8,true]
+            );
+  }
+
     // 3. Fallback: If e.data is null (common on Android), grab the actual character from the input value
     if (isInsert) {
         var textToInject = data;
