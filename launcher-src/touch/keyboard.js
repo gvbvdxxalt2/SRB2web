@@ -22,7 +22,12 @@ input.addEventListener("input", function (e) {
     e.preventDefault();
     e.stopPropagation();
 
-    var isInsert = (type == "insertText" || type == "insertFromPaste" || type == "insertReplacementText");
+    var isInsert = (
+        type === "insertText" || 
+        type === "insertFromPaste" || 
+        type === "insertReplacementText" ||
+        type === "insertCompositionText"
+    );
 
     try {
         if (isInsert && typeof data === "string" && data.length > 0) {
