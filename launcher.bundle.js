@@ -2261,7 +2261,11 @@ if (window["Module"]) {
 var input = document.createElement("input");
 input.type = "text";
 input.className = "touchControlsInput";
-input.value = " "; //Intentionally have a space to detect backspace.
+input.autocomplete = "off";
+input.autocorrect = "off";
+input.autocapitalize = "none"; 
+input.spellcheck = false;
+input.value = "\u200b"; //Intentionally have a space to detect backspace.
 
 input.addEventListener("input", function (e) {
     // 1. Safety checks first
@@ -2320,7 +2324,7 @@ input.addEventListener("input", function (e) {
     }
 
     // 4. Reset the buffer space so backspace detection keeps working
-    input.value = " "; 
+    input.value = "\u200b";
 });
 
 var keyboardActive = false;
