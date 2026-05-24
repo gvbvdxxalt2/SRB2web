@@ -5,23 +5,21 @@ if (window["Module"]) {
 var input = document.createElement("input");
 input.type = "text";
 input.className = "touchControlsInput";
-input.value = " "; //Intentionally have a space to detect deletion.
-document.body.appendChild(input);
+input.value = " "; //Intentionally have a space to detect backspace.
 
 input.addEventListener("input", function (e) {
-    input.value = " ";
-    var data = e.data;
-    var type = e.inputType;
+    // 1. Safety checks first
+    if (!Module.ccall || !keyboardActive) {
+        return;
+    }
 
-    if (!Module.ccall) {
-        return;
-    }
-    if (!keyboardActive) {
-        return;
-    }
     e.preventDefault();
     e.stopPropagation();
 
+    var data = e.data;
+    var type = e.inputType;
+
+    // 2. Expand matching to include composition events used by Samsung/Gboard
     var isInsert = (
         type === "insertText" || 
         type === "insertFromPaste" || 
@@ -29,38 +27,31 @@ input.addEventListener("input", function (e) {
         type === "insertCompositionText"
     );
 
-    try {
+    // 3. Fallback: If e.data is null (common on Android), grab the actual character from the input value
+    if (isInsert) {
         var textToInject = data;
         
         if (!textToInject && input.value.length > 1) {
             // Because you initialized value as " ", any new character makes length 2
             textToInject = input.value.substring(1); 
         }
-      
-        if (isInsert && typeof textToInject === "string" && textToInject.length > 0) {
-            Module.ccall(
-                'inject_text',
-                'void',
-                ['string'],
-                [textToInject]
-            );
-        }
 
-        if (type == "deleteContentBackward") {
-            Module.ccall('inject_keycode',
-                null,
-                ['int','int'],
-                [8,false]
-            );
-            Module.ccall('inject_keycode',
-                null,
-                ['int','int'],
-                [8,true]
-            );
+        try {
+            if (textToInject && textToInject.length > 0) {
+                Module.ccall(
+                    'inject_text',
+                    'void',
+                    ['string'],
+                    [textToInject]
+                );
+            }
+        } catch (err) {
+            console.error("Failed to inject text:", err);
         }
-    } catch (err) {
-        console.error("touch keyboard input failed", err);
     }
+
+    // 4. Reset the buffer space so backspace detection keeps working
+    input.value = " "; 
 });
 
 var keyboardActive = false;
