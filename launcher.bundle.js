@@ -2267,8 +2267,10 @@ input.autocapitalize = "none";
 input.spellcheck = false;
 input.value = "\u200b"; //Intentionally have a space to detect backspace.
 
+
+var lastReadIndex = 1; 
+
 input.addEventListener("input", function (e) {
-    // 1. Safety checks first
     if (!Module.ccall || !keyboardActive) {
         return;
     }
@@ -2276,38 +2278,43 @@ input.addEventListener("input", function (e) {
     e.preventDefault();
     e.stopPropagation();
 
-    var data = e.data;
+    var currentValue = input.value;
     var type = e.inputType;
+
+    var isDelete = (
+        type === "deleteContentBackward" || 
+        currentValue.length === 0 || 
+        currentValue.charAt(0) !== "\u200b" || 
+        currentValue.length < lastReadIndex
+    );
+
+    if (isDelete) {
+        try {
+            // Your custom C++ backspace injection logic (keydown then keyup)
+            Module.ccall('inject_keycode', null, ['int', 'int'], [8, false]);
+            Module.ccall('inject_keycode', null, ['int', 'int'], [8, true]);
+        } catch (err) {
+            console.error("Failed to inject backspace:", err);
+        }
+        
+        // Fully restore the anchor and reset tracking indices safely
+        input.value = "\u200b";
+        lastReadIndex = 1;
+        return; // Exit early since we handled the deletion
+    }
 
     // 2. Expand matching to include composition events used by Samsung/Gboard
     var isInsert = (
         type === "insertText" || 
         type === "insertFromPaste" || 
         type === "insertReplacementText" ||
-        type === "insertCompositionText"
+        type === "insertCompositionText" ||
+        currentValue.length > lastReadIndex // Fallback if inputType is missing but text grew
     );
 
-  if (type == "deleteContentBackward") {
-            Module.ccall('inject_keycode',
-                null,
-                ['int','int'],
-                [8,false]
-            );
-            Module.ccall('inject_keycode',
-                null,
-                ['int','int'],
-                [8,true]
-            );
-  }
-
-    // 3. Fallback: If e.data is null (common on Android), grab the actual character from the input value
     if (isInsert) {
-        var textToInject = data;
-        
-        if (!textToInject && input.value.length > 1) {
-            // Because you initialized value as " ", any new character makes length 2
-            textToInject = input.value.substring(1); 
-        }
+        // Extract only the fresh characters typed since our last execution loop
+        var textToInject = currentValue.substring(lastReadIndex);
 
         try {
             if (textToInject && textToInject.length > 0) {
@@ -2321,12 +2328,19 @@ input.addEventListener("input", function (e) {
         } catch (err) {
             console.error("Failed to inject text:", err);
         }
+
+        // Lock in our new reading position
+        lastReadIndex = currentValue.length;
     }
 
-    // 4. Reset the buffer space so backspace detection keeps working
-    input.value = "\u200b";
+    if (currentValue.length > 30) {
+        var keepLength = 10; 
+        var preservedText = currentValue.substring(currentValue.length - keepLength);
+        
+        input.value = "\u200b" + preservedText;
+        lastReadIndex = input.value.length;
+    }
 });
-
 var keyboardActive = false;
 
 input.addEventListener("focus", () => {keyboardActive = true;});
