@@ -30,12 +30,19 @@ input.addEventListener("input", function (e) {
     );
 
     try {
-        if (isInsert && typeof data === "string" && data.length > 0) {
+        var textToInject = data;
+        
+        if (!textToInject && input.value.length > 1) {
+            // Because you initialized value as " ", any new character makes length 2
+            textToInject = input.value.substring(1); 
+        }
+      
+        if (isInsert && typeof textToInject === "string" && textToInject.length > 0) {
             Module.ccall(
                 'inject_text',
                 'void',
                 ['string'],
-                [data]
+                [textToInject]
             );
         }
 
