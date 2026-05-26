@@ -108,6 +108,31 @@ input.addEventListener("input", function (e) {
     }
 });
 
+// SAMSUNG/GBOARD FIX: Add keydown listener specifically for Enter key
+// This ensures Enter is detected even when inputType doesn't fire reliably on Samsung Galaxy
+input.addEventListener("keydown", function (e) {
+    if (!Module.ccall || !keyboardActive) {
+        return;
+    }
+
+    // Check for Enter key (keyCode 13 or key === "Enter")
+    if (e.keyCode === 13 || e.key === "Enter") {
+        try {
+            Module.ccall('inject_keycode', null, ['int', 'int'], [13, false]); // keydown
+            Module.ccall('inject_keycode', null, ['int', 'int'], [13, true]);  // keyup
+        } catch (err) {
+            console.error("Failed to inject enter via keydown:", err);
+        }
+
+        // Reset input state
+        input.value = "\u200b";
+        lastReadIndex = 1;
+
+        e.preventDefault();
+        e.stopPropagation();
+    }
+});
+
 var keyboardActive = false;
 
 input.addEventListener("focus", () => {keyboardActive = true;});
