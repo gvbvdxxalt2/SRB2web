@@ -2442,7 +2442,7 @@ function activateKeyboardChecks() {
         // Show keyboard by default since we're in touch mode
         if (!state) {
             state = true;
-            showKeyboard();
+            //don't show because this keeps the keyboard opening even if you're trying to play the game            //showKeyboard();
         }
     }, 1000/30);
 }
