@@ -2337,7 +2337,8 @@ input.addEventListener("input", function (e) {
 
     if (isInsert) {
         // Extract only the fresh characters typed since our last execution loop
-        var textToInject = currentValue.substring(lastReadIndex);
+        // Skip the zero-width anchor character at position 0
+        var textToInject = currentValue.substring(Math.max(1, lastReadIndex));
 
         try {
             if (textToInject && textToInject.length > 0) {
