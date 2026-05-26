@@ -2282,9 +2282,6 @@ input.addEventListener("input", function (e) {
         return;
     }
 
-    e.preventDefault();
-    e.stopPropagation();
-
     var currentValue = input.value;
     var type = e.inputType;
 
@@ -2307,6 +2304,8 @@ input.addEventListener("input", function (e) {
         // Fully restore the anchor and reset tracking indices safely
         input.value = "\u200b";
         lastReadIndex = 1;
+        e.preventDefault();
+        e.stopPropagation();
         return; // Exit early since we handled the deletion
     }
 
@@ -2322,6 +2321,8 @@ input.addEventListener("input", function (e) {
         
         input.value = "\u200b";
         lastReadIndex = 1;
+        e.preventDefault();
+        e.stopPropagation();
         return;
     }
 
@@ -2353,6 +2354,8 @@ input.addEventListener("input", function (e) {
 
         // Lock in our new reading position
         lastReadIndex = currentValue.length;
+        e.preventDefault();
+        e.stopPropagation();
     }
 
     if (currentValue.length > 30) {
