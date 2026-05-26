@@ -2264,6 +2264,7 @@ input.className = "touchControlsInput";
 input.autocomplete = "off";
 input.autocorrect = "off";
 input.autocapitalize = "none"; 
+input.inputMode = "text";
 input.spellcheck = false;
 input.value = "\u200b"; //Intentionally have a space to detect backspace.
 
@@ -2273,8 +2274,6 @@ document.body.appendChild(input);
 input.style.position = "absolute";
 input.style.opacity = "0";
 input.style.pointerEvents = "none";
-input.style.width = "0";
-input.style.height = "0";
 
 var lastReadIndex = 1; 
 
@@ -2377,11 +2376,15 @@ function showKeyboard() {
     focusLoop = setInterval(() => {
         try{
             input.focus();
-        }catch(e){}
+        }catch(e){
+            console.error("Failed to focus keyboard input in focus loop:", e);
+        }
     },100);
     try{
         input.focus();
-    }catch(e){}
+    }catch(e){
+        console.error("Failed initial focus for keyboard input:", e);
+    }
 }
 
 function hideKeyboard() {
@@ -2432,6 +2435,13 @@ if (document.readyState === 'loading') {
 } else {
     activateKeyboardChecks();
 }
+
+document.addEventListener("click", function() {
+    var isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    if (isTouchDevice && !keyboardActive) {
+        showKeyboard();
+    }
+});
 
 module.exports = {
     showKeyboard,
