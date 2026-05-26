@@ -2267,6 +2267,14 @@ input.autocapitalize = "none";
 input.spellcheck = false;
 input.value = "\u200b"; //Intentionally have a space to detect backspace.
 
+// APPEND INPUT TO DOM SO IT CAN RECEIVE FOCUS
+document.body.appendChild(input);
+// Hide it visually but keep it functional
+input.style.position = "absolute";
+input.style.opacity = "0";
+input.style.pointerEvents = "none";
+input.style.width = "0";
+input.style.height = "0";
 
 var lastReadIndex = 1; 
 
@@ -2301,6 +2309,21 @@ input.addEventListener("input", function (e) {
         input.value = "\u200b";
         lastReadIndex = 1;
         return; // Exit early since we handled the deletion
+    }
+
+    // Handle Enter key - keyCode 13
+    var isEnter = (type === "insertLineBreak");
+    if (isEnter) {
+        try {
+            Module.ccall('inject_keycode', null, ['int', 'int'], [13, false]); // keydown
+            Module.ccall('inject_keycode', null, ['int', 'int'], [13, true]);  // keyup
+        } catch (err) {
+            console.error("Failed to inject enter:", err);
+        }
+        
+        input.value = "\u200b";
+        lastReadIndex = 1;
+        return;
     }
 
     // 2. Expand matching to include composition events used by Samsung/Gboard
@@ -2341,6 +2364,7 @@ input.addEventListener("input", function (e) {
         lastReadIndex = input.value.length;
     }
 });
+
 var keyboardActive = false;
 
 input.addEventListener("focus", () => {keyboardActive = true;});
@@ -2387,20 +2411,26 @@ function activateKeyboardChecks() {
         if (!Module.ccall) {
             return;
         }
-        /*var needs = Module.ccall('SRB2_KeyboardNeeded', 'boolean', [], []);
-        if (needs && !state) {
+        // Show keyboard by default since we're in touch mode
+        if (!state) {
             state = true;
             showKeyboard();
-        } else if (!needs && state) {
-            state = false;
-            hideKeyboard();
-        }*/
+        }
     }, 1000/30);
 }
 
 function deactivateKeyboardChecks() {
     clearInterval(checkInterval);
     hideKeyboard();
+}
+
+// INITIALIZE ON PAGE LOAD - This was missing!
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        activateKeyboardChecks();
+    });
+} else {
+    activateKeyboardChecks();
 }
 
 module.exports = {
