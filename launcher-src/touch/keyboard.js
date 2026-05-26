@@ -21,6 +21,17 @@ input.style.pointerEvents = "none";
 
 var lastReadIndex = 1; 
 
+function injectSafer(content) {
+ for (var char of content) { //calling more than one character might crash the game, so this might be a good fix.
+   Module.ccall(
+                    'inject_text',
+                    'void',
+                    ['string'],
+                    [char]
+                );
+ }
+}
+
 input.addEventListener("input", function (e) {
     if (!Module.ccall || !keyboardActive) {
         return;
@@ -86,12 +97,7 @@ input.addEventListener("input", function (e) {
 
         try {
             if (textToInject && textToInject.length > 0) {
-                Module.ccall(
-                    'inject_text',
-                    'void',
-                    ['string'],
-                    [textToInject]
-                );
+              injectSafer(textToInject);
             }
         } catch (err) {
             console.error("Failed to inject text:", err);
