@@ -205,12 +205,13 @@ if (document.readyState === 'loading') {
     activateKeyboardChecks();
 }
 
-document.addEventListener("click", function() {
+//Coommented out since the touch button does that.
+/*document.addEventListener("click", function() {
     var isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
     if (isTouchDevice && !keyboardActive) {
         showKeyboard();
     }
-});
+});*/
 
 module.exports = {
     showKeyboard,
