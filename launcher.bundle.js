@@ -3567,12 +3567,10 @@ window.StartedMainLoopCallback = function () {
   // Add mousemove listener for manual mouse delta handling
   document.addEventListener("mousemove", (e) => {
     if (document.pointerLockElement === gameCanvas) {
-      Module.ccall(
-        "SRB2_AddMouseDelta",
-        "void",
-        ["number", "number"],
-        [Math.round(e.movementX), Math.round(e.movementY)],
-      );
+      Module.ccall("SRB2_AddMouseDelta", "void", ["number", "number"], [
+        Math.round(e.movementX),
+        Math.round(e.movementY),
+      ]);
     }
   });
 
@@ -3766,16 +3764,6 @@ setInterval(() => {
     }
   }
 }, 1000 / 55);
-gameCanvas.addEventListener(
-  "mousemove",
-  (e) => {
-    if (document.pointerLockElement === gameCanvas) {
-      mouseMoveX += e.movementX;
-      mouseMoveY += e.movementY;
-    }
-  },
-  true,
-);
 window.addEventListener(
   "load",
   (_) => {
