@@ -2120,21 +2120,15 @@ void EMSCRIPTEN_KEEPALIVE unlock_mouse(void)
 
 void EMSCRIPTEN_KEEPALIVE SRB2_AddMouseDelta(int dx, int dy)
 {
-	mousemovex += dx;
-	mousemovey += dy;
 	SDL_SetWindowGrab(window, SDL_TRUE);
 
 	event_t event;
-	int wwidth, wheight;
-	SDL_GetWindowSize(window, &wwidth, &wheight);
 	//SDL_memset(&event, 0, sizeof(event_t));
 	event.type = ev_mouse;
 	event.key = 0;
-	event.x = (INT32)lround(mousemovex * ((float)wwidth / (float)realwidth));
-	event.y = (INT32)lround(mousemovey * ((float)wheight / (float)realheight));
+	event.x = dx;
+	event.y = dy;
 	D_PostEvent(&event);
-	mousemovex = 0;
-	mousemovey = 0;
 }
 
 void EMSCRIPTEN_KEEPALIVE mouse_button_down(int button)

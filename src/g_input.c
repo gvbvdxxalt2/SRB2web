@@ -156,8 +156,8 @@ void G_MapEventsToControls(event_t *ev)
 			break;
 
 		case ev_mouse: // buttons are virtual keys
-			mouse.rdx = ev->x;
-			mouse.rdy = ev->y;
+			mouse.rdx += ev->x;
+			mouse.rdy += ev->y;
 			break;
 
 		case ev_joystick: // buttons are virtual keys
@@ -179,8 +179,8 @@ void G_MapEventsToControls(event_t *ev)
 		case ev_mouse2: // buttons are virtual keys
 			if (menuactive || CON_Ready() || chat_on)
 				break;
-			mouse2.rdx = ev->x;
-			mouse2.rdy = ev->y;
+			mouse2.rdx += ev->x;
+			mouse2.rdy += ev->y;
 			break;
 
 		default:

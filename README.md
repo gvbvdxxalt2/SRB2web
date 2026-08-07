@@ -35,7 +35,7 @@ Below are the instructions for compiling the Sonic Robo Blast 2 (SRB2) WASM file
 
 #### Executing on Windows
 
-> **Note:** Windows hasn't been tested yet. If it is having issues, try using [Github codespaces](https://github.com/codespaces) to compile.
+> **Note:** Windows hasn't been tested yet. If it is having issues, try using [Github codespaces](https://github.com/codespaces) or WSL to compile.
 
 1. Open the **Command Prompt** (`cmd.exe`).
 2. Navigate to your source directory:
