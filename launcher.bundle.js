@@ -2023,7 +2023,15 @@ class ListenState {
 
       if (json.method == "listening") {
         _this.address = json.url;
-        attachSRB2.logInSRB2("[RELAY CONNECTION]: Now active on: " + json.url);
+        if (!_this.isPublic) {
+          setTimeout(() => {
+            attachSRB2.logInSRB2("[NOTICE]: This is a private netgame session. Enter the following netgame IP in the multiplayer menu to connect: " + json.url);
+          }, 100); //Short delay to put in front of the logs in srb2 when starting.
+        } else {
+          setTimeout(() => {
+            attachSRB2.logInSRB2("[RELAY CONNECTION]: Now active on: " + json.url);
+          }, 100); //Short delay to put in front of the logs in srb2 when starting.
+        }
       }
 
       if (json.method == "incoming") {
