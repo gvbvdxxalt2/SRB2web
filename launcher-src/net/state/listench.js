@@ -4,10 +4,11 @@ var attachSRB2 = require("../attach.js");
 var SimplePeer = require("simple-peer");
 
 class ListenChannel {
-  constructor(parent, id, ip, rtcConfig) {
+  constructor(parent, id, ip, rtcConfig, rtcId) {
     this.parent = parent;
     this.id = id;
     this.ip = ip;
+    this.rid = rtcId;
     this.rtcConfig = rtcConfig;
 
     this.isOpen = false;
