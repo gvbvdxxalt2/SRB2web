@@ -1665,8 +1665,8 @@ module.exports = [
 
 var elements = __webpack_require__(5100);
 
-var resizeModeSelect = elements.getGPId("resizeModeSelect");
-var resizeModes = ["safe", "force"];
+//var resizeModeSelect = elements.getGPId("resizeModeSelect");
+//var resizeModes = ["safe", "force"];
 
 function getSafeValue(elm,safeValues) {
     var val = ""+elm.value;
@@ -1678,7 +1678,7 @@ function getSafeValue(elm,safeValues) {
 
 function getDisplayOptions() {
     return {
-        resolutionChangeMethod: getSafeValue(resizeModeSelect, resizeModes)
+        //resolutionChangeMethod: getSafeValue(resizeModeSelect, resizeModes)
     };
 }
 
@@ -1701,7 +1701,7 @@ function addLocalStorageHandler(elm, id) {
     });
 }
 
-addLocalStorageHandler(resizeModeSelect, "srb2web-resize-mode-select");
+//addLocalStorageHandler(resizeModeSelect, "srb2web-resize-mode-select");
 
 module.exports = {
     getDisplayOptions
@@ -1884,14 +1884,14 @@ module.exports = [
 
             /////////////////////////////////////
 
-            {
+            /*{
                 element: "span",
                 textContent: "If your game is crashing, try changing these options:"
-            },
+            },/*
 
             /////////////////////////////////////
-
-            {
+            
+            /*{
                 element: "div",
                 className: "displayOption",
                 children: [
@@ -1919,7 +1919,7 @@ module.exports = [
                         ]
                     }
                 ]
-            },
+            },*/
 
             /////////////////////////////////////
             //Button to open touch controls to move and customize them.
