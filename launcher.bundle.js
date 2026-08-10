@@ -1868,35 +1868,45 @@ class ListenState {
     this.isPublic = isPublic;
     this.disposed = false;
     this.rtcConfig = null;
+    this.rtcConnections = {};
     this.prepareSocket();
     this.setUpdateInterval();
   }
 
   attachConnection(code, id, ip) {
+    var rtcId = 1;
+    while (this.rtcConnections[rtcId]) {
+      rtcId += 1;
+    }
     var ch = new ListenChannel(
       this,
       id,
       ip,
-      this.rtcConfig
+      this.rtcConfig,
+      rtcId
     );
+    //window.alert("Connection request: "+id);
+    this.rtcConnections[rtcId] = ch;
     this.connections[id] = ch;
     var _this = this;
 
     ch.requestDispose = () => {
       ch.dispose();
       delete _this.connections[id];
-      attachSRB2.emitClose(id);
+      delete _this.rtcConnections[rtcId];
+      attachSRB2.emitClose(rtcId);
     };
 
     ch.ondata = (data) => {
-      attachSRB2.emitPacket(new Uint8Array(data), id, ip);
+      attachSRB2.emitPacket(new Uint8Array(data), rtcId, ip);
     };
   }
 
   disconnectAll() {
-    for (var id of Object.keys(this.connections)) {
-      this.connections[id].requestDispose();
+    for (var id of Object.keys(this.rtcConnections)) {
+      this.rtcConnections[id].requestDispose();
     }
+    
   }
 
   prepareSocket() {
@@ -1995,8 +2005,8 @@ class ListenState {
     };
   }
 
-  handleSRB2Send(data, id) {
-    var ch = this.connections[id];
+  handleSRB2Send(data, rid) {
+    var ch = this.rtcConnections[rid];
     if (!ch) {
       return;
     }
@@ -3051,10 +3061,11 @@ var attachSRB2 = __webpack_require__(2052);
 var SimplePeer = __webpack_require__(1770);
 
 class ListenChannel {
-  constructor(parent, id, ip, rtcConfig) {
+  constructor(parent, id, ip, rtcConfig, rtcId) {
     this.parent = parent;
     this.id = id;
     this.ip = ip;
+    this.rid = rtcId;
     this.rtcConfig = rtcConfig;
 
     this.isOpen = false;
