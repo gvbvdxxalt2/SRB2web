@@ -17,6 +17,7 @@ module.exports = [
       ////////////////////////////////////////////
 
       ...__webpack_require__(9766),
+      ...__webpack_require__(4305),
       ...__webpack_require__(7496),
 
       ////////////////////////////////////////////
@@ -321,7 +322,7 @@ module.exports = {
 /***/ 492
 (module) {
 
-module.exports = "body {\n  background: #000000;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  height: 100dvh;\n  width: 100dvw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/title-bg.png\") center/cover no-repeat;\n  pointer-events: none;\n  image-rendering: pixelated;\n  filter: brightness(0.6);\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100dvh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100dvw;\n  height: 100dvh;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n}\n\n.sectionHeader {\n  display: block;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: column;\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n}\n\n.relayHostClickable:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayPublicCount {\n  font-size: 14px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n  z-index: 99999999;\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100dvh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}\n\n.publicNetgameBrowserContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.5);\n}\n\n.publicNetgameBrowserDialog {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: calc(100% - 150px);\n  height: calc(100dvh - 150px);\n  min-width: 640px;\n  min-height: 360px;\n  border-radius: 3px;\n  background: rgba(255,255,255,1);\n  display: flex;\n  flex-direction: row;\n}\n\n.publicNetgameBrowserLeft {\n  display: flex;\n  flex-direction: column;\n  min-width: 200px;\n  width: calc(100% - 450px);\n  max-width: 300px;\n  border-right: 2px solid rgba(0,0,0,0.3);\n  box-sizing: border-box;\n  flex-shrink: 0;\n  flex-grow: 0;\n  gap: 3px;\n  overflow: auto;\n}\n\n.publicNetgameItem {\n  width: 100%;\n  box-sizing: border-box;\n  height: fit-content;\n  min-height: 50px;\n  padding: 5px 5px;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 4px;\n  flex-shrink: 0;\n}\n\n.publicNetgameItem:hover {\n  background: rgba(0,0,0,0.7);\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.publicNetgameItem[viewing] {\n  text-decoration: underline;\n  cursor: unset;\n}\n\n.publicGameSeparator {\n  width: 100%;\n  height: 0px;\n  margin-top: 3px;\n  margin-bottom: 3px;\n  border-bottom-color: black;\n  border-bottom-style: dashed;\n  border-bottom-width: 2px;\n  box-sizing: border-box;\n}\n\n.publicNetgameBrowserRight {\n  display: block;\n  flex-grow: 1;\n  position: relative;\n}\n\n.publicNetgameBrowserCloseButton {\n  position: absolute;\n  top: 0;\n  right: 0;\n  font-size: 30px;\n}\n\n.viewPublicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  padding: 5px 5px;\n  border-radius: 3px;\n}\n\n.publicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 100%;\n  height: 100%;\n  padding: 10px 10px;\n  box-sizing: border-box;\n}\n\n.refreshIcon {\n  width: 32px;\n  height: 32px;\n}\n\n.netgameServerName {\n  font-size: 30px;\n}\n\n.netgameServerURL {\n  font-size: 16px;\n  margin-left: 5px;\n  font-family: arial;\n}\n\n.netgameCommunicationType {\n  width: 25px;\n  height: 25px;\n  object-fit: contain;\n  padding: 5px 5px;\n  border-radius: 3px;\n  background: rgba(255,255,255,0.4);\n}\n\n.netgameLoadingListsContainer {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,1);\n  border-radius: 4px;\n  font-size: 20px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n  gap: 8px;\n}\n\n.netgameLoadingListsImg {\n  width: 30px;\n  height: 30px;\n}\n\n\n.dontSellText {\n  color: rgb(196, 0, 0);\n  font-size: 35px;\n}\n\n.displayOption {\n  display: flex;\n  align-items: center;\n  gap: 2px;\n}\n\n.selectOptions {\n  all: unset;\n  display: block;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  color: black;\n  background: rgba(255,255,255,0.7);\n  appearance: auto;\n  border-radius: 5px;\n}\n\n.touchControlPosition[data-position=\"left\"] {\n  position: fixed;\n  left: var(--button-x);\n  bottom: var(--button-y);\n  will-change: left, right, bottom;\n  contain: layout paint; \n  user-select: none;\n  -webkit-user-select: none;\n}\n\n.touchControlPosition[data-position=\"right\"] {\n  position: fixed;\n  right: var(--button-x);\n  bottom: var(--button-y);\n  will-change: left, right, bottom;\n  contain: layout paint; \n  user-select: none;\n  -webkit-user-select: none;\n}\n\n.touchControlBox {\n  background: rgba(255,255,255,1);\n  border-radius: 0px;\n  border-width: 0.5vmin;\n  border-color: rgba(0,0,0,1);\n  border-style: solid;\n  width: 2vmin;\n  height: 2vmin;\n  transform: translate(-50%, 50%);\n}\n.touchControlBox[data-position=\"left\"]  {\n  position: fixed;\n  bottom: var(--button-y);\n  left: calc(calc(var(--button-x) + var(--button-width)));\n}\n\n.touchControlDeleteBox {\n  background: rgb(255, 0, 0);\n  border-radius: 0px;\n  border-width: 0.5vmin;\n  border-color: rgba(0,0,0,1);\n  border-style: solid;\n  width: 2vmin;\n  height: 2vmin;\n  transform: translate(-50%, 50%);\n}\n.touchControlDeleteBox[data-position=\"left\"]  {\n  position: fixed;\n  bottom: calc(var(--button-y));\n  left: var(--button-x);\n}\n\n.touchActionButton {\n  all: unset;\n  position: absolute;\n  width: var(--button-width);\n  height: var(--button-height);\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  cursor: not-allowed;\n  font-size: 4vmin;\n  box-sizing: border-box;\n  padding: 3vmin 3vmin;\n  /* The actual touch events are handled by the JavaScript collision tests */\n  overflow: hidden;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  user-select: none;\n}\n.touchActionButton[data-touching] {\n  background: rgba(255,255,255,0.8);\n}\n\n.blackDialogBG {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.8);\n}\n\n.whiteDialogBox {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(255,255,255,1);\n  color: rgba(0,0,0,1);\n  padding: 10px 10px;\n  box-sizing: border-box;\n  border-radius: 5px;\n}\n\n.touchControlsDialog {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n}\n.touchControlsDialogTitle {\n  font-size: 7vmin;\n  color: rgba(255,255,255,1);\n}\n\n.touchControlsDialogButton {\n  all: unset;\n  background: rgba(255,255,255,0.8);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  font-size: 4vmin;\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 1vmin 1vmin;\n}\n\n.touchControlsDialogButton:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.touchControlsDialogRedButton {\n  background: rgba(255,50,0,0.8);\n}\n.touchControlsDialogGreenButton {\n  background: rgba(4, 255, 0, 0.8);\n}\n\n.touchControlDialogEditButtons {\n  position: relative;\n  display: flex;\n  flex-direction: row;\n}\n\n.touchControlsDialogTip {\n  color: rgb(255, 0, 0);\n  font-size: 4vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsDialogTip2 {\n  color: rgba(255,255,255,1);\n  font-size: 3.5vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  /*width: 100%;\n  height: 100dvh;*/\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsAddDropdownContainer {\n  position: relative;\n  width: 0px;\n  height: 0px;\n}\n.touchControlsAddDropdown {\n  text-decoration: unset;\n  position: absolute;\n  top: 0;\n  left: 0;\n  transform: translate(0, 6vmin);\n  width: 50vmin;\n  max-height: 40vmin;\n  z-index: 99999;\n  background: rgba(255,255,255,0.9);\n  border-radius: 0.5vmin;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2vmin;\n  padding: 0.2vmin 0.2vmin;\n  overflow: auto;\n}\n\n.touchControlsAddDropdown > .option {\n  all: unset;\n  padding: 1vmin 1vmin;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 0.5vmin;\n  font-size: 3vmin;\n}\n.touchControlsAddDropdown > .option:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n.touchControlsEditButtonsSpacing {\n  all: unset;\n  margin-left: 0.5vmin;\n}\n\n.touchControlsContent {\n  position: fixed;\n  top: 0;\n  left: 50%;\n  transform: translate(-50%, 0);\n  display: flex;\n  align-items: center;\n  flex-direction: column;\n  text-align: center;\n}\n\n.touchControlsJoystickContainer {\n  display: block;\n  width: var(--button-width);\n  height: var(--button-height);\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsJoystick {\n  display: block;\n  width: var(--joystick-size);\n  height: var(--joystick-size);\n  background: rgba(255,255,255,0.3);\n  border-radius: 50%;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsJoystickCircle {\n  display: block;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 50%;\n  height: 50%;\n  background: rgba(0,0,255,0.4);\n  border-radius: 50%;\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsJoystickCircle[data-touching] {\n  background: rgba(0,0,255,0.7);\n}\n\n.touchControlsInput {\n  all: unset;\n  position: fixed;\n  top: -100px;\n  left: -100px;\n  background: rgba(0,0,0,0);\n  color: rgba(0,0,0,0);\n  width: 1px;\n  height: 10px;\n  opacity: 0;\n  user-select: none;\n}";
+module.exports = "body {\n  background: #000000;\n  font-family: PixelFont, Arial, sans-serif;\n  letter-spacing: 1px;\n  margin: 0;\n  padding: 0;\n  height: 100dvh;\n  width: 100dvw;\n  overflow-x: auto;\n  overflow-y: auto;\n}\n\n.sep {\n  width: 100%;\n  height: 10px;\n  margin-bottom: 10px;\n  border-bottom-style: solid;\n  border-bottom-width: 2px;\n  border-bottom-color: rgb(0, 110, 255);\n}\n\na {\n  all: unset;\n  color: #00ffff;\n  text-decoration: none;\n}\na:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.srb2BG {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  background: url(\"images/title-bg.png\") center/cover no-repeat;\n  pointer-events: none;\n  image-rendering: pixelated;\n  filter: brightness(0.6);\n}\n\n.launcherMain {\n  min-width: 600px;\n  width: calc(100vw - 400px);\n  height: calc(100dvh - 0px);\n  padding: 10px 10px;\n  box-sizing: border-box;\n\n  position: absolute;\n  left: 50%;\n  top: 0px;\n  transform: translate(-50%, 0px);\n\n  background: rgba(0, 0, 0, 0.619);\n  color: #ffffff;\n  border-radius: 1px;\n  overflow: auto;\n}\n\n.button {\n  all: unset;\n  padding: 5px 5px;\n  background: rgba(0, 0, 0, 0.5);\n  color: #ffffff;\n  border-radius: 3px;\n}\n\n.button:hover {\n  background: rgba(117, 117, 117, 0.5);\n  cursor: pointer;\n}\n\n.playButton {\n  font-size: 30px;\n  background: rgba(9, 255, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n\n  gap: 10;\n}\n\n.playButton:hover {\n  background: rgba(9, 255, 0, 0.7);\n}\n\n.fsButton {\n  font-size: 30px;\n  background: rgba(255, 157, 0, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.fsButton:hover {\n  background: rgba(255, 157, 0, 0.7);\n}\n\n.browseButton {\n  font-size: 30px;\n  background: rgba(174, 0, 255, 0.5);\n  width: 100%;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  gap: 10;\n}\n\n.browseButton:hover {\n  background: rgba(174, 0, 255, 0.7);\n}\n\n.gameCanvas {\n  background: black;\n  width: 100dvw;\n  height: 100dvh;\n  position: fixed;\n  top: 0;\n  left: 0;\n  image-rendering: pixelated;\n  object-fit: fill;\n}\n\n.sectionHeader {\n  display: block;\n  font-size: 30px;\n  margin-bottom: 10px;\n}\n\n.loaderMain {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: column;\n}\n\n.relayConfig {\n  width: calc(100% - 0px);\n  height: fit-content;\n  max-height: 200px;\n  min-height: 100px;\n  box-sizing: border-box;\n  padding: 2px;\n  color: #ffffff;\n  border-radius: 0px;\n  border-style: solid;\n  border-width: 2px;\n  border-color: rgba(0, 38, 255, 0.747);\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.noRelayContainer {\n}\n\n.noRelayText {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n\n  color: rgba(255, 255, 255, 1);\n}\n\n.configuredRelay {\n  width: 100%;\n  min-height: 100px;\n  box-sizing: border-box;\n  color: #ffffff;\n  background: rgba(255, 255, 255, 0.2);\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  padding: 5px;\n  flex-shrink: 0;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.configuredRelay[used] {\n  background: rgba(255, 255, 255, 0.4);\n}\n\n.relayName {\n  font-size: 20px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayHost {\n  margin-left: auto;\n  font-size: 10px;\n  font-style: italic;\n  color: rgb(0, 110, 255);\n  user-select: none;\n}\n\n.relayHostClickable:hover {\n  cursor: pointer;\n  text-decoration: underline;\n}\n\n.relayStatus {\n  display: flex;\n  gap: 3px;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  width: 50px;\n  height: 50px;\n}\n\n.relayStatusText {\n  color: rgb(255, 255, 255);\n  font-size: 10px;\n  text-align: center;\n}\n.relayStatusText[state=\"offline\"] {\n  color: rgb(255, 0, 0);\n}\n.relayStatusText[state=\"online\"] {\n  color: rgb(0, 255, 0);\n}\n\n.relayStatusImg {\n  width: 28px;\n  height: 28px;\n  image-rendering: pixelated;\n}\n\n.relayDescription {\n  font-size: 10px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayPublicCount {\n  font-size: 14px;\n  white-space: pre;\n  padding-left: 5px;\n  overflow: wrap;\n  text-wrap: wrap;\n}\n\n.relayButtons {\n  margin-top: 2px;\n  display: block;\n}\n\n.relayButtons > .button {\n  margin: 1px 1px;\n}\n\n:root {\n  --popup-dialog-font: Arial, sans-serif;\n  --popup-dialog-background: #fff;\n  --popup-dialog-border-radius: 10px;\n  --popup-dialog-text-color: #000;\n  --popup-dialog-button-background: #5985ff;\n  --popup-dialog-button-hover-background: #4275ff;\n  --popup-dialog-button-text-color: #fff;\n  --popup-dialog-button-radius: 5px;\n  --popup-dialog-input-background: #fff;\n  --popup-dialog-input-border-width: 1.5px;\n  --popup-dialog-input-border-color: #bababa;\n  --popup-dialog-input-text-color: #000;\n  --popup-dialog-message-size: 16px;\n}\n\n.windowDialogContainer {\n  font-family: var(--popup-dialog-font);\n  z-index: 99999999;\n}\n\n.windowDialogBackground {\n  background-color: black;\n  backdrop-filter: blur(2px);\n}\n\n.windowDialogBox {\n  background: var(--popup-dialog-background);\n  border-radius: var(--popup-dialog-border-radius);\n  color: var(--popup-dialog-text-color);\n}\n\n.windowDialogButton {\n  background: var(--popup-dialog-button-background);\n  color: var(--popup-dialog-button-text-color);\n  border-radius: var(--popup-dialog-button-radius);\n  padding: 4px 8px;\n  border: none;\n  cursor: pointer;\n}\n\n.windowDialogButton:hover {\n  background: var(--popup-dialog-button-hover-background);\n}\n\n.windowDialogInput {\n  background: var(--popup-dialog-input-background);\n  border: var(--popup-dialog-input-border-width) solid\n    var(--popup-dialog-input-border-color);\n  color: var(--popup-dialog-input-text-color);\n  outline: none;\n  border-radius: 4px;\n  padding: 4px;\n}\n\n.windowDialogHeader {\n  font-weight: bold;\n  font-size: var(--popup-dialog-message-size);\n}\n\n.logsContainer {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100dvh;\n    background: hsl(0, 0%, 13%);\n    color: #adadad;\n    font-family: monospace;\n    font-size: 14px;\n    overflow: auto;\n    box-sizing: border-box;\n    padding: 2px;\n    z-index: 1500;\n}\n\n.publicNetgameBrowserContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.5);\n}\n\n.publicNetgameBrowserDialog {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: calc(100% - 150px);\n  height: calc(100dvh - 150px);\n  min-width: 640px;\n  min-height: 360px;\n  border-radius: 3px;\n  background: rgba(255,255,255,1);\n  display: flex;\n  flex-direction: row;\n}\n\n.publicNetgameBrowserLeft {\n  display: flex;\n  flex-direction: column;\n  min-width: 200px;\n  width: calc(100% - 450px);\n  max-width: 300px;\n  border-right: 2px solid rgba(0,0,0,0.3);\n  box-sizing: border-box;\n  flex-shrink: 0;\n  flex-grow: 0;\n  gap: 3px;\n  overflow: auto;\n}\n\n.publicNetgameItem {\n  width: 100%;\n  box-sizing: border-box;\n  height: fit-content;\n  min-height: 50px;\n  padding: 5px 5px;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 4px;\n  flex-shrink: 0;\n}\n\n.publicNetgameItem:hover {\n  background: rgba(0,0,0,0.7);\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.publicNetgameItem[viewing] {\n  text-decoration: underline;\n  cursor: unset;\n}\n\n.publicGameSeparator {\n  width: 100%;\n  height: 0px;\n  margin-top: 3px;\n  margin-bottom: 3px;\n  border-bottom-color: black;\n  border-bottom-style: dashed;\n  border-bottom-width: 2px;\n  box-sizing: border-box;\n}\n\n.publicNetgameBrowserRight {\n  display: block;\n  flex-grow: 1;\n  position: relative;\n}\n\n.publicNetgameBrowserCloseButton {\n  position: absolute;\n  top: 0;\n  right: 0;\n  font-size: 30px;\n}\n\n.viewPublicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  padding: 5px 5px;\n  border-radius: 3px;\n}\n\n.publicNetgameDetails {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 100%;\n  height: 100%;\n  padding: 10px 10px;\n  box-sizing: border-box;\n}\n\n.refreshIcon {\n  width: 32px;\n  height: 32px;\n}\n\n.netgameServerName {\n  font-size: 30px;\n}\n\n.netgameServerURL {\n  font-size: 16px;\n  margin-left: 5px;\n  font-family: arial;\n}\n\n.netgameCommunicationType {\n  width: 25px;\n  height: 25px;\n  object-fit: contain;\n  padding: 5px 5px;\n  border-radius: 3px;\n  background: rgba(255,255,255,0.4);\n}\n\n.netgameLoadingListsContainer {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,1);\n  border-radius: 4px;\n  font-size: 20px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-direction: row;\n  gap: 8px;\n}\n\n.netgameLoadingListsImg {\n  width: 30px;\n  height: 30px;\n}\n\n\n.dontSellText {\n  color: rgb(196, 0, 0);\n  font-size: 35px;\n}\n\n.displayOption {\n  display: flex;\n  align-items: center;\n  gap: 2px;\n}\n\n.selectOptions {\n  all: unset;\n  display: block;\n  box-sizing: border-box;\n  padding: 4px 4px;\n  color: black;\n  background: rgba(255,255,255,0.7);\n  appearance: auto;\n  border-radius: 5px;\n}\n\n.touchControlPosition[data-position=\"left\"] {\n  position: fixed;\n  left: var(--button-x);\n  bottom: var(--button-y);\n  will-change: left, right, bottom;\n  contain: layout paint; \n  user-select: none;\n  -webkit-user-select: none;\n}\n\n.touchControlPosition[data-position=\"right\"] {\n  position: fixed;\n  right: var(--button-x);\n  bottom: var(--button-y);\n  will-change: left, right, bottom;\n  contain: layout paint; \n  user-select: none;\n  -webkit-user-select: none;\n}\n\n.touchControlBox {\n  background: rgba(255,255,255,1);\n  border-radius: 0px;\n  border-width: 0.5vmin;\n  border-color: rgba(0,0,0,1);\n  border-style: solid;\n  width: 2vmin;\n  height: 2vmin;\n  transform: translate(-50%, 50%);\n}\n.touchControlBox[data-position=\"left\"]  {\n  position: fixed;\n  bottom: var(--button-y);\n  left: calc(calc(var(--button-x) + var(--button-width)));\n}\n\n.touchControlDeleteBox {\n  background: rgb(255, 0, 0);\n  border-radius: 0px;\n  border-width: 0.5vmin;\n  border-color: rgba(0,0,0,1);\n  border-style: solid;\n  width: 2vmin;\n  height: 2vmin;\n  transform: translate(-50%, 50%);\n}\n.touchControlDeleteBox[data-position=\"left\"]  {\n  position: fixed;\n  bottom: calc(var(--button-y));\n  left: var(--button-x);\n}\n\n.touchActionButton {\n  all: unset;\n  position: absolute;\n  width: var(--button-width);\n  height: var(--button-height);\n  background: rgba(255,255,255,0.5);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  cursor: not-allowed;\n  font-size: 4vmin;\n  box-sizing: border-box;\n  padding: 3vmin 3vmin;\n  /* The actual touch events are handled by the JavaScript collision tests */\n  overflow: hidden;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  user-select: none;\n}\n.touchActionButton[data-touching] {\n  background: rgba(255,255,255,0.8);\n}\n\n.blackDialogBG {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n  background: rgba(0,0,0,0.8);\n}\n\n.whiteDialogBox {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  background: rgba(255,255,255,1);\n  color: rgba(0,0,0,1);\n  padding: 10px 10px;\n  box-sizing: border-box;\n  border-radius: 5px;\n}\n\n.touchControlsDialog {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100dvh;\n}\n.touchControlsDialogTitle {\n  font-size: 7vmin;\n  color: rgba(255,255,255,1);\n}\n\n.touchControlsDialogButton {\n  all: unset;\n  background: rgba(255,255,255,0.8);\n  color: rgba(0,0,0,0.6);\n  border-radius: 0.5vmin;\n  font-size: 4vmin;\n  width: fit-content;\n  height: fit-content;\n  box-sizing: border-box;\n  padding: 1vmin 1vmin;\n}\n\n.touchControlsDialogButton:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.touchControlsDialogRedButton {\n  background: rgba(255,50,0,0.8);\n}\n.touchControlsDialogGreenButton {\n  background: rgba(4, 255, 0, 0.8);\n}\n\n.touchControlDialogEditButtons {\n  position: relative;\n  display: flex;\n  flex-direction: row;\n}\n\n.touchControlsDialogTip {\n  color: rgb(255, 0, 0);\n  font-size: 4vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsDialogTip2 {\n  color: rgba(255,255,255,1);\n  font-size: 3.5vmin;\n  user-select: none;\n  pointer-events: none;\n}\n\n.touchControlsContainer {\n  position: fixed;\n  top: 0;\n  left: 0;\n  /*width: 100%;\n  height: 100dvh;*/\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsAddDropdownContainer {\n  position: relative;\n  width: 0px;\n  height: 0px;\n}\n.touchControlsAddDropdown {\n  text-decoration: unset;\n  position: absolute;\n  top: 0;\n  left: 0;\n  transform: translate(0, 6vmin);\n  width: 50vmin;\n  max-height: 40vmin;\n  z-index: 99999;\n  background: rgba(255,255,255,0.9);\n  border-radius: 0.5vmin;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2vmin;\n  padding: 0.2vmin 0.2vmin;\n  overflow: auto;\n}\n\n.touchControlsAddDropdown > .option {\n  all: unset;\n  padding: 1vmin 1vmin;\n  background: rgba(0,0,0,0.5);\n  color: rgba(255,255,255,1);\n  border-radius: 0.5vmin;\n  font-size: 3vmin;\n}\n.touchControlsAddDropdown > .option:hover {\n  text-decoration: underline;\n  cursor: pointer;\n}\n.touchControlsEditButtonsSpacing {\n  all: unset;\n  margin-left: 0.5vmin;\n}\n\n.touchControlsContent {\n  position: fixed;\n  top: 0;\n  left: 50%;\n  transform: translate(-50%, 0);\n  display: flex;\n  align-items: center;\n  flex-direction: column;\n  text-align: center;\n}\n\n.touchControlsJoystickContainer {\n  display: block;\n  width: var(--button-width);\n  height: var(--button-height);\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsJoystick {\n  display: block;\n  width: var(--joystick-size);\n  height: var(--joystick-size);\n  background: rgba(255,255,255,0.3);\n  border-radius: 50%;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsJoystickCircle {\n  display: block;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 50%;\n  height: 50%;\n  background: rgba(0,0,255,0.4);\n  border-radius: 50%;\n  overflow: visible;\n  user-select: none;\n}\n\n.touchControlsJoystickCircle[data-touching] {\n  background: rgba(0,0,255,0.7);\n}\n\n.touchControlsInput {\n  all: unset;\n  position: fixed;\n  top: -100px;\n  left: -100px;\n  background: rgba(0,0,0,0);\n  color: rgba(0,0,0,0);\n  width: 1px;\n  height: 10px;\n  opacity: 0;\n  user-select: none;\n}";
 
 /***/ },
 
@@ -376,6 +377,21 @@ module.exports = [
         element: "span",
         textContent:
           " - Offline: The server is offline, unreachable, or blocked.",
+      },
+    ],
+  },
+  {
+    element: "li",
+    children: [
+      {
+        element: "img",
+        className: "relayStatusImg",
+        src: RelayOption.OUTDATED_IMG,
+      },
+      {
+        element: "span",
+        textContent:
+          " - Outdated: The relay server is running an older version protocol. It may not be compatible with the current launcher.",
       },
     ],
   },
@@ -551,6 +567,7 @@ var configstuff = {
   iceTransportPolicy: "all",
 };
 
+
 module.exports = window.SRB2WEB_RTC_CONFIG || configstuff;
 
 
@@ -559,7 +576,7 @@ module.exports = window.SRB2WEB_RTC_CONFIG || configstuff;
 /***/ 1133
 (module, __unused_webpack_exports, __webpack_require__) {
 
-var { getWebsocketURL, PLACEHOLDER_IP } = __webpack_require__(3615);
+var { getWebsocketURL, getHttpURL, PLACEHOLDER_IP } = __webpack_require__(3615);
 var ErrorCodes = __webpack_require__(4888);
 var attachSRB2 = __webpack_require__(2052);
 var peer = __webpack_require__(1770);
@@ -585,28 +602,39 @@ class ConnectState {
     this.wsHost = wsHost;
     this.disposed = false;
     this.isOpen = false;
-    this.isReady = false;
-    this.initialQueue = [];
-    this.webrtc = false;
+    this.socketOpen = false;
+    this.peer = null;
+    this.socket = null;
+    this.rtcConfig = null;
     this.initWebsocket();
   }
 
   initWebsocket() {
     var { wsHost, address, port } = this;
+    var _this = this;
     var connectURL = ConnectState.createConnectURL(wsHost, { address, port });
     this.url = connectURL;
-    var socket = new WebSocket(connectURL);
-    var _this = this;
+
+    if (this.peer) {
+      try{
+        this.peer.destroy();
+      }catch(e){}
+      this.peer = null;
+    }
     this.isOpen = false;
-    this.isReady = false;
+    this.socketOpen = false;
+    this.initialQueue = [];
+
+    var socket = new WebSocket(connectURL);
+
     socket.onclose = function (event) {
-      _this.isOpen = false;
+      _this.socketOpen = false;
       var code = event.code;
       if (code == ErrorCodes.NETGAME_NOT_FOUND) {
         console.warn(`[Relay Connection]: Connection not found, not retrying.`);
         return;
       }
-      if (!_this.webrtc) {
+      if (!_this.isOpen) {
         console.warn(
           `[Relay Connection]: Disconnected unexpectedly, reconnecting...`,
         );
@@ -624,110 +652,80 @@ class ConnectState {
     this.socket = socket;
   }
 
-  handleOpen() {
+  peerSetup(rtcConfig) {
     var _this = this;
-    var { socket } = this;
-    this.isOpen = true;
-    this.isReady = false;
-    socket.onmessage = function (event) {
-      if (event.data instanceof ArrayBuffer) {
-        var uint8array = new Uint8Array(event.data);
-      } else {
-        try {
-          var json = JSON.parse(event.data);
-          if (json.ready) {
-            _this.isReady = true;
-            for (var msg of _this.initialQueue) {
-              socket.send(msg);
-            }
-            _this.initialQueue = [];
-            return;
-          }
-          if (json.webrtc && !_this.webrtc) {
-            _this.webrtc = true;
-            _this.initWebrtc();
-            return;
-          }
-          if (_this.webrtc && json.signal) {
-            _this.peer.signal(json.signal);
-            return;
-          }
-        } catch (e) {
-          var uint8array = new Uint8Array(event.data);
-        }
-      }
-
-      if (uint8array && typeof uint8array.length !== "undefined") {
-        try {
-          attachSRB2.emitPacket(uint8array, 0, PLACEHOLDER_IP);
-        } catch (e) {}
-      }
-    };
-
-    attachSRB2.onpacket = this.handleSRB2Packet.bind(this);
-  }
-
-  initWebrtc() {
+    this.rtcConfig = rtcConfig;
     this.peer = new peer({
       initiator: false,
       trickle: false,
-      config: rtcConfig,
+      config: this.rtcConfig,
       channelConfig: {
         ordered: false,          // Do NOT wait for missing packets
         maxRetransmits: 0,       // Do NOT try to resend lost packets
         priority: 'high'         // Hints to the browser to prioritize this traffic
       }
     });
-    var _this = this;
-
-    this.peer.on("error", (err) => {
-      //Shut up about your close locally errors.
+    this.peer.on("error", () => {});
+    this.peer.on("signal", (data) => {
+      if (!_this.socketOpen) {
+        return;
+      }
+      _this.socket.send(JSON.stringify({
+        signal: data
+      }));
     });
-    this.peer.on("signal", function (data) {
-      _this.socket.send(JSON.stringify({ signal: data }));
-    });
-
-    this.peer.on("connect", function () {
-      _this.isReady = true;
+    this.peer.on("connect", () => {
+      _this.isOpen = true;
+      _this.socket.close();
+      for (var msg of _this.initialQueue) {
+        _this.peer.send(msg);
+      }
       _this.initialQueue = [];
     });
-
-    this.peer.on("close", () => {});
-
-    this.peer.on("data", (data) => {
+    this.peer.on("close", () => {
+      _this.isOpen = false;
+    });
+    this.peer.on("data", (data) => { //send straight to SRB2.
       attachSRB2.emitPacket(data, 0, PLACEHOLDER_IP);
     });
+  }
 
-    this.socket.send(JSON.stringify({ rtcReady: true }));
+  handleOpen() {
+    var _this = this;
+    var { socket } = this;
+    this.isOpen = false;
+    this.socketOpen = true;
+    socket.onmessage = function (event) {
+      if (event.data instanceof ArrayBuffer) {
+        try{
+          socket.close();
+        }catch(e){}
+        return;
+      } else {
+
+        var json = JSON.parse(event.data);
+        if (json.rtcConfig) {
+          _this.peerSetup(json.rtcConfig);
+        }
+        if (json.signal) {
+          _this.peer.signal(json.signal);
+        }
+
+      }
+    };
+
+    attachSRB2.onpacket = this.handleSRB2Packet.bind(this);
   }
 
   handleSRB2Packet(data) {
-    var { socket } = this;
-    // WebRTC checks
-    if (this.webrtc && this.isReady) {
+    if (this.isOpen) {
       try {
         this.peer.send(data);
       } catch (e) {}
       return;
-    }
-
-    // Standard WebSocket checks
-    if (!socket) {
+    } else {
       this.initialQueue.push(data);
-      return;
     }
-    // If we aren't using WebRTC, we must rely on the socket being open
-    if (!this.isOpen) {
-      this.initialQueue.push(data);
-      return;
-    }
-    if (!this.isReady) {
-      this.initialQueue.push(data);
-      return;
-    }
-
-    // Fallback to WebSocket send
-    socket.send(data);
   }
 
   dispose() {
@@ -924,6 +922,7 @@ var RelayOption = __webpack_require__(9153);
 var net = __webpack_require__(1509);
 
 var browsePublicGames = elements.getGPId("browsePublicGames");
+var browseNetgamesLargeButton = elements.getGPId("browseNetgamesLargeButton");
 var publicNetgameBrowserContainer = elements.getGPId(
   "publicNetgameBrowserContainer",
 );
@@ -1243,11 +1242,11 @@ function gameToButton(game, selectedURL, onClick) {
           gap: "2px",
         },
         children: [
-          {
+          /*{
             element: "img",
             className: "netgameCommunicationType",
             src: game.usesWebRTC ? "images/webrtc.svg" : "images/websocket.svg",
-          },
+          },*/
           {
             element: "span",
             className: "netgameServerName",
@@ -1499,7 +1498,7 @@ async function loadPublicList() {
   displayPublicGames(games);
 }
 
-browsePublicGames.addEventListener("click", async () => {
+async function handleBrowseButtonClick () {
   if (!relayEnabled) {
     dialog.alert("You don't have the relay server enabled!");
     return;
@@ -1509,9 +1508,18 @@ browsePublicGames.addEventListener("click", async () => {
     return;
   }
 
-  loadPublicList();
-});
+  if (relayOpts[usedRelay].isOutdated) {
+    var accepted = await dialog.confirm("This relay server is (probably) outdated or uses an different protocol!\nYou may need to ask the owner of the relay server to update to the latest version of the relay server.\nContinue anyways?");
+    if (!accepted) {
+      return;
+    }
+  }
 
+  loadPublicList();
+}
+
+browsePublicGames.addEventListener("click", handleBrowseButtonClick);
+browseNetgamesLargeButton.addEventListener("click", handleBrowseButtonClick);
 
 /***/ },
 
@@ -1941,7 +1949,7 @@ module.exports = [
 /***/ 3052
 (module, __unused_webpack_exports, __webpack_require__) {
 
-var { getWebsocketURL, PLACEHOLDER_IP } = __webpack_require__(3615);
+var { getWebsocketURL, getHttpURL, PLACEHOLDER_IP } = __webpack_require__(3615);
 var ErrorCodes = __webpack_require__(4888);
 var attachSRB2 = __webpack_require__(2052);
 var ListenChannel = __webpack_require__(6091);
@@ -1951,7 +1959,7 @@ class ListenState {
     return getWebsocketURL(wsHost) + "listench/" + code;
   }
 
-  constructor(wsHost, isPublic = true, useRTC = false) {
+  constructor(wsHost, isPublic = true) {
     this.listen = true;
     this.wsHost = wsHost;
     this.isOpen = false;
@@ -1959,21 +1967,17 @@ class ListenState {
     this.address = PLACEHOLDER_IP + ":5029";
     this.isPublic = isPublic;
     this.disposed = false;
-    this.useRTC = !!useRTC;
-    this.openSocket();
+    this.rtcConfig = null;
+    this.prepareSocket();
     this.setUpdateInterval();
   }
 
-  attachConnection(code, ip) {
-    var id = 1;
-    while (this.connections[id]) {
-      id += 1;
-    }
+  attachConnection(code, id, ip) {
     var ch = new ListenChannel(
-      ListenState.getChannelURL(this.wsHost, code),
+      this,
       id,
       ip,
-      this.useRTC,
+      this.rtcConfig
     );
     this.connections[id] = ch;
     var _this = this;
@@ -1993,6 +1997,35 @@ class ListenState {
     for (var id of Object.keys(this.connections)) {
       this.connections[id].requestDispose();
     }
+  }
+
+  prepareSocket() {
+    var _this = this;
+    var host = this.wsHost;
+    var iceconfigURL = getHttpURL(host)+"iceconfig";
+
+    fetch(iceconfigURL).then((response) => {
+      if (!response.ok) {
+        attachSRB2.logInSRB2("[RELAY FAIL!]: Unable to get WebRTC configuration from server. Check your browser's developer tools for more details.");
+        console.error("Response not OK: ",response);
+        return;
+      }
+      response.json().then((json) => {
+        if (!Array.isArray(json.iceServers)) {
+          attachSRB2.logInSRB2("[RELAY FAIL!]: Unable to get WebRTC configuration from server. Check your browser's developer tools for more details.");
+          console.error("IceServers aren't provided in the configuration: ", json);
+          return;
+        }
+        _this.rtcConfig = json;
+        _this.openSocket();
+      }).catch((e) => {
+        console.error("Unable to parse json: ",e);
+        attachSRB2.logInSRB2("[RELAY FAIL!]: Unable to get WebRTC configuration from server. Check your browser's developer tools for more details.");
+      });
+    }).catch((e) => {
+      attachSRB2.logInSRB2("[RELAY FAIL!]: Unable to get WebRTC configuration from server. Check your browser's developer tools for more details.");
+      console.error("Unable to fetch webrtc configuration: ",e);
+    });
   }
 
   openSocket() {
@@ -2015,6 +2048,7 @@ class ListenState {
         if (_this.disposed) {
           return;
         }
+        attachSRB2.logInSRB2("[RELAY CONNECTION]: Contacting relay server...");
         _this.openSocket();
       }, 500);
     };
@@ -2026,16 +2060,32 @@ class ListenState {
         if (!_this.isPublic) {
           setTimeout(() => {
             attachSRB2.logInSRB2("[NOTICE]: This is a private netgame session. Enter the following netgame IP in the multiplayer menu to connect: " + json.url);
-          }, 100); //Short delay to put in front of the logs in srb2 when starting.
+          }, 200); //Short delay to put in front of the logs in srb2 when starting.
         } else {
           setTimeout(() => {
             attachSRB2.logInSRB2("[RELAY CONNECTION]: Now active on: " + json.url);
-          }, 100); //Short delay to put in front of the logs in srb2 when starting.
+          }, 200); //Short delay to put in front of the logs in srb2 when starting.
         }
       }
 
-      if (json.method == "incoming") {
-        _this.attachConnection(json.channel, json.ip);
+      if (json.method == "connection") {
+        _this.attachConnection(json.channel, json.id, json.ip);
+      }
+
+      if (json.method == "disconnect") {
+        var ch = _this.connections[json.id];
+        if (!ch) {
+          return;
+        }
+        ch.wsclosed();
+      }
+
+      if (json.method == "message") {
+        var ch = _this.connections[json.id]; 
+        if (!ch) {
+          return;
+        }
+        ch.onwsmsg(json.data);
       }
     };
     this.socket.onopen = function () {
@@ -2082,7 +2132,10 @@ class ListenState {
     }
 
     if (needsUpdate) {
-      socket.send(JSON.stringify(toUpdate));
+      socket.send(JSON.stringify({
+        update: true,
+        ...toUpdate
+      }));
     }
   }
 
@@ -2109,6 +2162,17 @@ class ListenState {
 
 module.exports = ListenState;
 
+
+/***/ },
+
+/***/ 3085
+(module) {
+
+class SRB2WebRelayProtocol {
+    static RELAY_PROTOCOL = "SRB2W_QRTC_V1";
+}
+
+module.exports = SRB2WebRelayProtocol;
 
 /***/ },
 
@@ -2203,9 +2267,23 @@ function getWebsocketURL(wsHost) {
   return url;
 }
 
+function getHttpURL(wsHost) {
+  var url = "";
+  if (window.location.protocol.startsWith("https")) {
+    url += "https://";
+  } else {
+    url += "http://";
+  }
+  url += wsHost;
+  if (!url.endsWith("/")) {
+    url += "/";
+  }
+  return url;
+}
+
 var PLACEHOLDER_IP = "0.0.0.0";
 
-module.exports = { getWebsocketURL, PLACEHOLDER_IP };
+module.exports = { getWebsocketURL, getHttpURL, PLACEHOLDER_IP };
 
 
 /***/ },
@@ -2222,6 +2300,33 @@ module.exports = [
         textContent: `@font-face { src: url(${FONT_DATA_URL}); font-family: PixelFont; font-size: 20px; }`
     }
 ];
+
+/***/ },
+
+/***/ 4305
+(module) {
+
+module.exports = [
+  {
+    element: "button",
+    className: "button browseButton",
+    children: [
+      {
+        element: "img",
+        src: "images/wifi.svg",
+        style: {
+          height: "32px",
+        },
+      },
+      {
+        element: "span",
+        textContent: "Browse & Host Netgames",
+      },
+    ],
+    gid: "browseNetgamesLargeButton",
+  },
+];
+
 
 /***/ },
 
@@ -3043,113 +3148,113 @@ module.exports = dialog;
 var { getWebsocketURL, PLACEHOLDER_IP } = __webpack_require__(3615);
 var ErrorCodes = __webpack_require__(4888);
 var attachSRB2 = __webpack_require__(2052);
-var peer = __webpack_require__(1770);
+var SimplePeer = __webpack_require__(1770);
 var rtcConfig = __webpack_require__(1053);
 
 class ListenChannel {
-  constructor(url, id, ip, useRTC) {
-    this.url = url;
+  constructor(parent, id, ip, rtcConfig) {
+    this.parent = parent;
     this.id = id;
     this.ip = ip;
-    this.useRTC = useRTC;
-    this.socket = new WebSocket(url);
-    this.socket.binaryType = "arraybuffer";
-    this.socket.onopen = this.handleOpen.bind(this);
-    this.socket.onmessage = this.handleMessage.bind(this);
-    this.socket.onclose = this.handleClose.bind(this);
+    this.rtcConfig = rtcConfig;
 
     this.isOpen = false;
-    this.rtcOpen = false;
+    this.socketOpen = true;
+    this.peer = null;
+
+    this.init();
   }
 
-  handleOpen() {
-    var { socket } = this;
-    this.isOpen = true;
-    if (this.useRTC) {
-      socket.send(JSON.stringify({ webrtc: true }));
+  wsclosed() {
+    if (!this.isOpen) {
+      this.requestDispose();
     }
   }
 
-  handleMessage(event) {
-    var { socket } = this;
-    if (event.data instanceof ArrayBuffer) {
-      if (this.ondata && !this.useRTC) {
-        this.ondata(event.data);
-      }
-    } else {
-      var json = JSON.parse(event.data);
+  wssend(data) { //the host socket share both the status updates and the connection process now.
+    if (!this.parent.socket) {
+      return;
+    }
+    this.parent.socket.send(JSON.stringify({
+      data,
+      id: this.id
+    }));
+  }
 
-      if (json.signal && this.peer) {
-        this.peer.signal(json.signal);
+  closews() {
+    if (!this.parent.socket) {
+      return;
+    }
+    if (!this.socketOpen) {
+      return;
+    }
+    this.socketOpen = false;
+    this.parent.socket.send(JSON.stringify({
+      disconnect: true,
+      id: this.id
+    }));
+  }
+
+  onwsmsg(data) { //message handler.
+    try{
+      var json = JSON.parse(data);
+    }catch(e){}
+    if (json.signal) {
+      this.peer.signal(json.signal);
+    }
+  }
+
+  init() {
+    var _this = this;
+    this.isOpen = true;
+    
+    this.wssend(JSON.stringify({ rtcConfig: rtcConfig }));
+
+    this.peer = new SimplePeer({
+      initiator: true,
+      trickle: false,
+      config: this.parent.rtcConfig,
+      channelConfig: {
+        ordered: false,          // Do NOT wait for missing packets
+        maxRetransmits: 0,       // Do NOT try to resend lost packets
+        priority: 'high'         // Hints to the browser to prioritize this traffic
+      }
+    });
+
+    this.peer.on("error", (err) => {});
+
+    this.peer.on("connect", () => {
+      _this.isOpen = true;
+      _this.closews(); //close once the handshake is finished.
+    });
+
+    this.peer.on("signal", (data) => {
+      if (!_this.isOpen) {
         return;
       }
+      _this.wssend(JSON.stringify({ signal: data }));
+    });
 
-      if (json.rtcReady) {
-        var _this = this;
-        this.peer = new peer({
-          initiator: true,
-          trickle: false,
-          config: rtcConfig,
-          channelConfig: {
-            ordered: false,          // Do NOT wait for missing packets
-            maxRetransmits: 0,       // Do NOT try to resend lost packets
-            priority: 'high'         // Hints to the browser to prioritize this traffic
-          }
-        });
+    this.peer.on("close", () => {
+      _this.handleClose();
+      _this.isOpen = false;
+    });
 
-        this.peer.on("error", (err) => {});
-
-        this.peer.on("signal", (data) => {
-          _this.socket.send(JSON.stringify({ signal: data }));
-        });
-
-        this.peer.on("connect", () => {
-          _this.rtcOpen = true;
-        });
-
-        this.peer.on("close", () => {
-          _this.rtcOpen = false;
-          _this.handleClose();
-        });
-
-        this.peer.on("data", (data) => {
-          if (_this.ondata) {
-            _this.ondata(data);
-          }
-          if (_this.socket) {
-            _this.rtcOpen = true;
-            _this.socket.onclose = () => {};
-            _this.socket.close(); //Won't be needing this anymore.
-            _this.socket = null;
-          }
-        });
+    this.peer.on("data", (data) => {
+      if (_this.ondata) { //this is added by listen.js
+        _this.ondata(data);
       }
-    }
+    });
   }
 
   handleClose() {
-    var { socket } = this;
-    if (this.useRTC && !this.rtcOpen) {
-      if (this.peer) {
-        try {
-          this.peer.destroy();
-        } catch (e) {}
-        this.peer = null;
-      }
-
-      this.isOpen = false;
-      this.rtcOpen = false;
-      if (this.requestDispose) {
-        this.requestDispose();
-      }
-
-      return;
-    } else {
-      if (this.useRTC) {
-        return;
-      }
+    if (this.peer) {
+      try {
+        this.peer.destroy();
+      } catch (e) {}
+      this.peer = null;
     }
-
+    this.closews();
     this.isOpen = false;
     if (this.requestDispose) {
       this.requestDispose();
@@ -3157,37 +3262,24 @@ class ListenChannel {
   }
 
   dispose() {
-    if (this.isOpen && this.socket) {
-      this.socket.onclose = () => {};
-      this.isOpen = false;
-      this.socket.close();
-    }
+    this.isOpen = false;
     if (this.peer) {
+      try{
       this.peer.destroy();
+      }catch(e){}
       this.peer = null;
     }
-    this.socket = null;
+    this.closews();
     this.requestDispose = null;
   }
 
-  send(data) {
-    var { socket } = this;
-    if (!this.isOpen) {
-      return;
-    }
-    if (this.useRTC && this.peer) {
+  send(data) { //recieving message from srb2.
+    if (this.isOpen && this.peer) {
       try {
         this.peer.send(data);
       } catch (e) {}
       return;
     }
-    if (this.useRTC) {
-      return;
-    }
-    if (!socket) {
-      return;
-    }
-    socket.send(data);
   }
 }
 
@@ -4716,6 +4808,7 @@ module.exports = {
 
 var elements = __webpack_require__(5100);
 var dialog = __webpack_require__(5925);
+var SRB2WebRelayProtocol = __webpack_require__(3085);
 
 class RelayOption {
   static FETCHING_IMG = "images/loading.gif";
@@ -4726,6 +4819,9 @@ class RelayOption {
 
   static OFFLINE_IMG = "images/red.png";
   static OFFLINE_TEXT = "Offline.";
+
+  static OUTDATED_IMG = "images/outdatedrelay.png";
+  static OUTDATED_TEXT = "Outdated version.";
 
   static async relayAddDialog() {
     var nameInput = null;
@@ -4814,6 +4910,7 @@ class RelayOption {
     this.requestSetUsed = requestSetUsed;
     this.requestDelete = requestDelete;
     this.firstFetch = true;
+    this.isOutdated = false;
     this.loadOption();
     this.createElements();
     this.updateContents();
@@ -5051,10 +5148,18 @@ class RelayOption {
     var url = this.getFetchURL();
     this.setPublicCount("loading");
     try {
-      var response = await fetch(url + "public");
+      var response = await fetch(url + "countpublic");
       if (response.ok) {
         var json = await response.json();
-        this.setPublicCount(json.length);
+        this.setPublicCount(json.count);
+      } else if (response.status == 404) {
+        var response2 = await fetch(url + "public");
+        if (response2.ok) {
+          var json2 = await response2.json();
+          this.setPublicCount(json2.length);
+        } else {
+          this.setPublicCount("error");
+        }
       } else {
         this.setPublicCount("error");
       }
@@ -5073,7 +5178,44 @@ class RelayOption {
       this.setPublicCount("loading");
     }
     var online = false;
+    var outdated = false;
     var url = this.getFetchURL();
+    try{
+      var response = await fetch(url + "version");
+      if (response.ok) {
+        try{
+          var json = await response.json();
+        }catch(e){
+          console.error(e);
+          online = false;
+        }
+
+        //outdated = true; //for testing
+
+        if (json.protocol !== SRB2WebRelayProtocol.RELAY_PROTOCOL) {
+          outdated = true;
+        }
+      } else if (response.status == 404) {
+        outdated = true;
+      } else {
+        console.error("Non OK status from '"+url+"version': "+response.ok);
+        online = false;
+      }
+    }catch(e){
+      console.error(e);
+      online = false;
+    }
+
+    this.isOutdated = false;
+    if (outdated) {
+      this.isOutdated = true;
+      statusImg.src = RelayOption.OUTDATED_IMG;
+      statusText.textContent = RelayOption.OUTDATED_TEXT;
+      statusText.setAttribute("state", "error");
+      this.setPublicCount("error");
+      return;
+    }
+
     try {
       var response = await fetch(url + "status");
       if (response.ok) {
