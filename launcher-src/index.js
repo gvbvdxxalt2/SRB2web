@@ -30,7 +30,7 @@ touchConfigureButton.addEventListener("click", function () {
 require("./relayconfig.js");
 
 window.requestAnimationFrame = function (r) {
-  return setTimeout(r, 1000 / 60);
+  return setTimeout(r, 1);
 };
 
 window.cancelAnimationFrame = function (r) {
