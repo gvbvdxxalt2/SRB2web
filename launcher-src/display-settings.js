@@ -1,7 +1,7 @@
 var elements = require("./gp2/elements.js");
 
-var resizeModeSelect = elements.getGPId("resizeModeSelect");
-var resizeModes = ["safe", "force"];
+//var resizeModeSelect = elements.getGPId("resizeModeSelect");
+//var resizeModes = ["safe", "force"];
 
 function getSafeValue(elm,safeValues) {
     var val = ""+elm.value;
@@ -13,7 +13,7 @@ function getSafeValue(elm,safeValues) {
 
 function getDisplayOptions() {
     return {
-        resolutionChangeMethod: getSafeValue(resizeModeSelect, resizeModes)
+        //resolutionChangeMethod: getSafeValue(resizeModeSelect, resizeModes)
     };
 }
 
@@ -36,7 +36,7 @@ function addLocalStorageHandler(elm, id) {
     });
 }
 
-addLocalStorageHandler(resizeModeSelect, "srb2web-resize-mode-select");
+//addLocalStorageHandler(resizeModeSelect, "srb2web-resize-mode-select");
 
 module.exports = {
     getDisplayOptions

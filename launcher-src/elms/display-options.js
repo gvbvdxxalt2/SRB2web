@@ -12,14 +12,14 @@ module.exports = [
 
             /////////////////////////////////////
 
-            {
+            /*{
                 element: "span",
                 textContent: "If your game is crashing, try changing these options:"
-            },
+            },/*
 
             /////////////////////////////////////
-
-            {
+            
+            /*{
                 element: "div",
                 className: "displayOption",
                 children: [
@@ -47,7 +47,7 @@ module.exports = [
                         ]
                     }
                 ]
-            },
+            },*/
 
             /////////////////////////////////////
             //Button to open touch controls to move and customize them.
