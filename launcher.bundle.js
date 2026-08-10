@@ -4629,7 +4629,7 @@ touchConfigureButton.addEventListener("click", function () {
 __webpack_require__(1618);
 
 window.requestAnimationFrame = function (r) {
-  return setTimeout(r, 1000 / 60);
+  return setTimeout(r, 1);
 };
 
 window.cancelAnimationFrame = function (r) {
