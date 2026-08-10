@@ -532,47 +532,6 @@ module.exports = {
 
 /***/ },
 
-/***/ 1053
-(module) {
-
-var configstuff = {
-  iceServers: [
-    { urls: "stun:stun.l.google.com:19302" },
-    { urls: "stun:vpn.mikedev101.cc:3478" },
-    {
-      urls: "turn:vpn.mikedev101.cc:3478",
-      username: "free",
-      credential: "free",
-    },
-    { urls: "stun:freeturn.net:3478" },
-    { urls: "stun:freeturn.net:5349" },
-    { urls: "turn:freeturn.net:3478", username: "free", credential: "free" },
-    { urls: "turn:freeturn.net:5349", username: "free", credential: "free" },
-    {
-      urls: "turn:numb.viagenie.ca",
-      credential: "muazkh",
-      username: "webrtc@live.com",
-    },
-    {
-      urls: "turn:turn.bistri.com:80",
-      credential: "homeo",
-      username: "homeo",
-    },
-    {
-      urls: "turn:turn.anyfirewall.com:443?transport=tcp",
-      credential: "webrtc",
-      username: "webrtc",
-    },
-  ],
-  iceTransportPolicy: "all",
-};
-
-
-module.exports = window.SRB2WEB_RTC_CONFIG || configstuff;
-
-
-/***/ },
-
 /***/ 1133
 (module, __unused_webpack_exports, __webpack_require__) {
 
@@ -580,7 +539,6 @@ var { getWebsocketURL, getHttpURL, PLACEHOLDER_IP } = __webpack_require__(3615);
 var ErrorCodes = __webpack_require__(4888);
 var attachSRB2 = __webpack_require__(2052);
 var peer = __webpack_require__(1770);
-var rtcConfig = __webpack_require__(1053);
 
 class ConnectState {
   static createConnectURL(wsHost, { address, port }) {
@@ -763,7 +721,6 @@ var enabled = false;
 var publicEnabled = false;
 var host = "";
 var curState = null;
-var serverRTCEnabled = true;
 
 attachSRB2.onconnect = function (address, port) {
   if (!enabled) {
@@ -782,7 +739,7 @@ attachSRB2.onlisten = function () {
   if (curState) {
     curState.dispose();
   }
-  curState = new ListenState(host, publicEnabled, serverRTCEnabled);
+  curState = new ListenState(host, publicEnabled);
 };
 
 attachSRB2.onclose = function () {
@@ -816,14 +773,6 @@ function disable() {
 
 function disablePublic() {
   publicEnabled = false;
-}
-
-function enableServerWebRTC() {
-  serverRTCEnabled = true;
-}
-
-function disableServerWebRTC() {
-  serverRTCEnabled = false;
 }
 
 async function listPublicGames() {
@@ -901,8 +850,6 @@ module.exports = {
   disable,
   enablePublic,
   disablePublic,
-  enableServerWebRTC,
-  disableServerWebRTC,
   listPublicGames,
 };
 
@@ -916,7 +863,6 @@ var elements = __webpack_require__(5100);
 var dialog = __webpack_require__(5925);
 var relayConfig = elements.getGPId("relayConfig");
 var relayServerCheckbox = elements.getGPId("relayServerCheckbox");
-var webrtcHostCheckbox = elements.getGPId("webrtcHostCheckbox");
 var lstorageName = "SRB2WebRelayConfig";
 var RelayOption = __webpack_require__(9153);
 var net = __webpack_require__(1509);
@@ -935,7 +881,6 @@ var relayOpts = [];
 
 var usedRelay = 0;
 var relayEnabled = true;
-var webrtcHostEnabled = true;
 
 function getPublicHosts() {
   return [
@@ -975,7 +920,6 @@ function saveRelays() {
       relays,
       used: usedRelay,
       enabled: relayEnabled,
-      webrtc: webrtcHostEnabled,
     }),
   );
 }
@@ -996,11 +940,6 @@ function updateRelayUsed() {
     net.enable(currentHost);
   } else {
     net.disable();
-  }
-  if (webrtcHostEnabled) {
-    net.enableServerWebRTC();
-  } else {
-    net.disableServerWebRTC();
   }
 
   setBrowsePublicGamesText(0);
@@ -1086,7 +1025,6 @@ function reloadRelayConfig() {
   }
 
   relayServerCheckbox.checked = relayEnabled;
-  webrtcHostCheckbox.checked = webrtcHostEnabled;
 
   if (relayOpts.length == 0) {
     elements.setInnerJSON(relayConfig, [
@@ -1111,20 +1049,6 @@ relayServerCheckbox.onchange = function () {
   reloadRelayConfig();
 };
 
-webrtcHostCheckbox.onchange = async function () {
-  if (!webrtcHostCheckbox.checked) {
-    var confirm = await dialog.confirm(
-      "Disabling WebRTC hosting will cause your hosted games to have slower connections and more input lag. Are you sure you want to disable it?",
-    );
-    if (!confirm) {
-      webrtcHostCheckbox.checked = true;
-      return;
-    }
-  }
-  webrtcHostEnabled = webrtcHostCheckbox.checked;
-  saveRelays();
-  reloadRelayConfig();
-};
 
 setInterval(
   () => {
@@ -1142,7 +1066,6 @@ if (storedConfig) {
     usedRelay = json.used;
     relays = json.relays;
     relayEnabled = json.enabled;
-    webrtcHostEnabled = json.webrtc;
   } catch (e) {
     relays = Array.from(defaultRelays);
     dialog.alert(
@@ -1595,29 +1518,6 @@ module.exports = [
         element: "input",
         type: "checkbox",
         gid: "relayServerCheckbox",
-      },
-    ],
-  },
-
-  /////////////////////////////////////////////////////////
-
-  //Enable WebRTC hosting toggle
-
-  {
-    element: "div",
-    style: {
-      display: "flex",
-    },
-    children: [
-      {
-        element: "span",
-        style: { fontWeight: "bold" },
-        textContent: "Enable WebRTC hosting (faster connection):",
-      },
-      {
-        element: "input",
-        type: "checkbox",
-        gid: "webrtcHostCheckbox",
       },
     ],
   },
@@ -3149,7 +3049,6 @@ var { getWebsocketURL, PLACEHOLDER_IP } = __webpack_require__(3615);
 var ErrorCodes = __webpack_require__(4888);
 var attachSRB2 = __webpack_require__(2052);
 var SimplePeer = __webpack_require__(1770);
-var rtcConfig = __webpack_require__(1053);
 
 class ListenChannel {
   constructor(parent, id, ip, rtcConfig) {
@@ -3208,7 +3107,7 @@ class ListenChannel {
     var _this = this;
     this.isOpen = true;
     
-    this.wssend(JSON.stringify({ rtcConfig: rtcConfig }));
+    this.wssend(JSON.stringify({ rtcConfig: this.rtcConfig }));
 
     this.peer = new SimplePeer({
       initiator: true,
