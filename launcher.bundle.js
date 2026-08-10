@@ -4764,7 +4764,7 @@ class RelayOption {
     await dialog.alertWithElement(editDiv); //Wait for close.
     var returned = {
       name: nameInput.value || "Relay server",
-      host: hostInput.value,
+      host: (""+hostInput.value).trim(),
     };
     var err = RelayOption.confirmRelayStuff(returned);
     if (err) {
@@ -4866,7 +4866,8 @@ class RelayOption {
     }
 
     this.relay.name = nameInput.value;
-    this.relay.host = hostInput.value;
+    this.relay.host = (""+hostInput.value).trim();
+    this.loadOption();
     this.updateContents();
     this.fetchStatus();
     this.requestSave();
