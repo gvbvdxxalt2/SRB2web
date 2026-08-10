@@ -105,6 +105,22 @@ a:hover {
   background: rgba(255, 157, 0, 0.7);
 }
 
+.browseButton {
+  font-size: 30px;
+  background: rgba(174, 0, 255, 0.5);
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  gap: 10;
+}
+
+.browseButton:hover {
+  background: rgba(174, 0, 255, 0.7);
+}
+
 .gameCanvas {
   background: black;
   width: 100dvw;

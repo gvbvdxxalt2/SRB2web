@@ -1,4 +1,4 @@
-var { getWebsocketURL, getHttpURL, PLACEHOLDER_IP } = require("./util.js");
+var { getWebsocketURL, PLACEHOLDER_IP } = require("./util.js");
 var ErrorCodes = require("./errors.js");
 var attachSRB2 = require("../attach.js");
 var peer = require("simple-peer");
@@ -24,39 +24,28 @@ class ConnectState {
     this.wsHost = wsHost;
     this.disposed = false;
     this.isOpen = false;
-    this.socketOpen = false;
-    this.peer = null;
-    this.socket = null;
-    this.rtcConfig = null;
+    this.isReady = false;
+    this.initialQueue = [];
+    this.webrtc = false;
     this.initWebsocket();
   }
 
   initWebsocket() {
     var { wsHost, address, port } = this;
-    var _this = this;
     var connectURL = ConnectState.createConnectURL(wsHost, { address, port });
     this.url = connectURL;
-
-    if (this.peer) {
-      try{
-        this.peer.destroy();
-      }catch(e){}
-      this.peer = null;
-    }
-    this.isOpen = false;
-    this.socketOpen = false;
-    this.initialQueue = [];
-
     var socket = new WebSocket(connectURL);
-
+    var _this = this;
+    this.isOpen = false;
+    this.isReady = false;
     socket.onclose = function (event) {
-      _this.socketOpen = false;
+      _this.isOpen = false;
       var code = event.code;
       if (code == ErrorCodes.NETGAME_NOT_FOUND) {
         console.warn(`[Relay Connection]: Connection not found, not retrying.`);
         return;
       }
-      if (!_this.isOpen) {
+      if (!_this.webrtc) {
         console.warn(
           `[Relay Connection]: Disconnected unexpectedly, reconnecting...`,
         );
@@ -74,80 +63,110 @@ class ConnectState {
     this.socket = socket;
   }
 
-  peerSetup(rtcConfig) {
-    var _this = this;
-    this.rtcConfig = rtcConfig;
-    this.peer = new peer({
-      initiator: false,
-      trickle: false,
-      config: this.rtcConfig,
-      channelConfig: {
-        ordered: false,          // Do NOT wait for missing packets
-        maxRetransmits: 0,       // Do NOT try to resend lost packets
-        priority: 'high'         // Hints to the browser to prioritize this traffic
-      }
-    });
-    this.peer.on("error", () => {});
-    this.peer.on("signal", (data) => {
-      if (!_this.socketOpen) {
-        return;
-      }
-      _this.socket.send(JSON.stringify({
-        signal: data
-      }));
-    });
-    this.peer.on("connect", () => {
-      _this.isOpen = true;
-      _this.socket.close();
-      for (var msg of _this.initialQueue) {
-        _this.peer.send(msg);
-      }
-      _this.initialQueue = [];
-    });
-    this.peer.on("close", () => {
-      _this.isOpen = false;
-    });
-    this.peer.on("data", (data) => { //send straight to SRB2.
-      attachSRB2.emitPacket(data, 0, PLACEHOLDER_IP);
-    });
-  }
-
   handleOpen() {
     var _this = this;
     var { socket } = this;
-    this.isOpen = false;
-    this.socketOpen = true;
+    this.isOpen = true;
+    this.isReady = false;
     socket.onmessage = function (event) {
       if (event.data instanceof ArrayBuffer) {
-        try{
-          socket.close();
-        }catch(e){}
-        return;
+        var uint8array = new Uint8Array(event.data);
       } else {
-
-        var json = JSON.parse(event.data);
-        if (json.rtcConfig) {
-          _this.peerSetup(json.rtcConfig);
+        try {
+          var json = JSON.parse(event.data);
+          if (json.ready) {
+            _this.isReady = true;
+            for (var msg of _this.initialQueue) {
+              socket.send(msg);
+            }
+            _this.initialQueue = [];
+            return;
+          }
+          if (json.webrtc && !_this.webrtc) {
+            _this.webrtc = true;
+            _this.initWebrtc();
+            return;
+          }
+          if (_this.webrtc && json.signal) {
+            _this.peer.signal(json.signal);
+            return;
+          }
+        } catch (e) {
+          var uint8array = new Uint8Array(event.data);
         }
-        if (json.signal) {
-          _this.peer.signal(json.signal);
-        }
+      }
 
+      if (uint8array && typeof uint8array.length !== "undefined") {
+        try {
+          attachSRB2.emitPacket(uint8array, 0, PLACEHOLDER_IP);
+        } catch (e) {}
       }
     };
 
     attachSRB2.onpacket = this.handleSRB2Packet.bind(this);
   }
 
+  initWebrtc() {
+    this.peer = new peer({
+      initiator: false,
+      trickle: false,
+      config: rtcConfig,
+      channelConfig: {
+        ordered: false,          // Do NOT wait for missing packets
+        maxRetransmits: 0,       // Do NOT try to resend lost packets
+        priority: 'high'         // Hints to the browser to prioritize this traffic
+      }
+    });
+    var _this = this;
+
+    this.peer.on("error", (err) => {
+      //Shut up about your close locally errors.
+    });
+    this.peer.on("signal", function (data) {
+      _this.socket.send(JSON.stringify({ signal: data }));
+    });
+
+    this.peer.on("connect", function () {
+      _this.isReady = true;
+      _this.initialQueue = [];
+    });
+
+    this.peer.on("close", () => {});
+
+    this.peer.on("data", (data) => {
+      attachSRB2.emitPacket(data, 0, PLACEHOLDER_IP);
+    });
+
+    this.socket.send(JSON.stringify({ rtcReady: true }));
+  }
+
   handleSRB2Packet(data) {
-    if (this.isOpen) {
+    var { socket } = this;
+    // WebRTC checks
+    if (this.webrtc && this.isReady) {
       try {
         this.peer.send(data);
       } catch (e) {}
       return;
-    } else {
-      this.initialQueue.push(data);
     }
+
+    // Standard WebSocket checks
+    if (!socket) {
+      this.initialQueue.push(data);
+      return;
+    }
+    // If we aren't using WebRTC, we must rely on the socket being open
+    if (!this.isOpen) {
+      this.initialQueue.push(data);
+      return;
+    }
+    if (!this.isReady) {
+      this.initialQueue.push(data);
+      return;
+    }
+
+    // Fallback to WebSocket send
+    socket.send(data);
   }
 
   dispose() {

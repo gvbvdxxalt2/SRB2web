@@ -1,5 +1,6 @@
 var elements = require("./gp2/elements.js");
 var dialog = require("./dialog.js");
+var SRB2WebRelayProtocol = require("./net/version.js");
 
 class RelayOption {
   static FETCHING_IMG = "images/loading.gif";
@@ -10,6 +11,9 @@ class RelayOption {
 
   static OFFLINE_IMG = "images/red.png";
   static OFFLINE_TEXT = "Offline.";
+
+  static OUTDATED_IMG = "images/outdatedrelay.png";
+  static OUTDATED_TEXT = "Outdated version.";
 
   static async relayAddDialog() {
     var nameInput = null;
@@ -98,6 +102,7 @@ class RelayOption {
     this.requestSetUsed = requestSetUsed;
     this.requestDelete = requestDelete;
     this.firstFetch = true;
+    this.isOutdated = false;
     this.loadOption();
     this.createElements();
     this.updateContents();
@@ -335,10 +340,18 @@ class RelayOption {
     var url = this.getFetchURL();
     this.setPublicCount("loading");
     try {
-      var response = await fetch(url + "public");
+      var response = await fetch(url + "countpublic");
       if (response.ok) {
         var json = await response.json();
-        this.setPublicCount(json.length);
+        this.setPublicCount(json.count);
+      } else if (response.status == 404) {
+        var response2 = await fetch(url + "public");
+        if (response2.ok) {
+          var json2 = await response2.json();
+          this.setPublicCount(json2.length);
+        } else {
+          this.setPublicCount("error");
+        }
       } else {
         this.setPublicCount("error");
       }
@@ -357,7 +370,44 @@ class RelayOption {
       this.setPublicCount("loading");
     }
     var online = false;
+    var outdated = false;
     var url = this.getFetchURL();
+    try{
+      var response = await fetch(url + "version");
+      if (response.ok) {
+        try{
+          var json = await response.json();
+        }catch(e){
+          console.error(e);
+          online = false;
+        }
+
+        //outdated = true; //for testing
+
+        if (json.protocol !== SRB2WebRelayProtocol.RELAY_PROTOCOL) {
+          outdated = true;
+        }
+      } else if (response.status == 404) {
+        outdated = true;
+      } else {
+        console.error("Non OK status from '"+url+"version': "+response.ok);
+        online = false;
+      }
+    }catch(e){
+      console.error(e);
+      online = false;
+    }
+
+    this.isOutdated = false;
+    if (outdated) {
+      this.isOutdated = true;
+      statusImg.src = RelayOption.OUTDATED_IMG;
+      statusText.textContent = RelayOption.OUTDATED_TEXT;
+      statusText.setAttribute("state", "error");
+      this.setPublicCount("error");
+      return;
+    }
+
     try {
       var response = await fetch(url + "status");
       if (response.ok) {

@@ -8,6 +8,7 @@ var RelayOption = require("./relayoption.js");
 var net = require("./net");
 
 var browsePublicGames = elements.getGPId("browsePublicGames");
+var browseNetgamesLargeButton = elements.getGPId("browseNetgamesLargeButton");
 var publicNetgameBrowserContainer = elements.getGPId(
   "publicNetgameBrowserContainer",
 );
@@ -327,11 +328,11 @@ function gameToButton(game, selectedURL, onClick) {
           gap: "2px",
         },
         children: [
-          {
+          /*{
             element: "img",
             className: "netgameCommunicationType",
             src: game.usesWebRTC ? "images/webrtc.svg" : "images/websocket.svg",
-          },
+          },*/
           {
             element: "span",
             className: "netgameServerName",
@@ -583,7 +584,7 @@ async function loadPublicList() {
   displayPublicGames(games);
 }
 
-browsePublicGames.addEventListener("click", async () => {
+async function handleBrowseButtonClick () {
   if (!relayEnabled) {
     dialog.alert("You don't have the relay server enabled!");
     return;
@@ -593,5 +594,15 @@ browsePublicGames.addEventListener("click", async () => {
     return;
   }
 
+  if (relayOpts[usedRelay].isOutdated) {
+    var accepted = await dialog.confirm("This relay server is (probably) outdated or uses an different protocol!\nYou may need to ask the owner of the relay server to update to the latest version of the relay server.\nContinue anyways?");
+    if (!accepted) {
+      return;
+    }
+  }
+
   loadPublicList();
-});
+}
+
+browsePublicGames.addEventListener("click", handleBrowseButtonClick);
+browseNetgamesLargeButton.addEventListener("click", handleBrowseButtonClick);

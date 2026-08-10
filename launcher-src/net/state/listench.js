@@ -1,113 +1,113 @@
 var { getWebsocketURL, PLACEHOLDER_IP } = require("./util.js");
 var ErrorCodes = require("./errors.js");
 var attachSRB2 = require("../attach.js");
-var peer = require("simple-peer");
+var SimplePeer = require("simple-peer");
 var rtcConfig = require("../rtc-config.js");
 
 class ListenChannel {
-  constructor(url, id, ip, useRTC) {
-    this.url = url;
+  constructor(parent, id, ip, rtcConfig) {
+    this.parent = parent;
     this.id = id;
     this.ip = ip;
-    this.useRTC = useRTC;
-    this.socket = new WebSocket(url);
-    this.socket.binaryType = "arraybuffer";
-    this.socket.onopen = this.handleOpen.bind(this);
-    this.socket.onmessage = this.handleMessage.bind(this);
-    this.socket.onclose = this.handleClose.bind(this);
+    this.rtcConfig = rtcConfig;
 
     this.isOpen = false;
-    this.rtcOpen = false;
+    this.socketOpen = true;
+    this.peer = null;
+
+    this.init();
   }
 
-  handleOpen() {
-    var { socket } = this;
-    this.isOpen = true;
-    if (this.useRTC) {
-      socket.send(JSON.stringify({ webrtc: true }));
+  wsclosed() {
+    if (!this.isOpen) {
+      this.requestDispose();
     }
   }
 
-  handleMessage(event) {
-    var { socket } = this;
-    if (event.data instanceof ArrayBuffer) {
-      if (this.ondata && !this.useRTC) {
-        this.ondata(event.data);
-      }
-    } else {
-      var json = JSON.parse(event.data);
+  wssend(data) { //the host socket share both the status updates and the connection process now.
+    if (!this.parent.socket) {
+      return;
+    }
+    this.parent.socket.send(JSON.stringify({
+      data,
+      id: this.id
+    }));
+  }
 
-      if (json.signal && this.peer) {
-        this.peer.signal(json.signal);
+  closews() {
+    if (!this.parent.socket) {
+      return;
+    }
+    if (!this.socketOpen) {
+      return;
+    }
+    this.socketOpen = false;
+    this.parent.socket.send(JSON.stringify({
+      disconnect: true,
+      id: this.id
+    }));
+  }
+
+  onwsmsg(data) { //message handler.
+    try{
+      var json = JSON.parse(data);
+    }catch(e){}
+    if (json.signal) {
+      this.peer.signal(json.signal);
+    }
+  }
+
+  init() {
+    var _this = this;
+    this.isOpen = true;
+    
+    this.wssend(JSON.stringify({ rtcConfig: rtcConfig }));
+
+    this.peer = new SimplePeer({
+      initiator: true,
+      trickle: false,
+      config: this.parent.rtcConfig,
+      channelConfig: {
+        ordered: false,          // Do NOT wait for missing packets
+        maxRetransmits: 0,       // Do NOT try to resend lost packets
+        priority: 'high'         // Hints to the browser to prioritize this traffic
+      }
+    });
+
+    this.peer.on("error", (err) => {});
+
+    this.peer.on("connect", () => {
+      _this.isOpen = true;
+      _this.closews(); //close once the handshake is finished.
+    });
+
+    this.peer.on("signal", (data) => {
+      if (!_this.isOpen) {
         return;
       }
+      _this.wssend(JSON.stringify({ signal: data }));
+    });
 
-      if (json.rtcReady) {
-        var _this = this;
-        this.peer = new peer({
-          initiator: true,
-          trickle: false,
-          config: rtcConfig,
-          channelConfig: {
-            ordered: false,          // Do NOT wait for missing packets
-            maxRetransmits: 0,       // Do NOT try to resend lost packets
-            priority: 'high'         // Hints to the browser to prioritize this traffic
-          }
-        });
+    this.peer.on("close", () => {
+      _this.handleClose();
+      _this.isOpen = false;
+    });
 
-        this.peer.on("error", (err) => {});
-
-        this.peer.on("signal", (data) => {
-          _this.socket.send(JSON.stringify({ signal: data }));
-        });
-
-        this.peer.on("connect", () => {
-          _this.rtcOpen = true;
-        });
-
-        this.peer.on("close", () => {
-          _this.rtcOpen = false;
-          _this.handleClose();
-        });
-
-        this.peer.on("data", (data) => {
-          if (_this.ondata) {
-            _this.ondata(data);
-          }
-          if (_this.socket) {
-            _this.rtcOpen = true;
-            _this.socket.onclose = () => {};
-            _this.socket.close(); //Won't be needing this anymore.
-            _this.socket = null;
-          }
-        });
+    this.peer.on("data", (data) => {
+      if (_this.ondata) { //this is added by listen.js
+        _this.ondata(data);
       }
-    }
+    });
   }
 
   handleClose() {
-    var { socket } = this;
-    if (this.useRTC && !this.rtcOpen) {
-      if (this.peer) {
-        try {
-          this.peer.destroy();
-        } catch (e) {}
-        this.peer = null;
-      }
-
-      this.isOpen = false;
-      this.rtcOpen = false;
-      if (this.requestDispose) {
-        this.requestDispose();
-      }
-
-      return;
-    } else {
-      if (this.useRTC) {
-        return;
-      }
+    if (this.peer) {
+      try {
+        this.peer.destroy();
+      } catch (e) {}
+      this.peer = null;
     }
-
+    this.closews();
     this.isOpen = false;
     if (this.requestDispose) {
       this.requestDispose();
@@ -115,37 +115,24 @@ class ListenChannel {
   }
 
   dispose() {
-    if (this.isOpen && this.socket) {
-      this.socket.onclose = () => {};
-      this.isOpen = false;
-      this.socket.close();
-    }
+    this.isOpen = false;
     if (this.peer) {
+      try{
       this.peer.destroy();
+      }catch(e){}
       this.peer = null;
     }
-    this.socket = null;
+    this.closews();
     this.requestDispose = null;
   }
 
-  send(data) {
-    var { socket } = this;
-    if (!this.isOpen) {
-      return;
-    }
-    if (this.useRTC && this.peer) {
+  send(data) { //recieving message from srb2.
+    if (this.isOpen && this.peer) {
       try {
         this.peer.send(data);
       } catch (e) {}
       return;
     }
-    if (this.useRTC) {
-      return;
-    }
-    if (!socket) {
-      return;
-    }
-    socket.send(data);
   }
 }
 

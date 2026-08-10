@@ -49,4 +49,19 @@ module.exports = [
       },
     ],
   },
+  {
+    element: "li",
+    children: [
+      {
+        element: "img",
+        className: "relayStatusImg",
+        src: RelayOption.OUTDATED_IMG,
+      },
+      {
+        element: "span",
+        textContent:
+          " - Outdated: The relay server is running an older version protocol. It may not be compatible with the current launcher.",
+      },
+    ],
+  },
 ];

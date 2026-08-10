@@ -1,4 +1,4 @@
-var { getWebsocketURL, getHttpURL, PLACEHOLDER_IP } = require("./util.js");
+var { getWebsocketURL, PLACEHOLDER_IP } = require("./util.js");
 var ErrorCodes = require("./errors.js");
 var attachSRB2 = require("../attach.js");
 var ListenChannel = require("./listench.js");
@@ -8,7 +8,7 @@ class ListenState {
     return getWebsocketURL(wsHost) + "listench/" + code;
   }
 
-  constructor(wsHost, isPublic = true) {
+  constructor(wsHost, isPublic = true, useRTC = false) {
     this.listen = true;
     this.wsHost = wsHost;
     this.isOpen = false;
@@ -16,17 +16,21 @@ class ListenState {
     this.address = PLACEHOLDER_IP + ":5029";
     this.isPublic = isPublic;
     this.disposed = false;
-    this.rtcConfig = null;
-    this.prepareSocket();
+    this.useRTC = !!useRTC;
+    this.openSocket();
     this.setUpdateInterval();
   }
 
-  attachConnection(code, id, ip) {
+  attachConnection(code, ip) {
+    var id = 1;
+    while (this.connections[id]) {
+      id += 1;
+    }
     var ch = new ListenChannel(
-      this,
+      ListenState.getChannelURL(this.wsHost, code),
       id,
       ip,
-      this.rtcConfig
+      this.useRTC,
     );
     this.connections[id] = ch;
     var _this = this;
@@ -46,35 +50,6 @@ class ListenState {
     for (var id of Object.keys(this.connections)) {
       this.connections[id].requestDispose();
     }
-  }
-
-  prepareSocket() {
-    var _this = this;
-    var host = this.wsHost;
-    var iceconfigURL = getHttpURL(host)+"iceconfig";
-
-    fetch(iceconfigURL).then((response) => {
-      if (!response.ok) {
-        attachSRB2.logInSRB2("[RELAY FAIL!]: Unable to get WebRTC configuration from server. Check your browser's developer tools for more details.");
-        console.error("Response not OK: ",response);
-        return;
-      }
-      response.json().then((json) => {
-        if (!Array.isArray(json.iceServers)) {
-          attachSRB2.logInSRB2("[RELAY FAIL!]: Unable to get WebRTC configuration from server. Check your browser's developer tools for more details.");
-          console.error("IceServers aren't provided in the configuration: ", json);
-          return;
-        }
-        _this.rtcConfig = json;
-        _this.openSocket();
-      }).catch((e) => {
-        console.error("Unable to parse json: ",e);
-        attachSRB2.logInSRB2("[RELAY FAIL!]: Unable to get WebRTC configuration from server. Check your browser's developer tools for more details.");
-      });
-    }).catch((e) => {
-      attachSRB2.logInSRB2("[RELAY FAIL!]: Unable to get WebRTC configuration from server. Check your browser's developer tools for more details.");
-      console.error("Unable to fetch webrtc configuration: ",e);
-    });
   }
 
   openSocket() {
@@ -97,7 +72,6 @@ class ListenState {
         if (_this.disposed) {
           return;
         }
-        attachSRB2.logInSRB2("[RELAY CONNECTION]: Contacting relay server...");
         _this.openSocket();
       }, 500);
     };
@@ -109,32 +83,16 @@ class ListenState {
         if (!_this.isPublic) {
           setTimeout(() => {
             attachSRB2.logInSRB2("[NOTICE]: This is a private netgame session. Enter the following netgame IP in the multiplayer menu to connect: " + json.url);
-          }, 200); //Short delay to put in front of the logs in srb2 when starting.
+          }, 100); //Short delay to put in front of the logs in srb2 when starting.
         } else {
           setTimeout(() => {
             attachSRB2.logInSRB2("[RELAY CONNECTION]: Now active on: " + json.url);
-          }, 200); //Short delay to put in front of the logs in srb2 when starting.
+          }, 100); //Short delay to put in front of the logs in srb2 when starting.
         }
       }
 
-      if (json.method == "connection") {
-        _this.attachConnection(json.channel, json.id, json.ip);
-      }
-
-      if (json.method == "disconnect") {
-        var ch = _this.connections[json.id];
-        if (!ch) {
-          return;
-        }
-        ch.wsclosed();
-      }
-
-      if (json.method == "message") {
-        var ch = _this.connections[json.id]; 
-        if (!ch) {
-          return;
-        }
-        ch.onwsmsg(json.data);
+      if (json.method == "incoming") {
+        _this.attachConnection(json.channel, json.ip);
       }
     };
     this.socket.onopen = function () {
@@ -181,10 +139,7 @@ class ListenState {
     }
 
     if (needsUpdate) {
-      socket.send(JSON.stringify({
-        update: true,
-        ...toUpdate
-      }));
+      socket.send(JSON.stringify(toUpdate));
     }
   }
 
