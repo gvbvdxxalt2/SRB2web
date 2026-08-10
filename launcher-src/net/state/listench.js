@@ -2,7 +2,6 @@ var { getWebsocketURL, PLACEHOLDER_IP } = require("./util.js");
 var ErrorCodes = require("./errors.js");
 var attachSRB2 = require("../attach.js");
 var SimplePeer = require("simple-peer");
-var rtcConfig = require("../rtc-config.js");
 
 class ListenChannel {
   constructor(parent, id, ip, rtcConfig) {
@@ -61,7 +60,7 @@ class ListenChannel {
     var _this = this;
     this.isOpen = true;
     
-    this.wssend(JSON.stringify({ rtcConfig: rtcConfig }));
+    this.wssend(JSON.stringify({ rtcConfig: this.rtcConfig }));
 
     this.peer = new SimplePeer({
       initiator: true,

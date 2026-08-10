@@ -2,7 +2,6 @@ var elements = require("./gp2/elements.js");
 var dialog = require("./dialog.js");
 var relayConfig = elements.getGPId("relayConfig");
 var relayServerCheckbox = elements.getGPId("relayServerCheckbox");
-var webrtcHostCheckbox = elements.getGPId("webrtcHostCheckbox");
 var lstorageName = "SRB2WebRelayConfig";
 var RelayOption = require("./relayoption.js");
 var net = require("./net");
@@ -21,7 +20,6 @@ var relayOpts = [];
 
 var usedRelay = 0;
 var relayEnabled = true;
-var webrtcHostEnabled = true;
 
 function getPublicHosts() {
   return [
@@ -61,7 +59,6 @@ function saveRelays() {
       relays,
       used: usedRelay,
       enabled: relayEnabled,
-      webrtc: webrtcHostEnabled,
     }),
   );
 }
@@ -82,11 +79,6 @@ function updateRelayUsed() {
     net.enable(currentHost);
   } else {
     net.disable();
-  }
-  if (webrtcHostEnabled) {
-    net.enableServerWebRTC();
-  } else {
-    net.disableServerWebRTC();
   }
 
   setBrowsePublicGamesText(0);
@@ -172,7 +164,6 @@ function reloadRelayConfig() {
   }
 
   relayServerCheckbox.checked = relayEnabled;
-  webrtcHostCheckbox.checked = webrtcHostEnabled;
 
   if (relayOpts.length == 0) {
     elements.setInnerJSON(relayConfig, [
@@ -197,20 +188,6 @@ relayServerCheckbox.onchange = function () {
   reloadRelayConfig();
 };
 
-webrtcHostCheckbox.onchange = async function () {
-  if (!webrtcHostCheckbox.checked) {
-    var confirm = await dialog.confirm(
-      "Disabling WebRTC hosting will cause your hosted games to have slower connections and more input lag. Are you sure you want to disable it?",
-    );
-    if (!confirm) {
-      webrtcHostCheckbox.checked = true;
-      return;
-    }
-  }
-  webrtcHostEnabled = webrtcHostCheckbox.checked;
-  saveRelays();
-  reloadRelayConfig();
-};
 
 setInterval(
   () => {
@@ -228,7 +205,6 @@ if (storedConfig) {
     usedRelay = json.used;
     relays = json.relays;
     relayEnabled = json.enabled;
-    webrtcHostEnabled = json.webrtc;
   } catch (e) {
     relays = Array.from(defaultRelays);
     dialog.alert(

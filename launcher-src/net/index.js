@@ -6,7 +6,6 @@ var enabled = false;
 var publicEnabled = false;
 var host = "";
 var curState = null;
-var serverRTCEnabled = true;
 
 attachSRB2.onconnect = function (address, port) {
   if (!enabled) {
@@ -25,7 +24,7 @@ attachSRB2.onlisten = function () {
   if (curState) {
     curState.dispose();
   }
-  curState = new ListenState(host, publicEnabled, serverRTCEnabled);
+  curState = new ListenState(host, publicEnabled);
 };
 
 attachSRB2.onclose = function () {
@@ -59,14 +58,6 @@ function disable() {
 
 function disablePublic() {
   publicEnabled = false;
-}
-
-function enableServerWebRTC() {
-  serverRTCEnabled = true;
-}
-
-function disableServerWebRTC() {
-  serverRTCEnabled = false;
 }
 
 async function listPublicGames() {
@@ -140,7 +131,5 @@ module.exports = {
   disable,
   enablePublic,
   disablePublic,
-  enableServerWebRTC,
-  disableServerWebRTC,
   listPublicGames,
 };

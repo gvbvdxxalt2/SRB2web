@@ -2,7 +2,6 @@ var { getWebsocketURL, getHttpURL, PLACEHOLDER_IP } = require("./util.js");
 var ErrorCodes = require("./errors.js");
 var attachSRB2 = require("../attach.js");
 var peer = require("simple-peer");
-var rtcConfig = require("../rtc-config.js");
 
 class ConnectState {
   static createConnectURL(wsHost, { address, port }) {

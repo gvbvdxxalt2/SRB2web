@@ -31,29 +31,6 @@ module.exports = [
 
   /////////////////////////////////////////////////////////
 
-  //Enable WebRTC hosting toggle
-
-  {
-    element: "div",
-    style: {
-      display: "flex",
-    },
-    children: [
-      {
-        element: "span",
-        style: { fontWeight: "bold" },
-        textContent: "Enable WebRTC hosting (faster connection):",
-      },
-      {
-        element: "input",
-        type: "checkbox",
-        gid: "webrtcHostCheckbox",
-      },
-    ],
-  },
-
-  /////////////////////////////////////////////////////////
-
   {
     element: "button",
     className: "button",
