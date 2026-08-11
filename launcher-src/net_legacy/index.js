@@ -108,6 +108,45 @@ async function listPublicGames() {
   return publicNetgames;
 }
 
+async function countPublicGames() {
+  if (!enabled) {
+    throw new Error(`Relay server is disabled`);
+    return [];
+  }
+  if (!host) {
+    throw new Error(`No host provided`);
+    return [];
+  }
+  try {
+    var response = await fetch(`https://${host}/countpublic`);
+    if (!response.ok) {
+      throw new Error(`Got Non-OK response: ${response.status}`);
+    }
+  } catch (e) {
+    console.warn(
+      "Failed to fetch public games through https, trying http. Error message:",
+      e,
+    );
+    try {
+      var response = await fetch(`http://${host}/countpublic`);
+      if (!response.ok) {
+        console.warn(
+          "Failed to fetch public games, response not ok. Status:",
+          response.status,
+        );
+        throw new Error(`Got Non-OK response: ${response.status}`);
+        return [];
+      }
+    } catch (e) {
+      throw e;
+      return [];
+    }
+  }
+  var countInfo = await response.json();
+
+  return countInfo.count;
+}
+
 var isAlerting = false;
 document.addEventListener("visibilitychange", (e) => {
   if (document.visibilityState == "hidden") {
@@ -143,4 +182,5 @@ module.exports = {
   enableServerWebRTC,
   disableServerWebRTC,
   listPublicGames,
+  countPublicGames
 };

@@ -42,8 +42,8 @@ async function setBrowsePublicGamesText(count) {
 }
 async function updatePublicNetgameCount() {
   try {
-    var games = await net.listPublicGames();
-    setBrowsePublicGamesText(games.length);
+    var games = await net.countPublicGames();
+    setBrowsePublicGamesText(games);
   } catch (e) {
     setBrowsePublicGamesText(0);
   }
