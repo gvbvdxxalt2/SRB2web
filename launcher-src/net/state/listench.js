@@ -17,9 +17,15 @@ class ListenChannel {
     this.removeWsConnection = () => {}; //Added in by listen.js
 
     this.init();
+
+    console.log(`[Relay ListenChannel]: Handling connection IP: ${ip} ID: ${id} Websocket ID: ${wsId}`);
   }
 
   wsclosed() {
+    if (this.socketOpen) {
+      console.log(`[Relay ListenChannel]: Websocket connection closed IP: ${this.ip} ID: ${this.id} Websocket ID: ${this.wsId}`);
+    }
+    this.socketOpen = false;
     this.removeWsConnection();
     if (!this.isOpen) {
       this.requestDispose();
@@ -80,6 +86,7 @@ class ListenChannel {
     this.peer.on("error", (err) => {});
 
     this.peer.on("connect", () => {
+      console.log(`[Relay ListenChannel]: Peer connection established IP: ${_this.ip} ID: ${_this.id} Websocket ID: ${_this.wsId}`);
       _this.isOpen = true;
       _this.closews(); //close once the handshake is finished.
     });
@@ -92,6 +99,8 @@ class ListenChannel {
     });
 
     this.peer.on("close", () => {
+      console.log(`[Relay ListenChannel]: Peer connection closed IP: ${_this.ip} ID: ${_this.id} Websocket ID: ${_this.wsId}`);
+      _this.closews();
       _this.handleClose();
       _this.isOpen = false;
     });
@@ -127,6 +136,10 @@ class ListenChannel {
     }
     this.closews();
     this.requestDispose = null;
+    if (!this.disposed) {
+      this.disposed = true;
+      console.log(`[Relay ListenChannel]: Channel closed IP: ${this.ip} ID: ${this.id} Websocket ID: ${this.wsId}`);
+    }
   }
 
   send(data) { //recieving message from srb2.

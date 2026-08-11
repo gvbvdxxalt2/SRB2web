@@ -35,6 +35,7 @@ class ConnectState {
     var _this = this;
     var connectURL = ConnectState.createConnectURL(wsHost, { address, port });
     this.url = connectURL;
+    console.log(`[Relay ConnectState]: Attempting to connect to ${connectURL}`);
 
     if (this.peer) {
       try{
@@ -52,12 +53,12 @@ class ConnectState {
       _this.socketOpen = false;
       var code = event.code;
       if (code == ErrorCodes.NETGAME_NOT_FOUND) {
-        console.warn(`[Relay Connection]: Connection not found, not retrying.`);
+        console.warn(`[Relay ConnectState]: Connection not found, not retrying.`);
         return;
       }
       if (!_this.isOpen) {
         console.warn(
-          `[Relay Connection]: Disconnected unexpectedly, reconnecting...`,
+          `[Relay ConnectState]: Disconnected unexpectedly, reconnecting...`,
         );
         socket.onmessage = () => {};
         setTimeout(() => {
@@ -102,9 +103,31 @@ class ConnectState {
         _this.peer.send(msg);
       }
       _this.initialQueue = [];
+      console.log(`[Relay ConnectState]: Peer connection established.`);
     });
     this.peer.on("close", () => {
+      if (!_this.isOpen) {
+        _this.isOpen = false;
+        console.warn(
+          `[Relay ConnectState]: Peer connection closed without completing handshake, retrying handshake...`,
+        );
+        if (_this.socket) {
+          _this.socket.onmessage = () => {};
+          _this.socket.onclose = () => {};
+          try{
+            _this.socket.close();
+          } catch (e) {}
+        }
+        setTimeout(() => {
+          if (_this.disposed) {
+            return;
+          }
+          _this.initWebsocket();
+        },500);
+        return;
+      }
       _this.isOpen = false;
+      console.log(`[Relay ConnectState]: Peer connection closed.`);
     });
     this.peer.on("data", (data) => { //send straight to SRB2.
       attachSRB2.emitPacket(data, 0, PLACEHOLDER_IP);
@@ -116,6 +139,9 @@ class ConnectState {
     var { socket } = this;
     this.isOpen = false;
     this.socketOpen = true;
+    console.log(
+      `[Relay ConnectState]: Websocket connection established. Waiting for WebRTC handshake to complete...`,
+    );
     socket.onmessage = function (event) {
       if (event.data instanceof ArrayBuffer) {
         try{
@@ -165,6 +191,7 @@ class ConnectState {
       this.initialQueue = null;
     }
     attachSRB2.onpacket = null;
+    console.log(`[Relay ConnectState]: State disposed & going offline.`);
   }
 }
 

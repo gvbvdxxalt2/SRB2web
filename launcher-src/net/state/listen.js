@@ -19,6 +19,7 @@ class ListenState {
     this.rtcConfig = null;
     this.wsConnections = {};
     this.pingPongInterval = null;
+    console.log(`[Relay ListenState]: Starting ListenState with wsHost: ${wsHost}, ${isPublic ? "with public listing enabled" : "with public listing disabled"}.`);
     this.prepareSocket();
     this.setUpdateInterval();
   }
@@ -248,6 +249,7 @@ class ListenState {
     this.disconnectAll();
     clearInterval(this.updateInterval);
     attachSRB2.onpacket = null;
+    console.log(`[Relay ListenState]: State disposed & going offline.`);
   }
 }
 

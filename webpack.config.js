@@ -11,13 +11,7 @@ module.exports = {
   devServer: {
     allowedHosts: "all",
     port: (+require("process").env.PORT) || 3000,
-    client: {
-      overlay: {
-        errors: true, // Keep displaying errors
-        warnings: false, // Disable displaying warnings
-        runtimeErrors: true, // Keep displaying runtime errors
-      },
-    },
+    client: false,
   },
   cache: {
     type: "filesystem",
