@@ -572,6 +572,7 @@ class ConnectState {
     var _this = this;
     var connectURL = ConnectState.createConnectURL(wsHost, { address, port });
     this.url = connectURL;
+    console.log(`[Relay ConnectState]: Attempting to connect to ${connectURL}`);
 
     if (this.peer) {
       try{
@@ -589,12 +590,12 @@ class ConnectState {
       _this.socketOpen = false;
       var code = event.code;
       if (code == ErrorCodes.NETGAME_NOT_FOUND) {
-        console.warn(`[Relay Connection]: Connection not found, not retrying.`);
+        console.warn(`[Relay ConnectState]: Connection not found, not retrying.`);
         return;
       }
       if (!_this.isOpen) {
         console.warn(
-          `[Relay Connection]: Disconnected unexpectedly, reconnecting...`,
+          `[Relay ConnectState]: Disconnected unexpectedly, reconnecting...`,
         );
         socket.onmessage = () => {};
         setTimeout(() => {
@@ -639,9 +640,31 @@ class ConnectState {
         _this.peer.send(msg);
       }
       _this.initialQueue = [];
+      console.log(`[Relay ConnectState]: Peer connection established.`);
     });
     this.peer.on("close", () => {
+      if (!_this.isOpen) {
+        _this.isOpen = false;
+        console.warn(
+          `[Relay ConnectState]: Peer connection closed without completing handshake, retrying handshake...`,
+        );
+        if (_this.socket) {
+          _this.socket.onmessage = () => {};
+          _this.socket.onclose = () => {};
+          try{
+            _this.socket.close();
+          } catch (e) {}
+        }
+        setTimeout(() => {
+          if (_this.disposed) {
+            return;
+          }
+          _this.initWebsocket();
+        },500);
+        return;
+      }
       _this.isOpen = false;
+      console.log(`[Relay ConnectState]: Peer connection closed.`);
     });
     this.peer.on("data", (data) => { //send straight to SRB2.
       attachSRB2.emitPacket(data, 0, PLACEHOLDER_IP);
@@ -653,6 +676,9 @@ class ConnectState {
     var { socket } = this;
     this.isOpen = false;
     this.socketOpen = true;
+    console.log(
+      `[Relay ConnectState]: Websocket connection established. Waiting for WebRTC handshake to complete...`,
+    );
     socket.onmessage = function (event) {
       if (event.data instanceof ArrayBuffer) {
         try{
@@ -702,6 +728,7 @@ class ConnectState {
       this.initialQueue = null;
     }
     attachSRB2.onpacket = null;
+    console.log(`[Relay ConnectState]: State disposed & going offline.`);
   }
 }
 
@@ -1914,6 +1941,7 @@ class ListenState {
     this.rtcConfig = null;
     this.wsConnections = {};
     this.pingPongInterval = null;
+    console.log(`[Relay ListenState]: Starting ListenState with wsHost: ${wsHost}, ${isPublic ? "with public listing enabled" : "with public listing disabled"}.`);
     this.prepareSocket();
     this.setUpdateInterval();
   }
@@ -2143,6 +2171,7 @@ class ListenState {
     this.disconnectAll();
     clearInterval(this.updateInterval);
     attachSRB2.onpacket = null;
+    console.log(`[Relay ListenState]: State disposed & going offline.`);
   }
 }
 
@@ -3150,9 +3179,15 @@ class ListenChannel {
     this.removeWsConnection = () => {}; //Added in by listen.js
 
     this.init();
+
+    console.log(`[Relay ListenChannel]: Handling connection IP: ${ip} ID: ${id} Websocket ID: ${wsId}`);
   }
 
   wsclosed() {
+    if (this.socketOpen) {
+      console.log(`[Relay ListenChannel]: Websocket connection closed IP: ${this.ip} ID: ${this.id} Websocket ID: ${this.wsId}`);
+    }
+    this.socketOpen = false;
     this.removeWsConnection();
     if (!this.isOpen) {
       this.requestDispose();
@@ -3213,6 +3248,7 @@ class ListenChannel {
     this.peer.on("error", (err) => {});
 
     this.peer.on("connect", () => {
+      console.log(`[Relay ListenChannel]: Peer connection established IP: ${_this.ip} ID: ${_this.id} Websocket ID: ${_this.wsId}`);
       _this.isOpen = true;
       _this.closews(); //close once the handshake is finished.
     });
@@ -3225,6 +3261,8 @@ class ListenChannel {
     });
 
     this.peer.on("close", () => {
+      console.log(`[Relay ListenChannel]: Peer connection closed IP: ${_this.ip} ID: ${_this.id} Websocket ID: ${_this.wsId}`);
+      _this.closews();
       _this.handleClose();
       _this.isOpen = false;
     });
@@ -3260,6 +3298,10 @@ class ListenChannel {
     }
     this.closews();
     this.requestDispose = null;
+    if (!this.disposed) {
+      this.disposed = true;
+      console.log(`[Relay ListenChannel]: Channel closed IP: ${this.ip} ID: ${this.id} Websocket ID: ${this.wsId}`);
+    }
   }
 
   send(data) { //recieving message from srb2.
