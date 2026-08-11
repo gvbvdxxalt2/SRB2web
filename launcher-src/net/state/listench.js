@@ -68,7 +68,7 @@ class ListenChannel {
 
     this.peer = new SimplePeer({
       initiator: true,
-      trickle: false,
+      trickle: true,
       config: this.parent.rtcConfig,
       channelConfig: {
         ordered: false,          // Do NOT wait for missing packets
