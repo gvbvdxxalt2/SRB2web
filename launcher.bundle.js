@@ -615,7 +615,7 @@ class ConnectState {
     this.rtcConfig = rtcConfig;
     this.peer = new peer({
       initiator: false,
-      trickle: false,
+      trickle: true,
       config: this.rtcConfig,
       channelConfig: {
         ordered: false,          // Do NOT wait for missing packets
@@ -3132,7 +3132,7 @@ class ListenChannel {
 
     this.peer = new SimplePeer({
       initiator: true,
-      trickle: false,
+      trickle: true,
       config: this.parent.rtcConfig,
       channelConfig: {
         ordered: false,          // Do NOT wait for missing packets
