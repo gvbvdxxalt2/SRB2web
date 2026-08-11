@@ -4,21 +4,23 @@ var attachSRB2 = require("../attach.js");
 var SimplePeer = require("simple-peer");
 
 class ListenChannel {
-  constructor(parent, id, ip, rtcConfig, rtcId) {
+  constructor(parent, id, ip, rtcConfig, wsId) {
     this.parent = parent;
     this.id = id;
     this.ip = ip;
-    this.rid = rtcId;
     this.rtcConfig = rtcConfig;
+    this.wsId = wsId;
 
     this.isOpen = false;
     this.socketOpen = true;
     this.peer = null;
+    this.removeWsConnection = () => {}; //Added in by listen.js
 
     this.init();
   }
 
   wsclosed() {
+    this.removeWsConnection();
     if (!this.isOpen) {
       this.requestDispose();
     }
@@ -30,7 +32,7 @@ class ListenChannel {
     }
     this.parent.socket.send(JSON.stringify({
       data,
-      id: this.id
+      id: this.wsId
     }));
   }
 
@@ -44,8 +46,9 @@ class ListenChannel {
     this.socketOpen = false;
     this.parent.socket.send(JSON.stringify({
       disconnect: true,
-      id: this.id
+      id: this.wsId
     }));
+    this.removeWsConnection();
   }
 
   onwsmsg(data) { //message handler.

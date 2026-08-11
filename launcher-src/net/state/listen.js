@@ -17,45 +17,52 @@ class ListenState {
     this.isPublic = isPublic;
     this.disposed = false;
     this.rtcConfig = null;
-    this.rtcConnections = {};
+    this.wsConnections = {};
     this.prepareSocket();
     this.setUpdateInterval();
   }
 
-  attachConnection(code, id, ip) {
-    var rtcId = 1;
-    while (this.rtcConnections[rtcId]) {
-      rtcId += 1;
+  attachConnection(wsId, ip) {
+    if (this.wsConnections[wsId]) {
+      this.wsConnections[wsId].requestDispose();
+      delete this.wsConnections[wsId];
+    }
+    var id = 1;
+    while (this.connections[id]) {
+      id += 1;
     }
     var ch = new ListenChannel(
       this,
       id,
       ip,
       this.rtcConfig,
-      rtcId
+      wsId
     );
     //window.alert("Connection request: "+id);
-    this.rtcConnections[rtcId] = ch;
+    this.wsConnections[wsId] = ch;
     this.connections[id] = ch;
     var _this = this;
 
     ch.requestDispose = () => {
       ch.dispose();
       delete _this.connections[id];
-      delete _this.rtcConnections[rtcId];
-      attachSRB2.emitClose(rtcId);
+      delete this.wsConnections[wsId];
+      attachSRB2.emitClose(id);
+    };
+
+    ch.removeWsConnection = () => {
+      delete this.wsConnections[wsId];
     };
 
     ch.ondata = (data) => {
-      attachSRB2.emitPacket(new Uint8Array(data), rtcId, ip);
+      attachSRB2.emitPacket(new Uint8Array(data), id, ip);
     };
   }
 
   disconnectAll() {
-    for (var id of Object.keys(this.rtcConnections)) {
-      this.rtcConnections[id].requestDispose();
+    for (var id of Object.keys(this.connections)) {
+      this.connections[id].requestDispose();
     }
-    
   }
 
   prepareSocket() {
@@ -128,11 +135,11 @@ class ListenState {
       }
 
       if (json.method == "connection") {
-        _this.attachConnection(json.channel, json.id, json.ip);
+        _this.attachConnection(json.id, json.ip);
       }
 
       if (json.method == "disconnect") {
-        var ch = _this.connections[json.id];
+        var ch = _this.wsConnections[json.id];
         if (!ch) {
           return;
         }
@@ -140,7 +147,7 @@ class ListenState {
       }
 
       if (json.method == "message") {
-        var ch = _this.connections[json.id]; 
+        var ch = _this.wsConnections[json.id]; 
         if (!ch) {
           return;
         }
@@ -155,7 +162,7 @@ class ListenState {
   }
 
   handleSRB2Send(data, rid) {
-    var ch = this.rtcConnections[rid];
+    var ch = this.connections[rid];
     if (!ch) {
       return;
     }

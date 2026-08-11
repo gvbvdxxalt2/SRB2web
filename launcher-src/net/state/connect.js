@@ -128,7 +128,7 @@ class ConnectState {
         if (json.rtcConfig) {
           _this.peerSetup(json.rtcConfig);
         }
-        if (json.signal) {
+        if (json.signal && _this.peer) {
           _this.peer.signal(json.signal);
         }
 
