@@ -18,8 +18,30 @@ class ListenState {
     this.disposed = false;
     this.rtcConfig = null;
     this.wsConnections = {};
+    this.pingPongInterval = null;
     this.prepareSocket();
     this.setUpdateInterval();
+  }
+
+  setPingPongInterval() {
+    clearInterval(this.pingPongInterval);
+    var _this = this;
+    this.pingPongInterval = setInterval(() => {
+      if (!_this.isOpen) {
+        return;
+      }
+      if (!_this.socket) {
+        return;
+      }
+      _this.socket.send(JSON.stringify({
+        ping: true
+      }));
+    }, 5000);
+  }
+
+  clearPingPongInterval() {
+    clearInterval(this.pingPongInterval);
+    this.pingPongInterval = null;
   }
 
   attachConnection(wsId, ip) {
@@ -105,6 +127,7 @@ class ListenState {
 
     this.socket.onclose = function () {
       _this._lastServerInfo = {};
+      _this.clearPingPongInterval();
       _this.isOpen = false;
       console.warn(
         `[Relay Connection]: Lost connection, connection might become unstable temporarily. Reconnecting...`,
@@ -154,6 +177,7 @@ class ListenState {
         ch.onwsmsg(json.data);
       }
     };
+    this.setPingPongInterval();
     this.socket.onopen = function () {
       _this.isOpen = true;
       _this._lastServerInfo = {};
@@ -209,11 +233,12 @@ class ListenState {
     this._lastServerInfo = {};
     this.updateInterval = setInterval(
       this.handleUpdateInterval.bind(this),
-      100,
+      1000,
     );
   }
 
   dispose() {
+    this.clearPingPongInterval();
     if (this.socket) {
       this.socket.onclose = () => {};
       this.socket.close();
