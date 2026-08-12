@@ -615,7 +615,7 @@ class ConnectState {
     var _this = this;
     this.rtcConfig = rtcConfig;
     this.peer = new peer({
-      initiator: true,
+      initiator: false,
       trickle: true,
       config: this.rtcConfig,
       channelConfig: {
@@ -3235,7 +3235,7 @@ class ListenChannel {
     this.wssend(JSON.stringify({ rtcConfig: this.rtcConfig }));
 
     this.peer = new SimplePeer({
-      initiator: false,
+      initiator: true,
       trickle: true,
       config: this.parent.rtcConfig,
       channelConfig: {
