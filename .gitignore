@@ -28,6 +28,23 @@ Win32_LIB_ASM_Release
 /objs/VC10
 /thirdparty/vcpkg-overlays
 libs/vcpkg/*
+
+node_modules/
+emsdk/
+vcpkg_installed/
+launcher-dist/
+
+# Build files for web browsers.
+# Keeping the bin folder so people don't have to rebuild themselves.
+
+build-wasm/*
+!build-wasm/*.js
+!build-wasm/*.wasm
+!build-wasm/*.data
+!build-wasm/*.worker.js
+!build-wasm/bin
+build-wasm/CMakeFiles/
+build-wasm/testing/
 build-wasm/CMakeFiles/
 build-wasm/vcpkg_installed/
 build-wasm/assets/
@@ -39,16 +56,26 @@ build-wasm/CPackConfig.cmake
 build-wasm/CPackSourceConfig.cmake
 build-wasm/HEAD
 build-wasm/Makefile
-node_modules/
-emsdk/
-vcpkg_installed/
-launcher-dist/
 
-build-wasm/*
-!build-wasm/*.js
-!build-wasm/*.wasm
-!build-wasm/*.data
-!build-wasm/*.worker.js
-!build-wasm/bin
-build-wasm/CMakeFiles/
-build-wasm/testing/
+# Build files for dedicated netgame
+# Also keeping so people don't have to rebuild themselves.
+
+build-wasm-node/*
+!build-wasm-node/*.js
+!build-wasm-node/*.wasm
+!build-wasm-node/*.data
+!build-wasm-node/*.worker.js
+!build-wasm-node/bin
+build-wasm-node/CMakeFiles/
+build-wasm-node/testing/
+build-wasm-node/CMakeFiles/
+build-wasm-node/vcpkg_installed/
+build-wasm-node/assets/
+build-wasm-node/src/
+build-wasm-node/thirdpart/
+build-wasm-node/cmake_install.cmake
+build-wasm-node/CMakeCache.txt
+build-wasm-node/CPackConfig.cmake
+build-wasm-node/CPackSourceConfig.cmake
+build-wasm-node/HEAD
+build-wasm-node/Makefile

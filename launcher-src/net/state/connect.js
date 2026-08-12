@@ -78,7 +78,7 @@ class ConnectState {
     var _this = this;
     this.rtcConfig = rtcConfig;
     this.peer = new peer({
-      initiator: false,
+      initiator: true,
       trickle: true,
       config: this.rtcConfig,
       channelConfig: {
