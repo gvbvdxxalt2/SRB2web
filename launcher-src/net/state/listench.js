@@ -73,7 +73,7 @@ class ListenChannel {
     this.wssend(JSON.stringify({ rtcConfig: this.rtcConfig }));
 
     this.peer = new SimplePeer({
-      initiator: false,
+      initiator: true,
       trickle: true,
       config: this.parent.rtcConfig,
       channelConfig: {
