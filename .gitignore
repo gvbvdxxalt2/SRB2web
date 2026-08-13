@@ -79,3 +79,6 @@ build-wasm-node/CPackConfig.cmake
 build-wasm-node/CPackSourceConfig.cmake
 build-wasm-node/HEAD
 build-wasm-node/Makefile
+
+# This is random but I use this to connect to netgames at school so
+randomrants-proxy/
