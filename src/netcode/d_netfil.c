@@ -134,7 +134,7 @@ consvar_t cv_noticedownload = CVAR_INIT ("noticedownload", "Off", CV_SAVE|CV_NET
 
 // Speed of file downloading (in packets per tic)
 static CV_PossibleValue_t downloadspeed_cons_t[] = {{1, "MIN"}, {300, "MAX"}, {0, NULL}};
-consvar_t cv_downloadspeed = CVAR_INIT ("downloadspeed", "26", CV_SAVE|CV_NETVAR, downloadspeed_cons_t, NULL);
+consvar_t cv_downloadspeed = CVAR_INIT ("downloadspeed", "80", CV_SAVE|CV_NETVAR, downloadspeed_cons_t, NULL);
 
 static UINT16 GetWadNumFromFileNeededId(UINT8 id)
 {
