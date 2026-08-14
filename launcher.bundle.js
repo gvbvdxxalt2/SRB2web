@@ -3547,18 +3547,6 @@ async function initGame() {
 
   loaderContent.textContent = "SRB2 is starting...";
 
-  // Ensure Module.HEAP8 exists temporarily so write checks don't throw ReferenceError
-  if (typeof HEAP8 === 'undefined' && typeof Module !== 'undefined') {
-      if (Module.wasmMemory && Module.wasmMemory.buffer) {
-          window.HEAP8 = new Int8Array(Module.wasmMemory.buffer);
-          Module.HEAP8 = window.HEAP8;
-      } else {
-          // Fallback stub if wasmMemory isn't bound yet (prevents buffer comparison crash)
-          window.HEAP8 = { buffer: new ArrayBuffer(0) };
-          Module.HEAP8 = window.HEAP8;
-      }
-  }
-
   keepAlive(); // Try to keep the screen awake while playing
 
   FS.mkdirTree("/addons");
@@ -3566,23 +3554,13 @@ async function initGame() {
   FS.symlink("/home/web_user/.srb2", "/addons/userdata");
   FS.mount(IDBFS, {}, "/home/web_user");
   FS.syncfs(true, (err) => {
-    console.log("SyncFS done");
+    console.log("SyncFS done", err);
 
     //Give some breathing room for the sync to complete before starting the game, seems to help with stability on some browsers.
     setTimeout(() => {
       Module.callMain(["-home", "/home/web_user"].concat(Module.arguments));
     },500);
   });
-  var isSyncing = false;
-  setInterval(() => {
-    if (!isSyncing) {
-      isSyncing = true;
-      FS.syncfs(false, (err) => {
-        isSyncing = false;
-      });
-    }
-    localStorage.setItem(RUNNING_CHECK_NAME, Date.now());
-  }, 100);
 }
 
 var GetViewportWidth = () => {
@@ -3741,6 +3719,18 @@ window.StartedMainLoopCallback = function () {
 
   // Try to resume immediately (will likely fail, but worth a shot)
   resumeAudio();
+
+
+  var isSyncing = false;
+  setInterval(() => {
+    if (!isSyncing) {
+      isSyncing = true;
+      FS.syncfs(false, (err) => {
+        isSyncing = false;
+      });
+    }
+    localStorage.setItem(RUNNING_CHECK_NAME, Date.now());
+  }, 100);
 };
 
 window.addEventListener("resize", () => {
