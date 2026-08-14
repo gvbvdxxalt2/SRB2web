@@ -14,6 +14,31 @@ function loadScript() {
 
 var FS = null;
 
+function isErrno44(err) {
+  return !!err && Number(err.errno) === 44;
+}
+
+function safeSymlink(targetPath, linkPath) {
+  try {
+    if (!FS.analyzePath(linkPath).exists) {
+      FS.symlink(targetPath, linkPath);
+    }
+  } catch (err) {
+    // If another flow already created the link, we can safely continue.
+    if (!FS.analyzePath(linkPath).exists) {
+      console.warn("Symlink setup failed:", linkPath, err);
+    }
+  }
+}
+
+function ensureUserDataTree() {
+  FS.mkdirTree("/home/web_user/.srb2/addons");
+  FS.mkdirTree("/home/web_user/.srb2/logs");
+  FS.mkdirTree("/addons");
+  safeSymlink("/home/web_user/.srb2", "/addons/.srb2");
+  safeSymlink("/home/web_user/.srb2", "/addons/userdata");
+}
+
 async function loadFilesystem() {
   Module.noInitialRun = true;
   Module.canvas = document.createElement("canvas");
@@ -33,22 +58,37 @@ async function loadFilesystem() {
       }
   }
 
-  FS.mkdirTree("/addons");
-  FS.symlink("/home/web_user/.srb2", "/addons/.srb2");
-  FS.symlink("/home/web_user/.srb2", "/addons/userdata");
+  ensureUserDataTree();
   FS.mount(IDBFS, {}, "/home/web_user");
 
   // 2. Sync from IndexedDB to MEMFS
   await new Promise((resolve,reject) => {
     FS.syncfs(true, (err) => {
       if (err) {
+        if (isErrno44(err)) {
+          // Missing path during hydration can happen after interrupted game startup.
+          // Recreate expected paths and continue instead of wiping IndexedDB.
+          console.warn("Recoverable SyncFS hydration error:", err);
+          try {
+            ensureUserDataTree();
+            resolve();
+            return;
+          } catch (recoverErr) {
+            console.error("Recovery after SyncFS errno 44 failed:", recoverErr);
+          }
+        }
         reject();
         console.error("Sync Error:", err);
         (async function() {
+          var error = ""+err;
+          try{
+            error = JSON.stringify(err);
+          }catch(e){}
           await dialog.alert(
             "The data seems corrupted!\n"+
             "You have probably exceeded your web browsers storage limit.\n"+
-            "If you continue your data will be erased to store new data on top of."
+            "If you continue your data will be erased to store new data on top of.\n"+
+            error
           );
 
           const deleteReq = window.indexedDB.deleteDatabase("/home/web_user");
@@ -76,31 +116,7 @@ async function loadFilesystem() {
 
       // --- SETUP START (Inside callback to ensure persistence awareness) ---
 
-      // Create the internal game folder
-      if (!FS.analyzePath("/home/web_user/.srb2").exists) {
-        FS.mkdir("/home/web_user/.srb2");
-      }
-
-      // Create the default subfolders
-      const subFolders = [
-        "/home/web_user/.srb2/addons",
-        "/home/web_user/.srb2/logs",
-      ];
-      subFolders.forEach((path) => {
-        if (!FS.analyzePath(path).exists) FS.mkdir(path);
-      });
-
-      // 3. Setup the /addons/userdata symlink
-      // We do NOT mkdir /addons/userdata; we link the name directly to the target.
-      if (!FS.analyzePath("/addons").exists) FS.mkdir("/addons");
-
-      try {
-        if (!FS.analyzePath("/addons/userdata").exists) {
-          FS.symlink("/home/web_user/.srb2", "/addons/userdata");
-        }
-      } catch (e) {
-        console.warn("Symlink issue:", e);
-      }
+      ensureUserDataTree();
 
       // --- SETUP END ---
       resolve();

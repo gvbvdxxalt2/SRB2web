@@ -21,6 +21,30 @@ var Touch = require("./touch");
 var touchState = Touch.state;
 var {startupTouchControls} = Touch;
 
+function isErrno44(err) {
+  return !!err && Number(err.errno) === 44;
+}
+
+function safeSymlink(targetPath, linkPath) {
+  try {
+    if (!FS.analyzePath(linkPath).exists) {
+      FS.symlink(targetPath, linkPath);
+    }
+  } catch (err) {
+    if (!FS.analyzePath(linkPath).exists) {
+      console.warn("Symlink setup failed:", linkPath, err);
+    }
+  }
+}
+
+function ensureUserDataTree() {
+  FS.mkdirTree("/home/web_user/.srb2/addons");
+  FS.mkdirTree("/home/web_user/.srb2/logs");
+  FS.mkdirTree("/addons");
+  safeSymlink("/home/web_user/.srb2", "/addons/.srb2");
+  safeSymlink("/home/web_user/.srb2", "/addons/userdata");
+}
+
 async function keepAlive() {
   if (navigator.requestWakeLock) {
     await navigator.requestWakeLock("screen");
@@ -154,11 +178,22 @@ async function initGame() {
 
   keepAlive(); // Try to keep the screen awake while playing
 
-  FS.mkdirTree("/addons");
-  FS.symlink("/home/web_user/.srb2", "/addons/.srb2");
-  FS.symlink("/home/web_user/.srb2", "/addons/userdata");
+  ensureUserDataTree();
   FS.mount(IDBFS, {}, "/home/web_user");
   FS.syncfs(true, (err) => {
+    if (err) {
+      if (isErrno44(err)) {
+        console.warn("Recoverable SyncFS hydration error:", err);
+        try {
+          ensureUserDataTree();
+        } catch (recoverErr) {
+          console.error("Failed to recover filesystem paths:", recoverErr);
+        }
+      } else {
+        console.error("SyncFS hydration failed:", err);
+      }
+    }
+
     console.log("SyncFS done", err);
 
     //Give some breathing room for the sync to complete before starting the game, seems to help with stability on some browsers.
@@ -331,11 +366,22 @@ window.StartedMainLoopCallback = function () {
     if (!isSyncing) {
       isSyncing = true;
       FS.syncfs(false, (err) => {
+        if (err) {
+          if (isErrno44(err)) {
+            try {
+              ensureUserDataTree();
+            } catch (recoverErr) {
+              console.error("Failed to recover filesystem paths:", recoverErr);
+            }
+          } else {
+            console.warn("Background SyncFS error:", err);
+          }
+        }
         isSyncing = false;
       });
     }
     localStorage.setItem(RUNNING_CHECK_NAME, Date.now());
-  }, 100);
+  }, 600);
 };
 
 window.addEventListener("resize", () => {
