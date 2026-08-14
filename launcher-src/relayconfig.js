@@ -138,7 +138,10 @@ function reloadRelayConfig() {
   relays.forEach((relay, i) => {
     var opt = new RelayOption(
       relay,
-      saveRelays,
+      () => {
+        updateRelayUsed();
+        saveRelays();
+      },
       () => {
         //Use button clicked.
         usedRelay = i;

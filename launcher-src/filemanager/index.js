@@ -182,41 +182,69 @@ function showDropdownMenu(e) {
         fileInput.type = "file";
         fileInput.multiple = true;
         fileInput.onchange = function () {
-          var files = fileInput.files;
-          if (!files[0]) {
-            return;
-          }
-          function loadFile(index) {
-            var file = files[index];
-            var fullPath = joinPaths(currentPath, file.name);
+            var files = fileInput.files;
+            if (!files.length) {
+                return;
+            }
+
             loadingScreen.hidden = false;
-            loadingScreen.textContent =
-              'Uploading "' + file.name + '" to this folder...';
-            var reader = new FileReader();
-            reader.onload = async function () {
-              if (!didDisplayDataLossNotice) {
+            loadingScreen.textContent = "Preparing files...";
+
+            // Show notice once
+            if (!didDisplayDataLossNotice) {
                 didDisplayDataLossNotice = true;
                 dialog.alert(
-                  "NOTICE!\n"+
-                  "When adding lots of files (usually above 1.5GB) your save data and other files may become corrupt.\n"+
-                  "This is a bug I can't fix myself due to restrictions on web browsers!\n"+
-                  "If you have any important save data, you can zip files by right clicking a folder and clicking \"Download (Save to zip)\"."
+                    "NOTICE!\n"+
+                    "When adding lots of files (usually above 1.5GB) your save data and other files may become corrupt.\n"+
+                    "This is a bug I can't fix myself due to restrictions on web browsers!\n"+
+                    "If you have any important save data, you can zip files by right clicking a folder and clicking \"Download (Save to zip)\"."
                 );
-              }
-              var arrayBuffer = reader.result;
-              var uint8Array = new Uint8Array(arrayBuffer);
-              FS.writeFile(fullPath, uint8Array);
-              refreshFileList();
-              await syncFs();
-              if (index + 1 < files.length) {
-                loadFile(index + 1);
-              } else {
-                loadingScreen.hidden = true;
-              }
-            };
-            reader.readAsArrayBuffer(file);
-          }
-          loadFile(0);
+            }
+
+            let currentIndex = 0;
+
+            function processNextFile() {
+                if (currentIndex >= files.length) {
+                    // All files written to memory, now do ONE single syncfs call!
+                    loadingScreen.textContent = "Saving changes to disk...";
+                    
+                    syncFs().then(() => {
+                        loadingScreen.hidden = true;
+                        refreshFileList();
+                        console.log("All files uploaded and synced successfully.");
+                    }).catch((err) => {
+                        loadingScreen.hidden = true;
+                        console.error("Sync error after batch upload:", err);
+                        alert("Error saving files to persistent storage. Storage might be full.");
+                    });
+                    return;
+                }
+
+                var file = files[currentIndex];
+                var fullPath = joinPaths(currentPath, file.name);
+                loadingScreen.textContent = `Uploading "${file.name}" (${currentIndex + 1}/${files.length})...`;
+
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var arrayBuffer = reader.result;
+                    if (!arrayBuffer || arrayBuffer.byteLength === 0) return;
+
+                    var uint8Array = new Uint8Array(arrayBuffer.slice(0));
+
+                    // Ensure parent folders exist so IDBFS metadata doesn't desync
+                    var lastSlash = fullPath.lastIndexOf('/');
+                    if (lastSlash !== -1) {
+                        FS.mkdirTree(fullPath.substring(0, lastSlash));
+                    }
+
+                    FS.writeFile(fullPath, uint8Array);
+                    currentIndex++;
+                    processNextFile();
+                };
+                reader.readAsArrayBuffer(file);
+            }
+
+            processNextFile();
         };
         fileInput.click();
       },
@@ -374,7 +402,9 @@ function showFileDropdownMenu(e, fullPath, isDir, fileName) {
                 var newZipFolder = zipFolder.folder(items[i]);
                 addFolderToZip(newZipFolder, itemPath);
               } else {
+                console.log(itemPath);
                 var fileData = FS.readFile(itemPath);
+                console.log(fileData);
                 zipFolder.file(items[i], fileData);
               }
             }
@@ -448,7 +478,7 @@ filePathInput.addEventListener("change", function () {
     }, 100);
   } catch (e) {
     console.error("FS Load Error:", e);
-    dialog.alert("Failed to load filesystem: " + e + "\nReload to try again.");
+    loadingScreen.hidden = true;
     // window.location.reload(); // Optional: only reload if it's a fatal error
   }
 })();

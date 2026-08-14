@@ -152,6 +152,18 @@ async function initGame() {
 
   loaderContent.textContent = "SRB2 is starting...";
 
+  // Ensure Module.HEAP8 exists temporarily so write checks don't throw ReferenceError
+  if (typeof HEAP8 === 'undefined' && typeof Module !== 'undefined') {
+      if (Module.wasmMemory && Module.wasmMemory.buffer) {
+          window.HEAP8 = new Int8Array(Module.wasmMemory.buffer);
+          Module.HEAP8 = window.HEAP8;
+      } else {
+          // Fallback stub if wasmMemory isn't bound yet (prevents buffer comparison crash)
+          window.HEAP8 = { buffer: new ArrayBuffer(0) };
+          Module.HEAP8 = window.HEAP8;
+      }
+  }
+
   keepAlive(); // Try to keep the screen awake while playing
 
   FS.mkdirTree("/addons");
