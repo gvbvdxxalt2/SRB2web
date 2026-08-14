@@ -257,41 +257,69 @@ function showDropdownMenu(e) {
         fileInput.type = "file";
         fileInput.multiple = true;
         fileInput.onchange = function () {
-          var files = fileInput.files;
-          if (!files[0]) {
-            return;
-          }
-          function loadFile(index) {
-            var file = files[index];
-            var fullPath = joinPaths(currentPath, file.name);
+            var files = fileInput.files;
+            if (!files.length) {
+                return;
+            }
+
             loadingScreen.hidden = false;
-            loadingScreen.textContent =
-              'Uploading "' + file.name + '" to this folder...';
-            var reader = new FileReader();
-            reader.onload = async function () {
-              if (!didDisplayDataLossNotice) {
+            loadingScreen.textContent = "Preparing files...";
+
+            // Show notice once
+            if (!didDisplayDataLossNotice) {
                 didDisplayDataLossNotice = true;
                 dialog.alert(
-                  "NOTICE!\n"+
-                  "When adding lots of files (usually above 1.5GB) your save data and other files may become corrupt.\n"+
-                  "This is a bug I can't fix myself due to restrictions on web browsers!\n"+
-                  "If you have any important save data, you can zip files by right clicking a folder and clicking \"Download (Save to zip)\"."
+                    "NOTICE!\n"+
+                    "When adding lots of files (usually above 1.5GB) your save data and other files may become corrupt.\n"+
+                    "This is a bug I can't fix myself due to restrictions on web browsers!\n"+
+                    "If you have any important save data, you can zip files by right clicking a folder and clicking \"Download (Save to zip)\"."
                 );
-              }
-              var arrayBuffer = reader.result;
-              var uint8Array = new Uint8Array(arrayBuffer);
-              FS.writeFile(fullPath, uint8Array);
-              refreshFileList();
-              await syncFs();
-              if (index + 1 < files.length) {
-                loadFile(index + 1);
-              } else {
-                loadingScreen.hidden = true;
-              }
-            };
-            reader.readAsArrayBuffer(file);
-          }
-          loadFile(0);
+            }
+
+            let currentIndex = 0;
+
+            function processNextFile() {
+                if (currentIndex >= files.length) {
+                    // All files written to memory, now do ONE single syncfs call!
+                    loadingScreen.textContent = "Saving changes to disk...";
+                    
+                    syncFs().then(() => {
+                        loadingScreen.hidden = true;
+                        refreshFileList();
+                        console.log("All files uploaded and synced successfully.");
+                    }).catch((err) => {
+                        loadingScreen.hidden = true;
+                        console.error("Sync error after batch upload:", err);
+                        alert("Error saving files to persistent storage. Storage might be full.");
+                    });
+                    return;
+                }
+
+                var file = files[currentIndex];
+                var fullPath = joinPaths(currentPath, file.name);
+                loadingScreen.textContent = `Uploading "${file.name}" (${currentIndex + 1}/${files.length})...`;
+
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var arrayBuffer = reader.result;
+                    if (!arrayBuffer || arrayBuffer.byteLength === 0) return;
+
+                    var uint8Array = new Uint8Array(arrayBuffer.slice(0));
+
+                    // Ensure parent folders exist so IDBFS metadata doesn't desync
+                    var lastSlash = fullPath.lastIndexOf('/');
+                    if (lastSlash !== -1) {
+                        FS.mkdirTree(fullPath.substring(0, lastSlash));
+                    }
+
+                    FS.writeFile(fullPath, uint8Array);
+                    currentIndex++;
+                    processNextFile();
+                };
+                reader.readAsArrayBuffer(file);
+            }
+
+            processNextFile();
         };
         fileInput.click();
       },
@@ -449,7 +477,9 @@ function showFileDropdownMenu(e, fullPath, isDir, fileName) {
                 var newZipFolder = zipFolder.folder(items[i]);
                 addFolderToZip(newZipFolder, itemPath);
               } else {
+                console.log(itemPath);
                 var fileData = FS.readFile(itemPath);
+                console.log(fileData);
                 zipFolder.file(items[i], fileData);
               }
             }
@@ -523,7 +553,7 @@ filePathInput.addEventListener("change", function () {
     }, 100);
   } catch (e) {
     console.error("FS Load Error:", e);
-    dialog.alert("Failed to load filesystem: " + e + "\nReload to try again.");
+    loadingScreen.hidden = true;
     // window.location.reload(); // Optional: only reload if it's a fatal error
   }
 })();
@@ -550,7 +580,9 @@ var checkInterval = setInterval(() => {
 /***/ },
 
 /***/ 3687
-(module) {
+(module, __unused_webpack_exports, __webpack_require__) {
+
+const dialog = __webpack_require__(5925);
 
 var Module = window["Module"] || {};
 
@@ -573,14 +605,58 @@ async function loadFilesystem() {
   await loadScript();
   FS = Module.FS;
 
-  // 1. Prepare the mount point
-  FS.mkdirTree("/home/web_user");
-  FS.mount(FS.filesystems.IDBFS, {}, "/home/web_user");
+  // Ensure Module.HEAP8 exists temporarily so write checks don't throw ReferenceError
+  if (typeof HEAP8 === 'undefined' && typeof Module !== 'undefined') {
+      if (Module.wasmMemory && Module.wasmMemory.buffer) {
+          window.HEAP8 = new Int8Array(Module.wasmMemory.buffer);
+          Module.HEAP8 = window.HEAP8;
+      } else {
+          // Fallback stub if wasmMemory isn't bound yet (prevents buffer comparison crash)
+          window.HEAP8 = { buffer: new ArrayBuffer(0) };
+          Module.HEAP8 = window.HEAP8;
+      }
+  }
+
+  FS.mkdirTree("/addons");
+  FS.symlink("/home/web_user/.srb2", "/addons/.srb2");
+  FS.symlink("/home/web_user/.srb2", "/addons/userdata");
+  FS.mount(IDBFS, {}, "/home/web_user");
 
   // 2. Sync from IndexedDB to MEMFS
-  await new Promise((resolve) => {
+  await new Promise((resolve,reject) => {
     FS.syncfs(true, (err) => {
-      if (err) console.error("Sync Error:", err);
+      if (err) {
+        reject();
+        console.error("Sync Error:", err);
+        (async function() {
+          await dialog.alert(
+            "The data seems corrupted!\n"+
+            "You have probably exceeded your web browsers storage limit.\n"+
+            "If you continue your data will be erased to store new data on top of."
+          );
+
+          const deleteReq = window.indexedDB.deleteDatabase("/home/web_user");
+
+          deleteReq.onsuccess = function () {
+              console.log("Corrupted database wiped successfully.");
+              window.location.reload();
+            };
+            deleteReq.onupgradeneeded = () => {
+              window.location.reload();
+            };
+
+            deleteReq.onerror = async function (dbErr) {
+                console.error("Failed to delete the corrupted IndexedDB database.", dbErr);
+                await dialog.alert("Unable to automatically erase IndexedDB database. Reload to try again.");
+                window.location.reload();
+              };
+
+              setTimeout(() => {
+                window.location.reload();
+              },1000);
+        })();
+        return;
+      }
 
       // --- SETUP START (Inside callback to ensure persistence awareness) ---
 
