@@ -87,6 +87,7 @@ if (window["Module"]) {
 }
 var jszip = __webpack_require__(1710);
 var loadingScreen = elements.getGPId("loadingScreen");
+var didDisplayDataLossNotice = false;
 
 var FS = null;
 var filePathInput = elements.getGPId("filePathInput");
@@ -268,6 +269,15 @@ function showDropdownMenu(e) {
               'Uploading "' + file.name + '" to this folder...';
             var reader = new FileReader();
             reader.onload = async function () {
+              if (!didDisplayDataLossNotice) {
+                didDisplayDataLossNotice = true;
+                dialog.alert(
+                  "NOTICE!\n"+
+                  "When adding lots of files (usually above 1.5GB) your save data and other files may become corrupt.\n"+
+                  "This is a bug I can't fix myself due to restrictions on web browsers!\n"+
+                  "If you have any important save data, you can zip files by right clicking a folder and clicking \"Download (Save to zip)\"."
+                );
+              }
               var arrayBuffer = reader.result;
               var uint8Array = new Uint8Array(arrayBuffer);
               FS.writeFile(fullPath, uint8Array);
@@ -422,7 +432,7 @@ function showFileDropdownMenu(e, fullPath, isDir, fileName) {
     {
       element: "div",
       className: "dropdownItem",
-      textContent: "Download (save to zip)",
+      textContent: "Download (Save to zip)",
       hidden: !isDir,
       onclick: function () {
         try {
