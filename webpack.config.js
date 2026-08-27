@@ -27,7 +27,7 @@ module.exports = {
       chunks: "all",
       name: "shared",
     },
-    minimize: false
+    minimize: true
   },
   output: {
     path: path.resolve(__dirname, "launcher-dist"),
