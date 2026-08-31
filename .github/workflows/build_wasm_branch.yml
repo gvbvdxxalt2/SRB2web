@@ -1,0 +1,47 @@
+name: Build wasm branch
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x] # Updated to 18 (16 is End-of-Life)
+
+    steps:
+      - name: Checkout master branch 🛎️
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }} ⚙️
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Build to emscripten WASM and JS.
+        run: |
+          ./setup-build.sh
+
+      - name: Push to wasm branch
+        # Only deploy when pushing to master, not on Pull Requests
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build-wasm/bin
+          branch: wasm
+
+      - name: Push to wasm-node branch
+        # Only deploy when pushing to master, not on Pull Requests
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build-wasm-node/bin
+          branch: wasm-node
