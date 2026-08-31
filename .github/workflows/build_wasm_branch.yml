@@ -28,6 +28,7 @@ jobs:
 
       - name: Build to emscripten WASM and JS.
         run: |
+          sudo apt install git cmake build-essential python3
           ./setup-build.sh
 
       - name: Push to wasm branch
@@ -37,6 +38,10 @@ jobs:
         with:
           folder: build-wasm/bin
           branch: wasm
+
+      - name: Build to emscripten node js WASM and JS.
+        run: |
+          ./build-wasm-node.sh
 
       - name: Push to wasm-node branch
         # Only deploy when pushing to master, not on Pull Requests
