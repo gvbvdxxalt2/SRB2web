@@ -343,7 +343,10 @@ async function launchToNetgame(game) {
 }
 
 async function launchToHost() {
-  var confirmed = await dialog.confirm(`Launch game to host public netgame?`);
+  var confirmed = await dialog.confirm(`Launch game to host public netgame?`+
+    "\nTip: If you want to host an unlisted netgame, launch the game normally and use Multiplayer > Internet/LAN."+
+    "\nThe console (press `) will display your netgame's IP for others to join."
+  );
   if (!confirmed) return;
 
   closePublicList();
@@ -357,6 +360,7 @@ async function launchToHost() {
 function displayPublicGames(games, selectedURL) {
   setBrowsePublicGamesText(games.length);
   publicNetgameBrowser.hidden = false;
+
   var gameslist = games.map((game) => {
         return gameToButton(game, selectedURL, () => {
           displayPublicGames(games, game.url);
@@ -583,7 +587,9 @@ async function loadPublicList() {
     return;
   }
 
-  displayPublicGames(games);
+  var gamesListOrganized = games.sort((game) => (game.gameID !== version.GAME_ID) ? 1 : -1);
+
+  displayPublicGames(gamesListOrganized);
 }
 
 async function handleBrowseButtonClick () {
