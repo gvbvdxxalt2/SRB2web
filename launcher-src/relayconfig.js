@@ -304,15 +304,14 @@ function gameToButton(game, selectedURL, onClick) {
         element: "div",
         style: {
           display: "flex",
-          alignItems: "center",
-          gap: "2px",
+          flexDirection: "column",
         },
         children: [
-          /*{
-            element: "img",
-            className: "netgameCommunicationType",
-            src: game.usesWebRTC ? "images/webrtc.svg" : "images/websocket.svg",
-          },*/
+          {
+            element: "span",
+            className: "netgameGameName",
+            textContent: game.gameName,
+          },
           {
             element: "span",
             className: "netgameServerName",
