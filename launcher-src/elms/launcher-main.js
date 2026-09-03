@@ -13,6 +13,7 @@ module.exports = [
       ...require("./play-button.js"),
       ...require("./browse-netgames-button.js"),
       ...require("./file-manager-button.js"),
+      ...require("./switch-game-button.js"),
 
       ////////////////////////////////////////////
 
