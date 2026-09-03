@@ -470,6 +470,10 @@ a:hover {
   font-family: arial;
 }
 
+.netgameGameName {
+  font-size: 16px;
+}
+
 .netgameCommunicationType {
   width: 25px;
   height: 25px;
