@@ -437,6 +437,29 @@ function displayPublicGames(games, selectedURL) {
     return;
   }
 
+  if (game.gameID !== version.GAME_ID) {
+    elements.setInnerJSON(publicNetgameBrowserRight, [
+      {
+        element: "span",
+        className: "viewPublicNetgameDetails",
+        children: [
+          {
+            element: "span",
+            textContent: `This netgame belongs to ${game.gameName}, but you are using ${version.GAME_NAME}.`,
+          },
+          { element: "br" },
+          {
+            element: "span",
+            textContent: "If you want to join this netgame, you need to use "+game.gameName+" instead.",
+          }
+        ]
+      },
+      getCloseButton(),
+    ]);
+
+    return;
+  }
+
   elements.setInnerJSON(publicNetgameBrowserRight, [
     {
       element: "div",
