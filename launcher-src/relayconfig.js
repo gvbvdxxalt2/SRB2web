@@ -5,6 +5,7 @@ var relayServerCheckbox = elements.getGPId("relayServerCheckbox");
 var lstorageName = "SRB2WebRelayConfig";
 var RelayOption = require("./relayoption.js");
 var net = require("./net");
+var version = require("./net/version.js");
 
 var browsePublicGames = elements.getGPId("browsePublicGames");
 var browseNetgamesLargeButton = elements.getGPId("browseNetgamesLargeButton");
