@@ -4,6 +4,8 @@ if (window["Module"]) {
   var Module = window["Module"];
 }
 
+var fflate = require('fflate');
+
 class SRB2WebNet {
   static InitNetwork() {
     if (attach.oninit) {
@@ -21,8 +23,9 @@ class SRB2WebNet {
 
   static SendPacket(node_id, data_ptr, length) {
     if (attach.onpacket) {
-      var data = new Uint8Array(Module.HEAPU8.buffer, data_ptr, length);
-      attach.onpacket(data, node_id);
+      var uncompressedData = new Uint8Array(Module.HEAPU8.buffer, data_ptr, length);
+      var compressedData = fflate.zlibSync(uncompressedData, { level: 9 });
+      attach.onpacket(compressedData, node_id);
     }
     return 0;
   }
@@ -47,14 +50,15 @@ window.SRB2WebNet = SRB2WebNet;
 var SRB2_Receive = null;
 var receiveBufferPtr = null; 
 attach.emitPacket = function (data, id, ip) {
+  var decompressedData = fflate.unzlibSync(data);
   if (!SRB2_Receive) {
     SRB2_Receive = Module.cwrap("SRB2_NetworkReceive", "void", ["number", "number", "number", "string"]);
   }
   if (!receiveBufferPtr) {
     receiveBufferPtr = Module._malloc(2048);
   }
-  Module.HEAPU8.set(data, receiveBufferPtr);
-  SRB2_Receive(receiveBufferPtr, data.length, +id || 0, ip);
+  Module.HEAPU8.set(decompressedData, receiveBufferPtr);
+  SRB2_Receive(receiveBufferPtr, decompressedData.length, +id || 0, ip);
 };
 
 attach.emitClose = function (id) {
