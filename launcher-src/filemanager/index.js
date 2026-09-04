@@ -56,11 +56,12 @@ function refreshFileList() {
             textContent: "UP...",
           },
         ],
-        onclick: function () {
+        onclick: function (e) {
           if (currentPath != "/") {
             currentPath = "/" + joinPaths(currentPath, "..");
             refreshFileList();
           }
+          e.stopPropagation();
         },
       },
     ]
@@ -110,11 +111,13 @@ function refreshFileList() {
                     currentPath = previous;
                     refreshFileList();
                   }
+                  e.stopPropagation();
                 } else {
                   setTimeout(() => {
                     showFileDropdownMenu(e, fullPath, isDir, fileName);
                   }, 1);
                   e.preventDefault();
+                  e.stopPropagation();
                   return false;
                 }
               },
@@ -432,6 +435,14 @@ fileListContainer.addEventListener("contextmenu", function (e) {
   e.preventDefault();
   showDropdownMenu(e);
   return false;
+});
+
+fileListContainer.addEventListener("click", function (e) {
+  if (clickDropdownMenu.hidden) {
+    e.preventDefault();
+    showDropdownMenu(e);
+    e.stopPropagation();
+  }
 });
 
 filePathInput.addEventListener("change", function () {
