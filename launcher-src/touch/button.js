@@ -29,6 +29,8 @@ class TouchControlButton {
             0,
             0
         );
+        button.width = 10;
+        button.height = 10;
         var data = button.save();
         button.destroy();
         return data;
