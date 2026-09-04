@@ -24,7 +24,7 @@ class SRB2WebNet {
   static SendPacket(node_id, data_ptr, length) {
     if (attach.onpacket) {
       var uncompressedData = new Uint8Array(Module.HEAPU8.buffer, data_ptr, length);
-      var compressedData = fflate.zlibSync(uncompressedData, { level: 9 });
+      var compressedData = fflate.zlibSync(uncompressedData, { level: 1 });
       attach.onpacket(compressedData, node_id);
     }
     return 0;
