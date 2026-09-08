@@ -8,7 +8,7 @@ ROOT_DIR=$(pwd)
 EM_TOOLCHAIN="$ROOT_DIR/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
 
 # Clean old build cache completely
-rm -rf build-wasm
+# rm -rf build-wasm
 mkdir -p build-wasm
 cd build-wasm
 
@@ -41,7 +41,7 @@ emmake make -j1
 
 emmake make -j$(nproc)
 
-cd bin
-if [ -f "srb2" ] && [ ! -f "srb2.js" ]; then
-    mv srb2 srb2.js
-fi
+# cd bin
+# if [ -f "srb2" ] && [ ! -f "srb2.js" ]; then
+#     mv srb2 srb2.js
+# fi
