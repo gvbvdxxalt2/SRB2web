@@ -25,7 +25,7 @@ var relayEnabled = true;
 function getPublicHosts() {
   return [
     {
-      host: "srb2web-lan.onrender.com",
+      host: "srb2web-lan.gvbvdxx.me",
       name: "Public server 1",
     },
   ];
