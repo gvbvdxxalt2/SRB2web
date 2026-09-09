@@ -121,9 +121,17 @@ class ListenState {
   openSocket() {
     var _this = this;
     var { wsHost, isPublic } = this;
+    if (this._socket) { //Safety because there might be two on accident and we don't want broken/extra netgame lists. 
+      try{
+        this._socket.onclose = () => {};
+        this._socket.close();
+      }catch(e){}
+      this._socket = null;
+    }
     this.socket = new WebSocket(
       getWebsocketURL(wsHost) + (isPublic ? "host/public" : "host"),
     );
+    this._socket = this.socket;
     this.isOpen = false;
     this._lastServerInfo = {};
 
@@ -247,6 +255,13 @@ class ListenState {
       this.socket.onclose = () => {};
       this.socket.close();
     }
+    if (this._socket) {
+      try{
+        this._socket.onclose = () => {};
+        this._socket.close();
+      }catch(e){}
+    }
+    this._socket = null;
     this.socket = null;
     this.disposed = true;
     this.disconnectAll();
