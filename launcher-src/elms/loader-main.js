@@ -47,6 +47,18 @@ module.exports = [
         },
       },
 
+      {
+        element: "div",
+        gid: "loaderCacheWarning",
+        hidden: true,
+        textContent: "It seems like your cache is having trouble storing the game data. This game may take long to load next time.",
+        style: {
+          textAlign: "center",
+          fontSize: "15px",
+          color: "#e3d400",
+        },
+      },
+
       ////////////////////////////////////////
     ],
   },
