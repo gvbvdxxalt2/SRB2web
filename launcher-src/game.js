@@ -15,7 +15,9 @@ var resolutionChangeMethod = "safe";
 var loadProgressMain = elements.getGPId("loadProgressMain");
 var loadProgressCurrent = elements.getGPId("loadProgressCurrent");
 var loadProgressCurrentText = elements.getGPId("loadProgressCurrentText");
+var loaderCacheWarning = elements.getGPId("loaderCacheWarning");
 loadProgressMain.hidden = true;
+loaderCacheWarning.hidden = true;
 
 const {ASSET_LIST, CACHE_NAME} = require("./assets.js");
 
@@ -181,6 +183,7 @@ async function downloadAndSaveAssets() {
       });
 
       var cachePromise = cache.put(asset.url, trackedResponse.clone()).catch((e) => {
+        loaderCacheWarning.hidden = false;
         console.warn(`Unable to put in cache: ${e}`);
       });
 
