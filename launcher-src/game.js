@@ -12,6 +12,13 @@ var launcherMain = elements.getGPId("launcherMain");
 var loaderMain = elements.getGPId("loaderMain");
 var resolutionChangeMethod = "safe";
 
+var loadProgressMain = elements.getGPId("loadProgressMain");
+var loadProgressCurrent = elements.getGPId("loadProgressCurrent");
+var loadProgressCurrentText = elements.getGPId("loadProgressCurrentText");
+loadProgressMain.hidden = true;
+
+const {ASSET_LIST, CACHE_NAME} = require("./assets.js");
+
 var gameResolutionWidth = 0;
 var gameResolutionHeight = 0;
 
@@ -55,22 +62,10 @@ async function keepAlive() {
       "srb2_game_running",
       { mode: "exclusive" },
       async () => {
-        await new Promise((resolve) => {});
+        return await new Promise((resolve) => {});
       },
     );
   }
-
-  startAudioKeepAlive();
-}
-
-function startAudioKeepAlive() {
-  const context = new AudioContext();
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-  gain.gain.value = 0.0001; // Inaudible
-  oscillator.connect(gain);
-  gain.connect(context.destination);
-  oscillator.start();
 }
 
 function enableStartServer(dedicated = false) {
@@ -94,76 +89,115 @@ function loadScript() {
   });
 }
 
-var CACHE_NAME = "srb2-assets-v1";
 async function downloadAndSaveAssets() {
-  const assetList = [
-    { url: "assets/characters.pk3", filename: "characters.pk3" },
-    { url: "assets/music.pk3", filename: "music.pk3" },
-    { url: "assets/srb2.pk3", filename: "srb2.pk3" },
-    { url: "assets/zones.pk3", filename: "zones.pk3" }, // If you have it
-  ];
-  // 1. Open the browser's cache storage
-  const cache = await caches.open(CACHE_NAME);
+  var cache = await caches.open(CACHE_NAME);
+  var assetCount = 0;
+  var assetLength = ASSET_LIST.length;
 
-  for (const asset of assetList) {
-    //console.log(`Checking storage for ${asset.filename}...`);
+  for (var asset of ASSET_LIST) {
 
-    // 2. Check if we already have the file in cache
-    let response = await cache.match(asset.url);
+    //Why not show the user how many resources are needed and currently finished?
+    loaderContent.textContent = `[${assetCount+1}/${assetLength} resources]`;
+
+    var response = await cache.match(asset.url);
+    var didCache = false;
 
     if (response) {
-      // HIT: We found it!
-      //console.log(`[CACHE HIT] Loading ${asset.filename} from disk.`);
-      loaderContent.textContent = `Loading ${asset.filename} from cache...`;
+      didCache = true;
     } else {
-      // MISS: We need to download it
-      //console.log(
-      //  `[CACHE MISS] Downloading ${asset.filename} from internet...`,
-      //);
-      loaderContent.textContent = `Downloading ${asset.filename}... (This may take a few minutes on first load!)`;
-
       try {
-        // --- NEW CODE START ---
-
-        // 1. Manually fetch the file first to check for errors
-        //console.log(`[NETWORK] Fetching ${asset.url}...`);
         const request = new Request(asset.url);
+        loadProgressMain.hidden = false;
+        loadProgressCurrentText.textContent = "Requesting resource...";
+        loadProgressCurrent.style.width = "0%";
         const networkResponse = await fetch(request);
 
-        // 2. Check for 404s or Server Errors
         if (!networkResponse.ok) {
           throw new Error(
             `Server returned ${networkResponse.status} ${networkResponse.statusText} for file: ${asset.url}`,
           );
         }
 
-        // 3. Put the successful response into the cache
-        // We must clone() it because the response body can only be read once
-        try{
-          await cache.put(request, networkResponse.clone());
-        }catch(e){
+        cache.put(request, networkResponse.clone()).catch((e) => {
           console.warn(`Unable to put in cache, it won't load fast next time. ${e}`);
-        }
+        });
 
-        // 4. Use the network response immediately so we don't have to look it up again
         response = networkResponse;
 
-        // --- NEW CODE END ---
       } catch (err) {
         console.error(`FATAL ERROR: Could not load ${asset.url}`);
-        // Update the loading screen so you can see it without opening console
         loaderContent.textContent = `ERROR: ${err.message}`;
+        loadProgressMain.hidden = true;
         throw err;
       }
     }
 
-    // 3. Read the file from cache into a buffer
-    const buffer = await response.arrayBuffer();
-    const data = new Uint8Array(buffer);
+    var buffer = null;
+    if (!didCache) {
+      var contentLength = response.headers.get('content-length');
+      var total = contentLength ? parseInt(contentLength, 10) : 0;
+      var reader = response.body.getReader();
+      var loaded = 0;
 
-    // 4. Write to the Game's Virtual RAM (MEMFS)
-    // This is fast because we are reading from disk, not network
+      if (total == 0) {
+        loadProgressMain.hidden = true;
+      }
+
+      function updatePercent() {
+        var percent = total ? (loaded / total) * 100 : 0;
+        if (percent < 0) {
+          percent = 0; //Somehow going to negatives? Just cap it anyways.
+        }
+        if (percent > 100) {
+          percent = 100; //Why are we going past 100%? Just cap it anyways.
+        }
+        loadProgressCurrent.style.width = percent + "%";
+        loadProgressCurrentText.textContent = `Downloading "${asset.filename}"... (${Math.round(percent)}%)`;
+      }
+
+      updatePercent();
+
+      var stream = new ReadableStream({
+        async start(controller) {
+          while (true) {
+
+            updatePercent();
+
+            const { done, value } = await reader.read();
+
+            if (done) {
+              controller.close();
+              break;
+            }
+
+            loaded += value.byteLength;
+            updatePercent();
+
+            controller.enqueue(value);
+          }
+        }
+      });
+
+      var trackedResponse = new Response(stream, {
+        headers: response.headers,
+        status: response.status,
+        statusText: response.statusText
+      });
+
+      buffer = await trackedResponse.arrayBuffer();
+    } else {
+      loadProgressCurrentText.textContent = `Pulling "${asset.filename}" from cache...`;
+      buffer = await response.arrayBuffer();
+    }
+    var data = new Uint8Array(buffer);
+
+    //This is probably sync so it won't display but whatever.
+    loadProgressCurrentText.textContent = `Attaching resource "${asset.filename}"...`;
     FS.writeFile(asset.filename, data);
+    
+    loadProgressMain.hidden = true;
+
+    assetCount += 1;
   }
 }
 
@@ -244,14 +278,7 @@ async function startGame(options = {}) {
   launcherMain.hidden = true;
   var { targetX, targetY } = getTargetSize();
 
-  Module.arguments = [
-    //"-connect",
-    //"0.0.0.0"
-    /*'-width',
-    ""+targetX,
-    '-height',
-    ""+targetY*/
-  ];
+  Module.arguments = [];
   if (serverOpts) {
     Module.arguments.push("-server");
     if (serverOpts.dedicated) {
@@ -269,13 +296,6 @@ async function startGame(options = {}) {
       resolutionChangeMethod = options.resolutionChangeMethod;
     }
   }
-
-  /*Module.arguments.push("-mb");
-  Module.arguments.push("250");
-  Module.arguments.push("+drawdist");
-  Module.arguments.push("2048");
-  Module.arguments.push("+addons_option");
-  Module.arguments.push("CUSTOM");*/
 
   Module.noInitialRun = true;
   Module.print = () => {};
@@ -339,27 +359,6 @@ window.StartedMainLoopCallback = function () {
   });
 
   startupTouchControls();
-
-  function resumeAudio() {
-    // SDL2 creates an AudioContext on the Module
-    if (Module.SDL2 && Module.SDL2.audioContext) {
-      if (Module.SDL2.audioContext.state === "suspended") {
-        Module.SDL2.audioContext.resume().then(() => {
-          //console.log("AudioContext resumed!");
-        });
-      }
-    }
-
-    // Also try the standard web audio context just in case
-    var AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (AudioContext) {
-      // If there's a global context hidden somewhere
-    }
-  }
-
-  // Try to resume immediately (will likely fail, but worth a shot)
-  resumeAudio();
-
 
   var isSyncing = false;
   setInterval(() => {
@@ -624,17 +623,6 @@ gameCanvas.addEventListener("touchend", function (e) {
     e.preventDefault();
 }, { passive: false });
 
-//Intentional debug logic, keep the if so it can be turned on and off.
-if (false) {
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "q") {
-      var gl =
-        gameCanvas.getContext("webgl2") || gameCanvas.getContext("webgl");
-      window.alert(gl.getError());
-    }
-  });
-}
-
 //Debug handling
 window.addEventListener('error', (event) => {
   // Check if it's a resource loading error (like a failed <img> or <script>)
@@ -661,11 +649,5 @@ window.addEventListener('error', (event) => {
   // Example alert incorporating the stack trace (or first few lines)
   dialog.alert(`Uncaught JS Error: ${event.message}\n\nStack Trace:\n${stackTrace || 'No stack available'}`);
 }, true);
-
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('Unhandled Promise Rejection:', {
-    reason: event.reason // The error or message passed to reject()
-  });
-});
 
 module.exports = { startGame, enableStartServer, disableStartServer };
