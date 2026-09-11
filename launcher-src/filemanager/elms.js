@@ -12,6 +12,15 @@ module.exports = [
   },
   {
     element: "div",
+    className: "srb2BG"
+  },
+  {
+    element: "img",
+    className: "srb2Logo",
+    src: "images/srb2logo.png"
+  },
+  {
+    element: "div",
     className: "loadingScreen",
     gid: "loadingScreen",
     textContent: "File system is loading...",
