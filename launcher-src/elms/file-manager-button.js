@@ -3,7 +3,6 @@ module.exports = [
     element: "a",
     className: "button fsButton",
     href: "file.html",
-    target: "_blank",
     children: [
       {
         element: "img",
