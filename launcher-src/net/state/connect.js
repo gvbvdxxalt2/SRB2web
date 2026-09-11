@@ -5,14 +5,19 @@ var peer = require("simple-peer");
 
 class ConnectState {
   static createConnectURL(wsHost, { address, port }) {
-    var connectURL = address;
+    var connectURL = (address || '').trim();
+
+    if (connectURL.includes(':') && !connectURL.startsWith('[')) {
+      connectURL = `[${connectURL}]`;
+    }
+
     if (port) {
       connectURL += ":" + port;
     } else {
       connectURL += ":5029";
     }
 
-    return `${getWebsocketURL(wsHost)}connect/${connectURL.trim()}`;
+    return `${getWebsocketURL(wsHost)}connect/${encodeURIComponent(connectURL.trim())}`;
   }
 
   constructor(wsHost, { address, port }) {
