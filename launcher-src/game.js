@@ -15,7 +15,9 @@ var resolutionChangeMethod = "safe";
 var loadProgressMain = elements.getGPId("loadProgressMain");
 var loadProgressCurrent = elements.getGPId("loadProgressCurrent");
 var loadProgressCurrentText = elements.getGPId("loadProgressCurrentText");
+var loaderCacheWarning = elements.getGPId("loaderCacheWarning");
 loadProgressMain.hidden = true;
+loaderCacheWarning.hidden = true;
 
 const {ASSET_LIST, CACHE_NAME} = require("./assets.js");
 
@@ -118,10 +120,6 @@ async function downloadAndSaveAssets() {
           );
         }
 
-        cache.put(request, networkResponse.clone()).catch((e) => {
-          console.warn(`Unable to put in cache, it won't load fast next time. ${e}`);
-        });
-
         response = networkResponse;
 
       } catch (err) {
@@ -184,7 +182,18 @@ async function downloadAndSaveAssets() {
         statusText: response.statusText
       });
 
+      var cachePromise = cache.put(asset.url, trackedResponse.clone()).catch((e) => {
+        loaderCacheWarning.hidden = false;
+        console.warn(`Unable to put in cache: ${e}`);
+      });
+
       buffer = await trackedResponse.arrayBuffer();
+
+      loadProgressCurrentText.textContent = `Waiting for "${asset.filename}" cache...`;
+      
+      try{
+      await cachePromise;
+      }catch(e){}
     } else {
       loadProgressCurrentText.textContent = `Pulling "${asset.filename}" from cache...`;
       buffer = await response.arrayBuffer();
