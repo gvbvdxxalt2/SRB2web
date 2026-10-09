@@ -134,7 +134,13 @@ class ConnectState {
       _this.isOpen = false;
       console.log(`[Relay ConnectState]: Peer connection closed.`);
     });
-    this.peer.on("data", (data) => { //send straight to SRB2.
+    this.peer.on("data", (data) => {
+      if (typeof data == "string" && (""+data).startsWith("{")) {
+        //Probably voice chat stuff.
+        
+        return;
+      }
+      //SRB2 Binary packet.
       attachSRB2.emitPacket(data, 0, PLACEHOLDER_IP);
     });
   }

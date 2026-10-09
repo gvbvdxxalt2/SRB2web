@@ -15,6 +15,8 @@ launcherMain.hidden = false;
 
 var playButton = elements.getGPId("playButton");
 var touchConfigureButton = elements.getGPId("configureTouchControlsButton");
+var voiceConfigButton = elements.getGPId("voiceConfigButton");
+
 var { startTouchCustomization } = require("./touch");
 var { startGame } = require("./game.js");
 
@@ -29,3 +31,9 @@ touchConfigureButton.addEventListener("click", function () {
 
 require("./relayconfig.js");
 require("./frameworker.js");
+
+var {openVoiceChatSettings} = require("./net/voice/settings.js");
+
+voiceConfigButton.addEventListener("click", function () {
+  openVoiceChatSettings(false);
+});

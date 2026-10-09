@@ -19,6 +19,8 @@ module.exports = [
     tabindex: "0",
   },
   ...require("./touch-controls.js"),
+  ...require("./voice-chat.js"),
+  ...require("./voice-settings.js"),
 
   ...require("./netgame-browser.js"),
 ];

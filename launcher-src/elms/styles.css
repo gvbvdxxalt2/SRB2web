@@ -121,6 +121,22 @@ a:hover {
   background: rgba(174, 0, 255, 0.7);
 }
 
+.voiceButton {
+  font-size: 30px;
+  background: rgba(4, 0, 255, 0.5);
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  gap: 10;
+}
+
+.voiceButton:hover {
+  background: rgba(4, 0, 255, 0.7);
+}
+
 .switchGameButton {
   font-size: 30px;
   background: rgba(0, 191, 255, 0.5);
@@ -842,4 +858,142 @@ a:hover {
   width: 100%;
   height: 100%;
   background: rgb(255,255,255);
+}
+
+
+.voiceIcon {
+  -webkit-mask: url('images/microphone.svg') no-repeat center / contain;
+  mask: url('images/microphone.svg') no-repeat center / contain;
+  --volume: 50%;
+  --inactive-color: rgba(0,0,0,0.5);
+  --active-color: rgb(0, 200, 0);
+  background: linear-gradient(to top, var(--active-color) 0%, var(--active-color) var(--volume), var(--inactive-color) var(--volume), var(--inactive-color) 100%);
+  width: 30px;
+  height: 30px;
+}
+
+.voiceIcon[disabled] {
+  background: rgba(200,0,0,1);
+}
+
+.voiceList {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  width: 100%;
+  height: fit-content;
+  user-select: none;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.voiceActive {
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  background: rgba(255,255,255,0.5);
+  border-radius: 10px;
+  color: rgba(0,0,0,0.5);
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  box-sizing: border-box;
+  padding: 4px 4px;
+}
+
+.voiceActive > .voiceUsername {
+  font-size: 20px;
+}
+
+.voiceSettingsDialog {
+  width: fit-content;
+  height: fit-content;
+  max-width: calc(100% - 100px);
+  max-height: calc(100dvh - 100px);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  padding: 5px 5px;
+  border-radius: 4px;
+  background: rgb(255,255,255);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  gap: 3px;
+}
+
+.voiceSettingsDialogTop {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  min-width: 300px;
+  flex-shrink: 0;
+}
+
+.voiceSettingsDialogContent {
+  width: 100%;
+  height: fit-content;
+  min-height: 100px;
+  flex-shrink: 0;
+  display: block;
+  color: rgb(0,0,0);
+}
+
+.voiceSettingsDialogTitle {
+  font-size: 25px;
+  font-weight: bold;
+  color: rgb(0,0,0);
+}
+
+.voiceSettingsDialogExit {
+  all: unset;
+  padding: 4px 4px;
+  width: fit-content;
+  height: fit-content;
+  border-radius: 3px;
+  background: rgb(200,0,0);
+  box-sizing: border-box;
+}
+
+.voiceSettingsDialogExit:hover {
+  background: rgb(230,0,0);
+  cursor: pointer;
+}
+
+.voiceSettingsDialogExit > img {
+  width: 25px;
+  height: 25px;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+.blueButton {
+  all: unset;
+  background: rgb(0, 93, 233);
+  color: rgb(255,255,255);
+  width: fit-content;
+  height: fit-content;
+  padding: 4px 4px;
+  box-sizing: border-box;
+  border-radius: 3px;
+}
+
+.blueButton:hover {
+  cursor: pointer;
+  background: rgb(0, 102, 255);
+}
+
+.voiceTestCanvas {
+  width: 480px;
+  height: 100px;
+  border-radius: 2px;
+  pointer-events: none;
+  background: rgb(0,0,0);
+  user-select: none;
+  image-rendering: pixelated;
 }
