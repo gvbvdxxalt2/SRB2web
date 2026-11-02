@@ -6,6 +6,10 @@ _**Web Version: 2.2.15**_
 
 A port of the game for WASM (WebAssembly) using Emscripten, fully supporting LAN & online multiplayer through its [Relay Server](https://github.com/gvbvdxxalt2/SRB2Web-Relay).
 
+> [!IMPORTANT]
+> This port may be updated in a way that makes older versions break compatibility with the relay servers,
+> in that case, you should make sure you always merge your source code (and use forks instead of directly downloading and reuploading the source) when possible!
+
 ---
 
 ## Live Sites
