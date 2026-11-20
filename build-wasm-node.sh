@@ -9,8 +9,8 @@ EM_TOOLCHAIN="$ROOT_DIR/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscrip
 VCPKG_INC="$ROOT_DIR/vcpkg_installed/wasm32-emscripten/include"
 VCPKG_LIB="$ROOT_DIR/vcpkg_installed/wasm32-emscripten/lib"
 
-mkdir -p build-wasm-node
-cd build-wasm-node
+mkdir -p web-emscripten-wasm-node
+cd web-emscripten-wasm-node
 
 emcmake cmake .. -DCMAKE_BUILD_TYPE=Release \
     -DUSE_GME=1 -DUSE_OPENMPT=1 -DUSE_UPNP=0 -DUSE_SDL2_NET=1 -DUSE_PHYSFS=0 -DUSE_ZLIB=1 -DUSE_LIBPNG=1 -DUSE_CURL=0 \

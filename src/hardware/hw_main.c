@@ -93,7 +93,7 @@ ps_metric_t ps_hw_numcolors = {0};
 ps_metric_t ps_hw_batchsorttime = {0};
 ps_metric_t ps_hw_batchdrawtime = {0};
 
-boolean gl_init = false;
+boolean _gl_init = false;
 boolean gl_maploaded = false;
 boolean gl_sessioncommandsadded = false;
 // false if shaders have not been initialized yet, or if shaders are not available
@@ -5819,7 +5819,7 @@ void HWR_AddCommands(void)
 // --------------------------------------------------------------------------
 void HWR_Startup(void)
 {
-	if (!gl_init)
+	if (!_gl_init)
 	{
 		CONS_Printf("HWR_Startup()...\n");
 
@@ -5838,7 +5838,7 @@ void HWR_Startup(void)
 		HWR_TogglePaletteRendering();
 	}
 
-	gl_init = true;
+	_gl_init = true;
 }
 
 // --------------------------------------------------------------------------

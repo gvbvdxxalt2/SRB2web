@@ -2579,12 +2579,16 @@ void W_VerifyFileMD5(UINT16 wadfilenum, const char *matchmd5)
 	{
 		char actualmd5text[2*MD5_LEN+1];
 		PrintMD5String(wadfiles[wadfilenum]->md5sum, actualmd5text);
+
+		//Don't check hashes in emscripten, we provide light versions with different hashes.
+		#ifndef EMSCRIPTEN
 #ifdef _DEBUG
 		CONS_Printf
 #else
 		I_Error
 #endif
 			(M_GetText("File is old, is corrupt or has been modified:\n%s\nFound MD5: %s\nWanted MD5: %s\n"), wadfiles[wadfilenum]->filename, actualmd5text, matchmd5);
+		#endif
 	}
 #endif
 }

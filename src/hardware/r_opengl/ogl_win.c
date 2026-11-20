@@ -129,6 +129,17 @@ static PFNwglMakeCurrent pwglMakeCurrent;
 #endif
 
 #ifndef STATIC_OPENGL
+#ifdef EMSCRIPTEN
+#include <gl4esinit.h>
+
+void *GetGLFunc(const char *symbol)
+{
+    void *func = gl4es_GetProcAddress(symbol);
+    if (!func)
+        func = SDL_GL_GetProcAddress(symbol);
+    return func;
+}
+#else
 void *GetGLFunc(const char *proc)
 {
 	void *func = NULL;
@@ -138,6 +149,7 @@ void *GetGLFunc(const char *proc)
 		func = GetProcAddress(OGL32, proc);
 	return func;
 }
+#endif
 #endif
 
 boolean LoadGL(void)

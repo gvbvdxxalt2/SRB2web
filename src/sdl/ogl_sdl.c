@@ -72,10 +72,22 @@ PFNglGetString pglGetString;
 INT32 oglflags = 0;
 SDL_GLContext sdlglcontext = 0;
 
+#ifdef EMSCRIPTEN
+#include <gl4esinit.h>
+
+void *GetGLFunc(const char *proc)
+{
+	void *func = gl4es_GetProcAddress(proc);
+    if (!func)
+        func = SDL_GL_GetProcAddress(proc);
+    return func;
+}
+#else
 void *GetGLFunc(const char *proc)
 {
 	return SDL_GL_GetProcAddress(proc);
 }
+#endif
 
 boolean LoadGL(void)
 {

@@ -199,6 +199,8 @@ endif()
 # <-- FIX: Add generic WebAssembly support for network stub
 if("${SRB2_SYSTEM_TYPE}" STREQUAL "WEB" OR EMSCRIPTEN)
 	target_link_libraries(SRB2SDL2 PRIVATE)
+
+	add_compile_options(-include "${CMAKE_SOURCE_DIR}/libs/gl4es/include/gl4es_mangle.h")
 endif()
 
 if("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
@@ -218,7 +220,7 @@ target_compile_definitions(SRB2SDL2 PRIVATE -D_LARGEFILE64_SOURCE)
 if("${SRB2_CONFIG_HWRENDER}")
 	target_compile_definitions(SRB2SDL2 PRIVATE -DHWRENDER)
 	add_subdirectory(hardware)
-
+	
 	if("${SRB2_CONFIG_STATIC_OPENGL}" AND NOT EMSCRIPTEN) # <-- FIX: Skip OpenGL check for Emscripten
 		find_package(OpenGL)
 		if(${OPENGL_FOUND})

@@ -1,0 +1,858 @@
+body {
+  background: #000000;
+  font-family: PixelFont, Arial, sans-serif;
+  letter-spacing: 1px;
+  margin: 0;
+  padding: 0;
+  height: 100dvh;
+  width: 100dvw;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.sep {
+  width: 100%;
+  height: 10px;
+  margin-bottom: 10px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: rgb(0, 110, 255);
+}
+
+a {
+  all: unset;
+  color: #00ffff;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.srb2BG {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background: url("images/title-bg.png") center/cover no-repeat;
+  pointer-events: none;
+  image-rendering: pixelated;
+  filter: brightness(0.6);
+}
+
+.launcherMain {
+  min-width: 600px;
+  width: calc(100vw - 400px);
+  height: calc(100dvh - 0px);
+  padding: 10px 10px;
+  box-sizing: border-box;
+
+  position: absolute;
+  left: 50%;
+  top: 0px;
+  transform: translate(-50%, 0px);
+
+  background: rgba(0, 0, 0, 0.619);
+  color: #ffffff;
+  border-radius: 1px;
+  overflow: auto;
+}
+
+.button {
+  all: unset;
+  padding: 5px 5px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  border-radius: 3px;
+}
+
+.button:hover {
+  background: rgba(117, 117, 117, 0.5);
+  cursor: pointer;
+}
+
+.playButton {
+  font-size: 30px;
+  background: rgba(9, 255, 0, 0.5);
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+
+  gap: 10;
+}
+
+.playButton:hover {
+  background: rgba(9, 255, 0, 0.7);
+}
+
+.fsButton {
+  font-size: 30px;
+  background: rgba(255, 157, 0, 0.5);
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  gap: 10;
+}
+
+.fsButton:hover {
+  background: rgba(255, 157, 0, 0.7);
+}
+
+.browseButton {
+  font-size: 30px;
+  background: rgba(174, 0, 255, 0.5);
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  gap: 10;
+}
+
+.browseButton:hover {
+  background: rgba(174, 0, 255, 0.7);
+}
+
+.switchGameButton {
+  font-size: 30px;
+  background: rgba(0, 191, 255, 0.5);
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  gap: 10;
+}
+
+.switchGameButton:hover {
+  background: rgba(0, 191, 255, 0.7);
+}
+
+.gameCanvasContainer {
+  background: rgba(0,0,0,0.5);
+  width: 100dvw;
+  height: 100dvh;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.gameCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  object-fit: contain;
+  background: rgb(0,0,0);
+}
+
+.sectionHeader {
+  display: block;
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.loaderMain {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.relayConfig {
+  width: calc(100% - 0px);
+  height: fit-content;
+  max-height: 200px;
+  min-height: 100px;
+  box-sizing: border-box;
+  padding: 2px;
+  color: #ffffff;
+  border-radius: 0px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgba(0, 38, 255, 0.747);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.noRelayContainer {
+}
+
+.noRelayText {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+
+  color: rgba(255, 255, 255, 1);
+}
+
+.configuredRelay {
+  width: 100%;
+  min-height: 100px;
+  box-sizing: border-box;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  flex-shrink: 0;
+  overflow: wrap;
+  text-wrap: wrap;
+}
+
+.configuredRelay[used] {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.relayName {
+  font-size: 20px;
+  overflow: wrap;
+  text-wrap: wrap;
+}
+
+.relayHost {
+  margin-left: auto;
+  font-size: 10px;
+  font-style: italic;
+  color: rgb(0, 110, 255);
+  user-select: none;
+}
+
+.relayHostClickable:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.relayStatus {
+  display: flex;
+  gap: 3px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+}
+
+.relayStatusText {
+  color: rgb(255, 255, 255);
+  font-size: 10px;
+  text-align: center;
+}
+.relayStatusText[state="offline"] {
+  color: rgb(255, 0, 0);
+}
+.relayStatusText[state="online"] {
+  color: rgb(0, 255, 0);
+}
+
+.relayStatusImg {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
+}
+
+.relayDescription {
+  font-size: 10px;
+  white-space: pre;
+  padding-left: 5px;
+  overflow: wrap;
+  text-wrap: wrap;
+}
+
+.relayPublicCount {
+  font-size: 14px;
+  white-space: pre;
+  padding-left: 5px;
+  overflow: wrap;
+  text-wrap: wrap;
+}
+
+.relayButtons {
+  margin-top: 2px;
+  display: block;
+}
+
+.relayButtons > .button {
+  margin: 1px 1px;
+}
+
+:root {
+  --popup-dialog-font: Arial, sans-serif;
+  --popup-dialog-background: #fff;
+  --popup-dialog-border-radius: 10px;
+  --popup-dialog-text-color: #000;
+  --popup-dialog-button-background: #5985ff;
+  --popup-dialog-button-hover-background: #4275ff;
+  --popup-dialog-button-text-color: #fff;
+  --popup-dialog-button-radius: 5px;
+  --popup-dialog-input-background: #fff;
+  --popup-dialog-input-border-width: 1.5px;
+  --popup-dialog-input-border-color: #bababa;
+  --popup-dialog-input-text-color: #000;
+  --popup-dialog-message-size: 16px;
+}
+
+.windowDialogContainer {
+  z-index: 99999999999;
+  font-family: var(--popup-dialog-font);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.windowDialogBackground {
+  background-color: rgba(0,0,0,0.5);
+  backdrop-filter: blur(2px);
+}
+
+.windowDialogBox {
+  background: var(--popup-dialog-background);
+  border-radius: var(--popup-dialog-border-radius);
+  color: var(--popup-dialog-text-color);
+}
+
+.windowDialogButton {
+  background: var(--popup-dialog-button-background);
+  color: var(--popup-dialog-button-text-color);
+  border-radius: var(--popup-dialog-button-radius);
+  padding: 4px 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.windowDialogButton:hover {
+  background: var(--popup-dialog-button-hover-background);
+}
+
+.windowDialogInput {
+  background: var(--popup-dialog-input-background);
+  border: var(--popup-dialog-input-border-width) solid
+    var(--popup-dialog-input-border-color);
+  color: var(--popup-dialog-input-text-color);
+  outline: none;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.windowDialogHeader {
+  font-weight: bold;
+  font-size: var(--popup-dialog-message-size);
+}
+
+.logsContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: hsl(0, 0%, 13%);
+    color: #adadad;
+    font-family: monospace;
+    font-size: 14px;
+    overflow: auto;
+    box-sizing: border-box;
+    padding: 2px;
+    z-index: 1500;
+}
+
+.publicNetgameBrowserContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100dvh;
+  background: rgba(0,0,0,0.5);
+}
+
+.publicNetgameBrowserDialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 150px);
+  height: calc(100dvh - 150px);
+  min-width: 640px;
+  min-height: 360px;
+  border-radius: 3px;
+  background: rgba(255,255,255,1);
+  display: flex;
+  flex-direction: row;
+}
+
+.publicNetgameBrowserLeft {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  width: calc(100% - 450px);
+  max-width: 300px;
+  border-right: 2px solid rgba(0,0,0,0.3);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  flex-grow: 0;
+  gap: 3px;
+  overflow: auto;
+}
+
+.publicNetgameItem {
+  width: 100%;
+  box-sizing: border-box;
+  height: fit-content;
+  min-height: 50px;
+  padding: 5px 5px;
+  background: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,1);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.publicNetgameItem:hover {
+  background: rgba(0,0,0,0.7);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.publicNetgameItem[viewing] {
+  text-decoration: underline;
+  cursor: unset;
+}
+
+.publicGameSeparator {
+  width: 100%;
+  height: 0px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  border-bottom-color: black;
+  border-bottom-style: dashed;
+  border-bottom-width: 2px;
+  box-sizing: border-box;
+}
+
+.publicNetgameBrowserRight {
+  display: block;
+  flex-grow: 1;
+  position: relative;
+}
+
+.publicNetgameBrowserCloseButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 30px;
+}
+
+.viewPublicNetgameDetails {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,1);
+  padding: 5px 5px;
+  border-radius: 3px;
+}
+
+.publicNetgameDetails {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  padding: 10px 10px;
+  box-sizing: border-box;
+}
+
+.refreshIcon {
+  width: 32px;
+  height: 32px;
+}
+
+.netgameServerName {
+  font-size: 30px;
+}
+
+.netgameServerURL {
+  font-size: 16px;
+  margin-left: 5px;
+  font-family: arial;
+}
+
+.netgameGameName {
+  font-size: 16px;
+}
+
+.netgameCommunicationType {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  padding: 5px 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.4);
+}
+
+.netgameLoadingListsContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: fit-content;
+  height: fit-content;
+  box-sizing: border-box;
+  padding: 4px 4px;
+  background: rgba(255,255,255,0.5);
+  color: rgba(0,0,0,1);
+  border-radius: 4px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.netgameLoadingListsImg {
+  width: 30px;
+  height: 30px;
+}
+
+
+.dontSellText {
+  color: rgb(196, 0, 0);
+  font-size: 35px;
+}
+
+.displayOption {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.selectOptions {
+  all: unset;
+  display: block;
+  box-sizing: border-box;
+  padding: 4px 4px;
+  color: black;
+  background: rgba(255,255,255,0.7);
+  appearance: auto;
+  border-radius: 5px;
+}
+
+.touchControlPosition[data-position="left"] {
+  position: fixed;
+  left: var(--button-x);
+  bottom: var(--button-y);
+  will-change: left, right, bottom;
+  contain: layout paint; 
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.touchControlPosition[data-position="right"] {
+  position: fixed;
+  right: var(--button-x);
+  bottom: var(--button-y);
+  will-change: left, right, bottom;
+  contain: layout paint; 
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.touchControlBox {
+  background: rgba(255,255,255,1);
+  border-radius: 0px;
+  border-width: 0.5vmin;
+  border-color: rgba(0,0,0,1);
+  border-style: solid;
+  width: 2vmin;
+  height: 2vmin;
+  transform: translate(-50%, 50%);
+}
+.touchControlBox[data-position="left"]  {
+  position: fixed;
+  bottom: var(--button-y);
+  left: calc(calc(var(--button-x) + var(--button-width)));
+}
+
+.touchControlDeleteBox {
+  background: rgb(255, 0, 0);
+  border-radius: 0px;
+  border-width: 0.5vmin;
+  border-color: rgba(0,0,0,1);
+  border-style: solid;
+  width: 2vmin;
+  height: 2vmin;
+  transform: translate(-50%, 50%);
+}
+.touchControlDeleteBox[data-position="left"]  {
+  position: fixed;
+  bottom: calc(var(--button-y));
+  left: var(--button-x);
+}
+
+.touchActionButton {
+  all: unset;
+  position: absolute;
+  width: var(--button-width);
+  height: var(--button-height);
+  background: rgba(255,255,255,0.5);
+  color: rgba(0,0,0,0.6);
+  border-radius: 0.5vmin;
+  cursor: not-allowed;
+  font-size: 4vmin;
+  box-sizing: border-box;
+  padding: 3vmin 3vmin;
+  /* The actual touch events are handled by the JavaScript collision tests */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+.touchActionButton[data-touching] {
+  background: rgba(255,255,255,0.8);
+}
+
+.blackDialogBG {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100dvh;
+  background: rgba(0,0,0,0.8);
+}
+
+.whiteDialogBox {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255,255,255,1);
+  color: rgba(0,0,0,1);
+  padding: 10px 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+.touchControlsDialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100dvh;
+}
+.touchControlsDialogTitle {
+  font-size: 7vmin;
+  color: rgba(255,255,255,1);
+}
+
+.touchControlsDialogButton {
+  all: unset;
+  background: rgba(255,255,255,0.8);
+  color: rgba(0,0,0,0.6);
+  border-radius: 0.5vmin;
+  font-size: 4vmin;
+  width: fit-content;
+  height: fit-content;
+  box-sizing: border-box;
+  padding: 1vmin 1vmin;
+}
+
+.touchControlsDialogButton:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.touchControlsDialogRedButton {
+  background: rgba(255,50,0,0.8);
+}
+.touchControlsDialogGreenButton {
+  background: rgba(4, 255, 0, 0.8);
+}
+
+.touchControlDialogEditButtons {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+}
+
+.touchControlsDialogTip {
+  color: rgb(255, 0, 0);
+  font-size: 4vmin;
+  user-select: none;
+  pointer-events: none;
+}
+
+.touchControlsDialogTip2 {
+  color: rgba(255,255,255,1);
+  font-size: 3.5vmin;
+  user-select: none;
+  pointer-events: none;
+}
+
+.touchControlsContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /*width: 100%;
+  height: 100dvh;*/
+  overflow: visible;
+  user-select: none;
+}
+
+.touchControlsAddDropdownContainer {
+  position: relative;
+  width: 0px;
+  height: 0px;
+}
+.touchControlsAddDropdown {
+  text-decoration: unset;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(0, 6vmin);
+  width: 50vmin;
+  max-height: 40vmin;
+  z-index: 99999;
+  background: rgba(255,255,255,0.9);
+  border-radius: 0.5vmin;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2vmin;
+  padding: 0.2vmin 0.2vmin;
+  overflow: auto;
+}
+
+.touchControlsAddDropdown > .option {
+  all: unset;
+  padding: 1vmin 1vmin;
+  background: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,1);
+  border-radius: 0.5vmin;
+  font-size: 3vmin;
+}
+.touchControlsAddDropdown > .option:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.touchControlsEditButtonsSpacing {
+  all: unset;
+  margin-left: 0.5vmin;
+}
+
+.touchControlsContent {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.touchControlsJoystickContainer {
+  display: block;
+  width: var(--button-width);
+  height: var(--button-height);
+  overflow: visible;
+  user-select: none;
+}
+
+.touchControlsJoystick {
+  display: block;
+  width: var(--joystick-size);
+  height: var(--joystick-size);
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: visible;
+  user-select: none;
+}
+
+.touchControlsJoystickCircle {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+  background: rgba(0,0,255,0.4);
+  border-radius: 50%;
+  overflow: visible;
+  user-select: none;
+}
+
+.touchControlsJoystickCircle[data-touching] {
+  background: rgba(0,0,255,0.7);
+}
+
+/* Technically invisible, though its really just offscreen */
+.touchControlsInput {
+  all: unset;
+  position: fixed;
+  top: calc(100svh, 30px);
+  left: calc(100svw, 30px);
+  background: rgba(0,0,0,1);
+  color: rgba(0,0,0,0);
+  width: 10px;
+  height: 10px;
+  user-select: none;
+  font-family: Arial;
+}
+
+.loadProgressMain {
+  min-width: 200px;
+  width: calc(100% - 30px);
+  height: 25px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgb(255,255,255);
+  padding: 2px 2px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.loadProgressCurrentText {
+  color: rgba(91, 151, 253, 0.8);
+  font-style: italic;
+  font-size: 14px;
+  position: absolute;
+  top: 50%;
+  margin-left: 2px;
+  transform: translate(0%, -50%);
+  text-wrap: unset;
+  word-wrap: unset;
+  overflow-wrap: unset;
+}
+
+.loadProgressCurrent {
+  width: 100%;
+  height: 100%;
+  background: rgb(255,255,255);
+}
