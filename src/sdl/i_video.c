@@ -219,7 +219,9 @@ static void SDLSetMode(INT32 width, INT32 height, SDL_bool fullscreen, SDL_bool 
 				SDL_SetWindowFullscreen(window, 0);
 			}
 			// Reposition window only in windowed mode
+			#ifndef EMSCRIPTEN
 			SDL_SetWindowSize(window, width, height);
+			#endif
 			if (reposition)
 			{
 				SDL_SetWindowPosition(window,
@@ -233,7 +235,9 @@ static void SDLSetMode(INT32 width, INT32 height, SDL_bool fullscreen, SDL_bool 
 	{
 		Impl_CreateWindow(fullscreen);
 		wasfullscreen = fullscreen;
+		#ifndef EMSCRIPTEN
 		SDL_SetWindowSize(window, width, height);
+		#endif
 		if (fullscreen)
 		{
 			//SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -1457,6 +1461,29 @@ void VID_PrepareModeList(void)
 	allow_fullscreen = true;
 }
 
+#ifdef EMSCRIPTEN
+#include <gl4esinit.h> // from libs/gl4es/include
+
+static void Web_BindCanvasForMode(boolean use_opengl, int w, int h)
+{
+    char *selector = (char *)EM_ASM_PTR({
+        if (Module.selectRenderCanvas) {
+            const sel = Module.selectRenderCanvas($0 !== 0, $1, $2);
+            return stringToNewUTF8(sel);
+        }
+        return 0;
+    }, use_opengl ? 1 : 0, w, h);
+
+    if (selector)
+    {
+        SDL_SetHint("SDL_HINT_EMSCRIPTEN_CANVAS_SELECTOR", selector);
+        free(selector);
+    }
+}
+
+static boolean gl4es_initialized = false;
+#endif
+
 static SDL_bool Impl_CreateContext(void)
 {
 	// Renderer-specific stuff
@@ -1464,14 +1491,31 @@ static SDL_bool Impl_CreateContext(void)
 	if ((rendermode == render_opengl)
 	&& (vid.glstate != VID_GL_LIBRARY_ERROR))
 	{
-		if (!sdlglcontext)
+		#ifdef EMSCRIPTEN
+			Web_BindCanvasForMode(true, vid.width, vid.height);
+		#endif
+		if (!sdlglcontext) {
 			sdlglcontext = SDL_GL_CreateContext(window);
+		}
 		if (sdlglcontext == NULL)
 		{
 			SDL_DestroyWindow(window);
 			I_Error("Failed to create a GL context: %s\n", SDL_GetError());
 		}
 		SDL_GL_MakeCurrent(window, sdlglcontext);
+		#ifdef EMSCRIPTEN
+			if (!gl4es_initialized)
+			{
+				setenv("LIBGL_ES", "2", 1);
+				setenv("LIBGL_VAO", "0", 1);      // Disable desktop VAO emulation; WebGL2 VAO handling can conflict with client arrays
+				setenv("LIBGL_USEVBO", "1", 1);   // Force gl4es to upload CPU vertex arrays into WebGL ARRAY_BUFFER VBOs
+				setenv("LIBGL_FB", "0", 1);
+
+				initialize_gl4es();
+				gl4es_initialized = true;
+			}
+			glViewport(0, 0, vid.width, vid.height);
+		#endif
 	}
 	else
 #endif
@@ -1493,6 +1537,15 @@ static SDL_bool Impl_CreateContext(void)
 			CV_StealthSetValue(&cv_vidwait, 0);
 #endif
 		}
+
+		#ifdef EMSCRIPTEN
+		Web_BindCanvasForMode(false, vid.width, vid.height);
+
+		if (rendermode == render_soft)
+		{
+			Impl_VideoSetupSDLBuffer();
+		}
+		#endif
 
 		if (!renderer)
 			renderer = SDL_CreateRenderer(window, -1, flags);

@@ -34,51 +34,51 @@ emsdk/
 vcpkg_installed/
 launcher-dist/
 
-# Build files for web browsers.
+# Build files for SRB2 web.
 # Keeping the bin folder so people don't have to rebuild themselves.
 
-build-wasm/*
-!build-wasm/*.js
-!build-wasm/*.wasm
-!build-wasm/*.data
-!build-wasm/*.worker.js
-!build-wasm/bin
-build-wasm/CMakeFiles/
-build-wasm/testing/
-build-wasm/CMakeFiles/
-build-wasm/vcpkg_installed/
-build-wasm/assets/
-build-wasm/src/
-build-wasm/thirdpart/
-build-wasm/cmake_install.cmake
-build-wasm/CMakeCache.txt
-build-wasm/CPackConfig.cmake
-build-wasm/CPackSourceConfig.cmake
-build-wasm/HEAD
-build-wasm/Makefile
+web-emscripten-wasm/*
+!web-emscripten-wasm/*.js
+!web-emscripten-wasm/*.wasm
+!web-emscripten-wasm/*.data
+!web-emscripten-wasm/*.worker.js
+!web-emscripten-wasm/bin
+web-emscripten-wasm/CMakeFiles/
+web-emscripten-wasm/testing/
+web-emscripten-wasm/CMakeFiles/
+web-emscripten-wasm/vcpkg_installed/
+web-emscripten-wasm/assets/
+web-emscripten-wasm/src/
+web-emscripten-wasm/thirdpart/
+web-emscripten-wasm/cmake_install.cmake
+web-emscripten-wasm/CMakeCache.txt
+web-emscripten-wasm/CPackConfig.cmake
+web-emscripten-wasm/CPackSourceConfig.cmake
+web-emscripten-wasm/HEAD
+web-emscripten-wasm/Makefile
 
 # Build files for dedicated netgame
 # Also keeping so people don't have to rebuild themselves.
 
-build-wasm-node/*
-!build-wasm-node/*.js
-!build-wasm-node/*.wasm
-!build-wasm-node/*.data
-!build-wasm-node/*.worker.js
-!build-wasm-node/bin
-build-wasm-node/CMakeFiles/
-build-wasm-node/testing/
-build-wasm-node/CMakeFiles/
-build-wasm-node/vcpkg_installed/
-build-wasm-node/assets/
-build-wasm-node/src/
-build-wasm-node/thirdpart/
-build-wasm-node/cmake_install.cmake
-build-wasm-node/CMakeCache.txt
-build-wasm-node/CPackConfig.cmake
-build-wasm-node/CPackSourceConfig.cmake
-build-wasm-node/HEAD
-build-wasm-node/Makefile
+web-emscripten-wasm-node/*
+!web-emscripten-wasm-node/*.js
+!web-emscripten-wasm-node/*.wasm
+!web-emscripten-wasm-node/*.data
+!web-emscripten-wasm-node/*.worker.js
+!web-emscripten-wasm-node/bin
+web-emscripten-wasm-node/CMakeFiles/
+web-emscripten-wasm-node/testing/
+web-emscripten-wasm-node/CMakeFiles/
+web-emscripten-wasm-node/vcpkg_installed/
+web-emscripten-wasm-node/assets/
+web-emscripten-wasm-node/src/
+web-emscripten-wasm-node/thirdpart/
+web-emscripten-wasm-node/cmake_install.cmake
+web-emscripten-wasm-node/CMakeCache.txt
+web-emscripten-wasm-node/CPackConfig.cmake
+web-emscripten-wasm-node/CPackSourceConfig.cmake
+web-emscripten-wasm-node/HEAD
+web-emscripten-wasm-node/Makefile
 
-# This is random but I use this to connect to netgames at school so
+# This is random but I use this to connect to netgames at school so...
 randomrants-proxy/
