@@ -21,7 +21,7 @@ emcmake cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DUSE_GME=1 -DUSE_OPENMPT=1 -DUSE_UPNP=0 -DUSE_SDL2_NET=1 -DUSE_PHYSFS=0 -DUSE_ZLIB=1 -DUSE_LIBPNG=1 -DUSE_CURL=0 \
     -DSRB2_CONFIG_HAVE_CURL=OFF \
-    -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="$ROOT_DIR/build-wasm/bin" \
+    -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="$ROOT_DIR/web-emscripten-wasm-node/bin" \
     -DCMAKE_EXECUTABLE_SUFFIX=".js" \
     "-DCMAKE_C_FLAGS=-I$ROOT_DIR/libs/gl4es/include -include $ROOT_DIR/libs/gl4es/include/GL/gl.h -DEMSCRIPTEN -mbulk-memory -sASYNCIFY -s USE_ZLIB=1 -s USE_LIBPNG=1 -msimd128 -DMASTERSERVER -DHAVE_SDLNET -std=gnu17 -s USE_SDL=2 -s SDL2_MIXER_FORMATS=['ogg','wav'] -s USE_SDL_MIXER=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s USE_SDL_NET=2 -g2" \
     "-DCMAKE_CXX_FLAGS=-I$ROOT_DIR/libs/gl4es/include -include $ROOT_DIR/libs/gl4es/include/GL/gl.h -DEMSCRIPTEN -mbulk-memory -sASYNCIFY -s USE_ZLIB=1 -s USE_LIBPNG=1 -O3 -msimd128 -s USE_SDL=2 -s SDL2_MIXER_FORMATS=['ogg','wav'] -s USE_SDL_MIXER=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s USE_SDL_NET=2" \
