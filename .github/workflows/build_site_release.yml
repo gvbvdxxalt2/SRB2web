@@ -3,7 +3,7 @@ name: Build and Release SRB2Web Launcher
 on:
   push:
     branches:
-      - main # Triggers the action when you push to the main branch
+      - master # Triggers the action when you push to the main branch
   workflow_dispatch: # Allows you to manually click a "Run workflow" button in GitHub
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
       - name: Zip the Webpack output
         run: |
           # Zips the folder contents so it can be uploaded as a single asset
-          zip -r launcher-build.zip launcher-dist/
+          zip -r SRB2web-site.zip web-build/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -47,7 +47,7 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           name: Release ${{ env.TAG_NAME }}
           body: "Automated build of the SRB2Web Launcher."
-          files: launcher-build.zip
+          files: SRB2web-site.zip
           draft: false
           prerelease: false
         env:
