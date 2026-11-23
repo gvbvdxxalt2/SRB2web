@@ -106,4 +106,4 @@ This should work on both Windows and Linux.
 | [`/src/web-src`](./src/web-src) | Source code for the web launcher and file manager. |
 | [`/src/web-static`](./static) | Static assets, icons, and images for the launcher. |
 | `/web-build` | The production-ready web build (generated via `npm run build`). |
-| [`/build-wasm/bin`](./build-wasm/bin) | Where the web port's compiled emscripten output is (js and wasm files) |
+| [`/web-emscripten-wasm/bin`](./web-emscripten-wasm/bin) | Where the web port's compiled emscripten output is (js and wasm files) |
