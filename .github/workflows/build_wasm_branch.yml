@@ -36,7 +36,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build-wasm/bin
+          folder: web-emscripten-wasm/bin
           branch: wasm
 
       - name: Build to emscripten node js WASM and JS.
@@ -48,5 +48,5 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build-wasm-node/bin
+          folder: web-emscripten-wasm-node/bin
           branch: wasm-node
