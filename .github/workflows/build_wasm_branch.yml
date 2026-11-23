@@ -41,6 +41,7 @@ jobs:
 
       - name: Build to emscripten node js WASM and JS.
         run: |
+          ./setup-build.sh
           ./build-wasm-node.sh
 
       - name: Push to wasm-node branch
