@@ -16,6 +16,9 @@ source ./load-emsdk.sh
 chmod +x ./vcpkg-setup.sh
 ./vcpkg-setup.sh
 
+chmod +x ./gl4es-setup.sh
+./gl4es-setup.sh
+
 # 4. Build the game
 chmod +x ./build-wasm.sh
 ./build-wasm.sh
