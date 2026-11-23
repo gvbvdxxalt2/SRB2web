@@ -32,7 +32,7 @@ libs/vcpkg/*
 node_modules/
 emsdk/
 vcpkg_installed/
-launcher-dist/
+web-build/
 
 # Build files for SRB2 web.
 # Keeping the bin folder so people don't have to rebuild themselves.
