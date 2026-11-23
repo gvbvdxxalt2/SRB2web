@@ -7,9 +7,6 @@ const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
-try {
-  require("fs").rmSync("./launcher-dist", { recursive: true });
-} catch (e) {}
 
 const LAUNCHER_SRC = "./src/web-src/";
 const STATIC_PATH = "./src/web-static/";
@@ -28,6 +25,10 @@ const WEB_CONSTANTS = {
 };
 
 const HTML_TEMPLATE_PATH = "./html-template/template.html"; //Relative to LAUNCHER_SRC
+
+try {
+  require("fs").rmSync(BUILD_PATH, { recursive: true });
+} catch (e) {}
 
 module.exports = {
   mode: "production",
