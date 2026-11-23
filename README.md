@@ -8,6 +8,8 @@ _**Web Version: 2.2.15**_
 
 A port of the game for WASM (WebAssembly) using Emscripten, fully supporting LAN & online multiplayer through its [Relay Server](https://github.com/gvbvdxxalt2/SRB2Web-Relay).
 
+Also check out my other web ports: [SRB2Kart Web](https://github.com/gvbvdxxalt2/SRB2KartWeb), [SRB2Legacy Web](https://github.com/gvbvdxxalt2/SRB2LegacyWeb)
+
 > **AI usage is in this port:**
 > This port is written with the help of AI, mostly the C side code and compiling commands, and small help with emscripten calls and API references.
 > Though the JavaScript side, (the launcher page, file manager) is stylized and written by me, some bug fixes are also written by AI.
