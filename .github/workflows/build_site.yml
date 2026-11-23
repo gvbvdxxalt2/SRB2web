@@ -37,5 +37,5 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: launcher-dist # The folder containing your built website files
+          folder: web-build # The folder containing your built website files
           branch: deploy        # The branch you want to push to
